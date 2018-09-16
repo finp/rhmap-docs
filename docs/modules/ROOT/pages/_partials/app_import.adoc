@@ -1,0 +1,175 @@
+// include::shared/attributes.adoc[]
+
+[[importing-client-apps-and-cloud-apps-into-projects]]
+= Importing Client Apps and Cloud Apps into Projects
+
+.Overview
+You can import existing Client Apps and Cloud Apps into projects.
+A git repository is created in {ProductShortName} for each imported app.
+
+The imported apps must fulfill the requirements outlined in this document:
+
+* xref:client-app-requirements[Client App Requirements]
+* xref:cloud-app-requirements[Cloud App Requirements]
+
+.Requirements
+* Cloning, pushing, or pulling from Git repositories hosted in {ProductShortName} requires an SSH key to be configured in the platform.
+If you have not already added an SSH Key, see link:{LocalDevelopmentGuide}#ssh-key-setup[SSH Key Setup].
+
+[[creating-an-empty-project]]
+== Creating an Empty Project
+
+This guide assumes that you do not currently have a project in Studio.
+To create a bare project:
+
+. Log in to the Studio.
+. Navigate to **Projects**.
+. Click **+ New Project**.
+. Select the _Empty Project_ template and give the new project a name.
+. Click *Create* button.
+. When the project has been created, click **Finish**.
+
+[[importing-a-client-app]]
+== Importing a Client App
+
+Before creating a Client App, make sure there is at least one Cloud App already created in the project.
+See xref:importing-a-cloud-app[Importing a Cloud App] to import an existing Cloud App.
+
+. In your bare project, navigate to __Apps, Cloud Apps & Services__.
+. Click the *+* in the _Apps_ box.
+. Click **Import Existing App**.
+. Select the _App Type_ you wish to create.
+See xref:client-app-requirements[Client App Requirements] to make sure your app can be imported.
+. Click *Next* and give your imported app a name.
+. Choose how to import the app.
+* *Public Git Repository*
++
+Enter the URL of a public Git repository containing the Client App, and a branch name.
+The default is `master`.
+* *Zip File*
++
+On your computer, create a single ZIP archive of the contents of your Client App.
++
+[source,bash]
+----
+zip -r app.zip ./ -x *.git*
+----
++
+In Studio, choose the ZIP file to upload.
+* *Bare Repo*
++
+This creates an empty repository where you can push your app code.
+. Click **Import & move on to Integration**. Your Client App is imported into the project.
++
+If you imported using the _Bare Repo_ option, click _Already have a git repo_ and follow the presented steps.
++
+If you imported using the _Zip File_ or _Bare Repo_ options, you will be presented with steps for integration of the {ProductShortName} SDK.
+. Click **Finished - Take me to My App!**.
+
+[[importing-a-cloud-app]]
+== Importing a Cloud App
+
+. In your bare project, navigate to __Apps, Cloud Apps & Services__.
+. Click the *+* in the _Cloud Code Apps_ box.
+. Click **Import Existing App**.
+. Select the _App Type_ you wish to create.
+See xref:cloud-app-requirements[Cloud App Requirements] to make sure your app can be imported.
+. Click *Next* and give your imported app a name.
+. Choose an initial deployment environment.
++
+Your Cloud App will be deployed to the chosen environment immediately after importing.
+Choose _None_ to skip the initial deployment.
+. Choose how to import the app.
+* *Public Git Repository*
++
+Enter the URL of a public Git repository containing the Cloud App, and a branch name.
+The default is `master`.
+* *Zip File*
++
+On your computer, create a single ZIP archive of the contents of your Cloud App.
++
+[source,bash]
+----
+zip -r app.zip ./ -x *.git*
+----
++
+In Studio, choose the ZIP file to upload.
+* *Bare Repo*
++
+This creates an empty repository where you can push your app code.
+. Click **Import & move on to Integration**. Your Cloud App is imported into the project.
++
+If you imported using the _Bare Repo_ option, click _Already have a git repo_ and follow the presented steps.
+. Click **Finished - Take me to My App!**.
+
+[[client-app-requirements]]
+== Client App Requirements
+
+Prerequisites for importing a Client App into your project depend on the type of Client App you are creating.
+
+[[cordova-app]]
+=== Cordova App
+
+A standard Cordova 3.x mobile application. These apps consist of a combination of web technology and native code. The underlying native project and Cordova libraries are exposed to the developer allowing for full customization or the app, including Cordova plug-ins and third-party SDKs.
+
+Typically, the amount of time spent writing or modifying native code for these apps is relatively small and requires only a small development team to have experience with native code. They should be able to develop, configure, and manage the native code and expose any additional plug-ins or SDKs to the web layer using the standard Cordova plug-in approach.
+
+The majority of the development team do not need to concern themselves with the native code. They can continue to develop using pure web tech, but still be in a position to take advantage of any additional functionality that has been exposed from the native layer.
+
+.Requirements
+* Minimum supported PhoneGap version: 3.0
+* Must conform to PhoneGap 3.x standard structure and contain the following files/folders:
+- `www/index.html`
+- `www/config.xml`
+- `platforms/`
+- `plugins/`
+- `merges/`
+- `.cordova/`
+
+[[web-app]]
+=== Web App
+
+A Node.js + Express web application. These apps provide advanced mobile websites and desktop browser web portals. They expose the full power of Node.js for web app development, including functionality such as server side templating (using template engines such as Jade). They also support static file serving for standard HTML5, CSS, and JavaScript.
+
+.Requirements
+* Must be a Node.js app, with the following files located in `/`:
+- `package.json`
+- `application.js` - script that starts when the Node.js app is deployed
+* Your app should listen on a port specified via the `FH_PORT` environment variable, for example,
++
+[source,javascript]
+----
+app.listen(process.env.FH_PORT)
+----
+
+[[native-android]]
+=== Native Android
+
+A native Android app.
+
+.Requirements
+* Must be a valid Android project based on Ant or Gradle (created in Android Studio based on Eclipse or IDEA). Ant-based projects must contain an `AndroidManifest.xml` file in `/` (project root).
+* Minimum Android platform version: 2.3 (API Level 9).
+* All dependencies must be available either in the Android SDK or in Maven repositories accessible from {ProductShortName}.
+
+[[native-ios]]
+=== Native iOS
+
+A native iOS Application.
+
+.Requirements
+* Must be a valid Xcode Project that builds and compiles correctly locally.
+* Minimum iOS OS target version: 7.0.
+
+[[cloud-app-requirements]]
+== Cloud App Requirements
+
+* Must be a Node.js application, with the following files are located in `/`
+- `package.json`
+- `application.js` - script that starts when the Node.js app is deployed
+* Your app should listen on a port specified via the `FH_PORT` environment variable, for example,
++
+[source,javascript]
+----
+app.listen(process.env.FH_PORT)
+----

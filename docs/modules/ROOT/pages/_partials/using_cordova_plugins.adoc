@@ -1,0 +1,151 @@
+// include::shared/attributes.adoc[]
+
+[[using-cordova-plug-ins]]
+= Using Cordova Plug-ins
+
+Cordova plug-ins provide a platform-independent JavaScript interface to mobile device capabilities in hybrid mobile apps. There are several official Apache plug-ins for basic device functions such as storage, camera, or geolocation, and other third-party plug-ins.
+
+The official registry and distribution channel for Cordova plug-ins is npm and the plug-in ID corresponds to the npm package ID. The http://cordova.apache.org/plugins/[Cordova Plugins^] page contains the official plug-in list and acts as a filter for npm packages with the keyword `ecosystem:cordova`.
+
+[[cordova-supported-platforms]]
+== Supported Platforms
+
+You can use Cordova plug-ins with all platforms supported by {ProductShortName}. However, not all Cordova plug-ins support all platforms. Platforms supported by a plug-in are specified in a plug-in's `package.json` file in the `cordova.platforms` object, or on the Cordova Plug-ins search page.
+
+[[adding-plug-ins-to-apps]]
+== Adding Plug-ins to Apps
+
+When developing Cordova applications, plug-ins are added using `cordova plugin add`, which downloads the plug-in from the repository, creates the necessary folder structure, and adds an entry in the `config.xml` file. See http://cordova.apache.org/docs/en/latest/platform_plugin_versioning_ref/index.html[Platforms and Plugins Version Management^] in the official Cordova documentation for more information.
+
+In {ProductShortName}, however, plug-ins can also be declared in an {ProductShortName}-specific JSON file `config.json` and makes the apps future-proof in case the plug-in specification format changes. The necessary changes can be implemented once in the {ProductShortName} Build Farm instead of forcing all developers to update their apps.
+[source,json]
+----
+{
+  "plugins": [
+    {
+      "id": "cordova-plugin-device",
+      "version": "latest"
+    },
+    {
+      "id": "cordova-plugin-geolocation",
+      "version": "1.0.1"
+    },
+    {
+      "id": "cordova-labs-local-webserver",
+      "url": "https://github.com/apache/cordova-plugins#master:local-webserver",
+      "version": "2.3.1",
+      "preferences": {
+          "CordovaLocalWebServerStartOnSimulator": "false"
+      }
+    }
+  ]
+}
+----
+
+Three plug-ins are specified in the above example: the Device plug-in and Geolocation plug-in, which are available through npm, and the Local WebServer plug-in which is available only from the indicated Github repository.
+
+[[specification]]
+=== Specification
+
+The `config.json` file must be located in the `www` folder of a Cordova app.
+
+The file must contain a key called `plugins`, the value of which is an array of JSON objects, which can define the following properties:
+
+* *id* (Required)
++
+This is the globally unique ID of the Cordova plug-in, which corresponds to its npm package ID. It can also be found in the plug-in's `plugin.xml` file, as described in the https://cordova.apache.org/docs/en/5.4.0/plugin_ref/spec.html#link-1[Cordova Plugin Specification^].
+
+* *version* (Required)
++
+The version of the plug-in to use. Corresponds to the npm package version. For plug-ins distributed through Git only, you can find the version of a plug-in in its `plugin.xml`.
++
+For plug-ins distributed through npm, you can also use the `latest` value to always use the latest available version. We strongly advise you to use a specific version that is proved to work with your app, since a plug-in upgrade could break backward compatibility.
+
+* *url*
++
+The URL of a public Git repository, containing a valid Cordova plugin (contains a `plugin.xml` file).
++
+The provided value for this field is used to download the plug-in, regardless of the values of the `id` and `version` fields. If this field is not provided, the plug-in will be downloaded from npm with the values of `id` and `version` fields.
++
+You can also specify a particular Git ref and a path to the plug-in within the repository, as described in https://cordova.apache.org/docs/en/latest/guide/cli/index.html#link-8[official Cordova CLI documentation^].
++
+--
+** A Git ref object can be specified by appending `#<git-ref>` in the URL. We strongly recommend using a tag or other stable ref that is tested as working with your app. Using `master` as the ref could result in the plug-in code changing on every build and potentially breaking your application.
+
+** Path to the directory containing the plug-in can be specified with `:<path>` in the URL.
+--
++
+For example, if we want to get a plug-in that resides in the `plugin` subdirectory in the `release` branch of the repository, the URL should have the following format:
++
+....
+https://example.com/example.git#release:plugin
+....
++
+After the plug-in is downloaded, its `plugin.xml` file will be parsed to make sure the plug-in ID matches the `id` field specified in the `config.json`.
+
+* *preferences*
++
+To provide plug-in configuration, use key-value pairs in the `preferences` object, like `CordovaLocalWebServerStartOnSimulator` in the example above.
+
+* *variables*
++
+Some plug-ins use variables in `plugin.xml` to parameterize string values. You can provide values for variables as key-value pairs in this field. See https://cordova.apache.org/docs/en/latest/plugin_ref/spec.html#link-24[official documentation^] for more information on variables.
+
+[[default-plugins]]
+=== Default Plugins
+
+.Official plug-ins
+* cordova-plugin-device (1.1.2)
+* cordova-plugin-network-information (1.2.1)
+* cordova-plugin-battery-status (1.1.2)
+* cordova-plugin-device-motion (1.2.1)
+* cordova-plugin-device-orientation (1.0.3)
+* cordova-plugin-geolocation (2.2.0)
+* cordova-plugin-file (4.2.0)
+* cordova-plugin-camera (2.2.0)
+* cordova-plugin-media (2.3.0)
+* cordova-plugin-media-capture (1.3.0)
+* cordova-plugin-file-transfer (1.5.1)
+* cordova-plugin-dialogs (1.2.1)
+* cordova-plugin-vibration (2.1.1)
+* cordova-plugin-contacts (2.1.0)
+* cordova-plugin-globalization (1.0.3)
+* cordova-plugin-inappbrowser (1.4.0)
+* cordova-plugin-console (1.0.3)
+* cordova-plugin-whitelist (1.2.2)
+* cordova-plugin-splashscreen (3.2.2)
+
+.Optional
+* cordova-sms-plugin (v0.1.9)
+* com.arnia.plugins.smsbuilder (0.1.1)
+* cordova-plugin-statusbar (2.1.3)
+
+.Custom {ProductShortName} plug-ins:
+* https://github.com/fheng/fh-cordova-plugins-api.git#fh0.0.6[com.feedhenry.plugins.apis^] (0.0.6)
+* https://github.com/feedhenry/fh-cordova-plugin-apkdownloader.git#fh0.0.1[com.feedhenry.plugins.apkdownloader^] (0.0.1)
+* https://github.com/feedhenry/fh-cordova-plugin-device.git#fh0.0.2[com.feedhenry.plugin.device^] (0.0.2)
+* https://github.com/feedhenry/fh-cordova-plugin-ftputil.git#fh0.0.1[com.feedhenry.plugins.ftputil^]
+
+[[testing-apps-in-the-browser]]
+== Testing Apps in the Browser
+
+If a plug-in is specified in the `config.json` file, the JavaScript object of the plug-in won't be available until it is built and installed on the device. So if you reference the plug-in's JavaScript object in your app, and try to load your app in _App Preview_ in the Studio, you may get _object undefined_ errors.
+
+To solve this, use defensive checking when calling the plug-in APIs. For example, the following call to the Cordova camera API would result in an "object undefined" error:
+
+[source,javascript]
+----
+navigator.camera.getPicture(success, fail, opts);
+----
+
+However, checking whether the API is defined lets you handle the error gracefully:
+
+[source,javascript]
+----
+if(typeof navigator.camera !== "undefined"){
+  navigator.camera.getPicture(success, fail, opts);
+} else {
+  //fail gracefully
+  fail();
+}
+----

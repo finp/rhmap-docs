@@ -1,0 +1,100 @@
+// include::shared/attributes.adoc[]
+
+[[user-roles-api]]
+= User Roles API
+
+[[user-roles-api-list-users-roles]]
+== List User's Roles
+
+[[user-roles-api-description]]
+=== Description
+
+List currently logged in user's roles.
+
+[[user-roles-api-endpoint]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/role/list
+
+* method - POST
+
+[[user-roles-api-request-body]]
+=== Request Body
+
+[source,javascript]
+----
+{}
+----
+
+[[user-roles-api-response-body]]
+=== Response Body
+
+[[user-roles-api-success]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "list": ["sub", "dev"]
+}
+----
+
+[[user-roles-api-error]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[user-roles-api-list-users-assignable-roles]]
+== List User's Assignable Roles
+
+[[user-roles-api-description-1]]
+=== Description
+
+List currently logged in user's assignable roles, that is, roles that this user can assign to others.
+
+[[user-roles-api-endpoint-1]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/role/listAssignable
+
+* method - POST
+
+[[user-roles-api-request-body-1]]
+=== Request Body
+
+[source,javascript]
+----
+{}
+----
+
+[[user-roles-api-response-body-1]]
+=== Response Body
+
+[[user-roles-api-success-1]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "list": ["sub", "dev", "devadmin", "analytics", "portaladmin"]
+}
+----
+
+[[user-roles-api-error-1]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----

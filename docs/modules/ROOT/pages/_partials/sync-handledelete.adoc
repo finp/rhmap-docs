@@ -1,0 +1,63 @@
+[[fh-sync-handledelete]]
+== $fh.sync.handleDelete
+{syncnote} xref:fh-sync-handledelete-dep[section for the old version]
+
+Defines a handler function to delete a single row of data from the Dataset Backend for a specific Dataset.
+The sync server makes sure the data can be deleted, that is, the row is up to date and will not cause collisions.
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.handleDelete(dataset_id, function deleteHandler(dataset_id, uid, meta_data, cb){});
+----
+
+=== Parameters
+
+==== dataset_id
+* Description: the id of the dataset
+* Type: String
+
+==== deleteHandler
+* Description: The function that is invoked when deleting a record.
+* Type: Function
+* Invoked Parameters:
+** *dataset_id*
+*** Description: the id of the dataset
+*** Type: String
+** *uid*
+*** Description: the unique id of the record to delete
+*** Type: String
+** *meta_data*
+*** Description: the meta data associated with the data, can be null.
+*** Type: Object
+** *cb*
+*** Description: the callback function
+*** Type: Function
+
+=== Example
+
+[source,javascript]
+----
+$fh.sync.handleDelete("todo", function(dataset_id, uid, meta_data, cb) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // Unique Identifier for row to update
+  console.log(uid);
+
+  // Sample back-end storage call
+  var deletedData = deleteData(uid);
+
+  /* sample response
+    {
+      "userid": "1234",
+      "name": "Jane Bloggs",
+      "age": 27
+    }
+  */
+
+  // The callback into the sync service to return the deleted row of data
+  return cb(null, deletedData);
+});
+----

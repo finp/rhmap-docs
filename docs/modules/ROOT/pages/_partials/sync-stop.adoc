@@ -1,0 +1,38 @@
+[[fh-sync-stop]]
+== $fh.sync.stop
+{syncnote} xref:fh-sync-stop-dep[section for the old version]
+
+Stop the synchronization of a specific Dataset with the Dataset Backend.
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.stop(dataset_id, callback)
+----
+
+=== Parameters
+
+==== dataset_id
+
+* Description: The id of the dataset.
+* Type: String
+
+==== callback
+
+* Description: The callback function.
+* Type: Function
+
+=== Example
+
+[source,javascript]
+----
+var datasetId = "todolist";
+$fh.sync.stop(datasetId, function(err){
+  if (err) {
+    console.error('sync stop failed due to error', err);
+  } else {
+    console.log('sync stop finished successfully');
+  }
+});
+----

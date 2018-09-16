@@ -1,0 +1,77 @@
+// include::shared/attributes.adoc[]
+
+[[create-a-simple-form]]
+= Create a Simple Form
+
+.Overview
+This tutorial will cover how to:
+
+* Create a form
+* Add fields to a form
+
+.Requirements
+* App Studio Account
+
+[[tutorial-form]]
+== Tutorial
+
+[[step-1-login]]
+== Step 1: Login
+
+Log in to the Studio with your credentials.
+
+[[step-2-creating-a-form]]
+== Step 2: Creating a form
+
+Click the 'Forms Builder' tab. You will now be presented with the Forms screen. If forms have already been created, they will be displayed here. If multiple forms have been created, the search box can be used to search for a form, or the listing format can be changed to a format that displays more forms at once. If no forms exist, or the user does not have sufficient priviliges to view the already created forms, a message saying 'No Forms Found' will be displayed.
+
+Selecting a form will cause the Forms Dashboard to be displayed. Form the Dashboard, more information regarding the selected form can be accessed. This information includes:
+
+* Projects Using This Form
+* Submissions Today
+* Total Submissions
+* Pages
+* Subscribers
+
+To create a new form, click the 'New Form' button.
+
+The form creation window will now be displayed. Here you will be prompted to select a Form Template, and enter a Form Name. The inclusion of a Form Description is optional.
+
+There are a number of Form Templates available for selection. Clicking on any of the templates will cause a preview of the form to be displayed. If you do not wish to use any of the pre-made forms, select the 'Blank Form' template.
+
+NOTE: Selecting a template does not mean you have to use the form exactly as it is. Templates are used as a starting point for a form, and can be edited.
+
+[[step-3-editing-a-form]]
+== Step 3: Editing a form
+
+To edit a form, first select the form from the list. After the form has been selected, a preview of the form will be displayed on screen along with the Form Menu.
+
+NOTE: If a newly created form has been selected, the form preview will appear blank, showing only the title of the form. This is because fields have not yet been added to the form.
+
+Select `Edit Form` from the sidebar. This displays the Edit Form screen. From here, fields can be added to a form. Fields can be added to a form in two ways, either via a drag and drop mechanism, or by simply clicking on the field you wish to add.
+
+NOTE: When adding fields to a form, clicking the field will add it to the end of the form, whereas dragging and dropping a field allows you to position it wherever you want in the form. Fields can be moved via the drag and drop system after they have been added to a form.
+
+Click on a field to add it to the form. The form preview is automatically updated when a field is added. When added to a form, all fields are automatically labeled 'Untitled' and the 'Required' value is applied.
+
+NOTE: The required attribute determines whether or not a value must be entered in a field in order for it to be possible to submit a form. If the 'Required' attribute is added to a field, a value must be entered/selected for that field before the form can be successfully submitted.
+
+Add a `Number` field to the form. After it has been added, click on the field in the preview. A new menu will now appear.
+
+From here, various attributes relating to the selected field can be configured. These include the field name, additional instructions, limitations for maximum and minimum values that can be entered, and more.
+
+NOTE: Each field has different configuration options specific to that field. For example, a text field will have a configuration option for the maximum set of characters that can be entered, whereas the photo upload field has a configuration option for the max file size that can be uploaded.
+
+Set the attributes of the number field as the are listed below:
+
+* Name: Number field
+
+* Instructions: Please enter your mobile number
+
+Now add a `Text` field by dragging it on to the form. Reposition the `Text` field so it's above the `Number` field. To do this, drag the `Text` field and release it above the `Number` field.
+
+Select the `Text` field and set its Name to "Name".
+
+Now Save the form.
+
+The form has now successfully been created, and can be associated with a project.

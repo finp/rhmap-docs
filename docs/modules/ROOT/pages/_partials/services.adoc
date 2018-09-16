@@ -1,0 +1,391 @@
+// include::shared/attributes.adoc[]
+
+[[mbaas-services]]
+= MBaaS Services
+
+[[mbaas-services-overview]]
+== Overview
+
+A Service is a running Cloud App used by projects to integrate with back-end systems for example, an Oracle integration service. Services are added to one or more projects to make them available to Apps in that project.
+
+.Requirements
+In order to be able to provision an Cloud Service, the xref:service-administrator-serviceadmin[Service Administrator] Role must be assigned to an account.
+
+In order to be able to create an instance of a Cloud Service, users must have either a xref:developer-administrator-devadmin[Developer Admin] Role or xref:developer-dev[Developer] Role assigned to their account, in order to be able to create and manage projects. Services can then be added to a project in the same way an App or Cloud Instance is added.
+
+.Related Resources
+* link:{CloudAPI}#fh-service[Invoking a service via an API call]
+* link:{LocalDevelopmentGuide}#working-with-mbaas-services-locally[Local Development with Services]
+
+[[provisioning-an-mbaas-service]]
+== Provisioning an MBaaS Service
+
+Service Administrators can provision new MBaaS microservices that allow developers access to various back-end systems. Users can choose from a number of available services. After a service has been provisioned, it is then available to be used within Projects on the Platform. By default, when a service is created, it is marked as private. In order for the service to be available to all projects on a domain, the 'Global Service' option must be enabled. This declares the service as being publically available.
+
+[[services-details]]
+== Details
+
+Here you can access general overview information related to a specific service.
+
+[[service-details]]
+=== Service Details
+
+The Service Details section provides you with overview information.
+
+* Service ID: This is the unique identifier for a particular service. It is used to reference a particular service through FHC.
+* Service API Key: This is used in conjunction with App Id to allow the App to communicate with the Cloud.
+* Git URL: URL to clone repository.
+
+[[service-settings]]
+=== Service Settings
+
+The Service Settings section allows users to edit details related to the service.
+
+* Name: The name of the service.
+* Projects: A list of projects that have access to the service.
+* Global Service: Selecting this option makes the service globally available to all projects on the domain. If this setting is enabled, developers will be able to select the service for use within their projects.
+* Delete Service: Deletes a service.
+
+[[services-docs]]
+== Docs
+
+The _Docs_ section contains an API documentation viewer, which clearly shows important aspects of the service's API for
+each of its endpoints, such as:
+
+* expected request headers and an example of a request body,
+* an example of a response for the sample request,
+* a complete snippet of a `$fh.service` call to invoke the method on the given service,
+* a form for invocation of the service directly from the documentation viewer.
+
+All of this is automatically generated if the root directory of the service contains a `README.md` file adhering to the
+https://github.com/apiaryio/api-blueprint[API Blueprint^] specification. To learn more about the specification, take a
+look at the https://github.com/apiaryio/api-blueprint/blob/master/Tutorial.md[API Blueprint Tutorial^] or refer to the
+https://github.com/apiaryio/api-blueprint/blob/master/API%20Blueprint%20Specification.md[Language Specification^] for a
+full reference.
+
+[[services-editor]]
+== Editor
+
+The built in Editor allows users to edit cloud code related to their service instance. The built in syntax highlighting feature makes it easier to distinguish between syntactical elements. Users can create new files and folders, with saved changes being automatically pushed back to the corresponding Git repository.
+
+After a change has been made, the preview automatically refreshes so you can instantly see your changes take effect. Changes can also be pulled in from a Git Repository by performing a 'git pull'.
+
+The App Preview in the Editor section allows users to view how the current App appears on a number of selectable devices.
+
+[[services-environment-variables]]
+== Environment Variables
+
+You can define environment variables using the Studio and those variables can be accessed in the cloud code. The Studio will show a list of current defined environment variables and current deployed environment variables for each cloud environment. You can also view the list of environment variables defined by the system.
+
+[[services-app-environment-variables]]
+=== App Environment Variables
+
+This section lists the variables defined by you. These variables may not yet have been pushed to the cloud so the values here maybe different from the values that are currently active. Any inconsistency between the defined values and deployed values will be highlighted in red color. You can click on the value field to update it.
+
+[[services-deployed-user-environment-variables]]
+=== Deployed User Environment Variables
+
+This section lists the current deployed environment variables created by you. Again, any inconsistencies will be highlighted. However, those values can not be updated directly.
+
+[[services-deployed-system-environment-variables]]
+=== Deployed System Environment Variables
+
+This section lists the current deployed environment variables created by the platform. Those values are for your reference only and you should not change the values of those variables.
+
+[[services-create-environment-variables]]
+=== Create Environment Variables
+
+You can create a new environment variable by clicking on the "Add Variable" button. The name of the environment variable should follow these rules:
+
+* Should NOT begin with `FH_` or `MONIT_`
+* Should NOT be one of
+** `PATH`
+** `HOME`
+** `PWD`
+** `USER`
+** `NODE_PATH`
+** `LD_LIBRARY_PATH`
+
+[[services-unsetdelete-environment-variables]]
+=== Unset/Delete Environment Variables
+
+In the current environment variables list, when you check any of the variables, you will get the option to unset/delete the variable.
+
+* *Unsetting* a variable removes it from the currently selected environment.
+* *Deleting* a variable removes it from all environments.
+
+You can unset/delete multiple variables at the same time.
+
+[[services-push-environment-variables]]
+=== Push Environment Variables
+
+After finishing updating the values of the variables, you need to push the updated variables to the cloud by clicking on the "Push Environment Variables" button. This will also cause the app to be restarted.
+
+[[services-data-browser]]
+== Data Browser
+
+The Data Browser section of the App Studio allows a developer to
+
+* Graphically and interactively view the data associated with their app,
+* View, create and delete, import and export collections,
+* Modify data in a collection.
+
+For more information, see the link:{ServerSideDeveloperGuide}#data-browser[Data Browser Guide].
+
+[[services-enabling-the-data-browser]]
+=== Enabling the Data Browser
+
+Selecting the Data Browser tab in the App Studio will present you with one of three screens.
+
+* The Data Browser, if you have already enabled the Data Browser.
+* A screen asking you to enable the Data Browser.
+* A screen asking you to migrate your data to enable to Data Browser.
+
+Clicking on the enable button will perform the following steps:
+
+* Your app is stopped.
+* A new database is created specifically for your app.
+* An environmental variable is set for your app containing the raw connection string to the mongodb.
+
+If your app's data needs to be migrated, you will see a screen with a migrate button. This button will do the following:
+
+* Your app is stopped. This is to ensure no more data can be written during the migrate.
+* A new database is created specifically for your app.
+* Your existing data is migrated from the old database to the new one.
+* Your data is validated in the new database.
+* An environmental variable is set for your app containing the raw connection string to the app's MongoDB instance.
+* Finally, if everything has succeeded, your old data is removed.
+
+NOTE: You may also need to update the contents of your cloud/application.js and your cloud/package.json. If this is the case you will be informed on the migrate screen.
+
+After all data migration steps have completed, you will be asked to re-stage your app.
+
+[[using-the-data-browser]]
+=== Using the data browser
+
+[[viewingadding-collections]]
+==== Viewing/Adding Collections
+
+The collections associated with an app can be viewed by selecting the Data Browser tab in the Cloud Management section of the Studio.
+
+This screen has two controls located at the top of the collection list, with buttons for:
+
+* Adding a collection.
+* Refreshing the list of collections.
+
+Clicking on the button to add a collection prompts you to enter the collection name. Click on the Create button to create the collection.
+
+[[viewing-data-in-a-collection]]
+==== Viewing Data In A Collection
+
+To view the data stored in a collection simply click on one of the collections listed in the Data Browser. This view shows the data associated with the collection. At the top of the screen are the main listing functions:
+
+* Switch Collection. Selecting this option presents you with a list of collections for the app. Click on a collection to list the data in that collection.
+* Add an entry to the collection.
+
+[[sorting-data]]
+===== Sorting Data
+
+To sort the data by a specific field, simply click in the field name at the top of the list. Sorting will alternate between ascending and descending order.
+
+[[filtering-data]]
+===== Filtering Data
+
+To filter the displayed data, select the "Filter" button at the top of the Data Browser screen. Clicking this button displays the filtering options. These options allow you to filter the displayed data by one or more fields.
+
+[[editing-data]]
+==== Editing Data
+
+Editing data in the Data Browser can be done using either the Inline or Advanced Editor
+
+* The Inline Editor is used to edit simple data in a collection (for example, changing the text in a single field).
+* The Advanced Editor is used to edit more complex data types. This can be done using an interactive Dynamic Editor or a Raw JSON editor.
+
+[[editing-using-the-inline-editor]]
+===== Editing Using the Inline Editor
+
+To edit an entry using the Inline Editor, select the Edit option to the right of a data entry and select Edit Inline. The option will turn to a green tick and black arrow icons. When a field is too complex to edit in the Inline Editor, the "Advanced Editor Only" text is shown. This field is editable only in the Advanced Editor.
+
+When finished updating the entry, select the green tick button to commit the changes to the data or the black arrow button to cancel any changes made.
+
+[[editing-using-the-advanced-editor]]
+===== Editing Using the Advanced Editor
+
+The advanced editor is used to edit more complex data types (for example, where a field is composed of multiple nested fields).
+
+To open the advanced editor, select the Edit option to the right of a data entry and select Advanced Editor. The advanced editor has two modes
+
+* A Dynamic Editor to interactively add/edit fields.
+* A Raw JSON Editor to directly edit the data in JSON format.
+
+[[editing-using-the-dynamic-editor]]
+===== Editing Using the Dynamic Editor
+
+The Dynamic Editor is an interactive editor for JSON data. It presents a structured view of each field to allow adding/editing complex data types. The actions menu provides all the functionality needed to manage complex fields for the entry:
+
+* Type: The type option changes the data type of the field to an array, JSON object or string. It is also possible to set the field to auto, where the data type is automatically selected from the data entered.
+* Sort: The sort option sorts the sub-fields of a complex type in ascending or descending order.
+* Append: The append option adds a field after the object selected.
+* Insert: The insert option inserts a field before the object selected.
+* Duplicate: The duplicate option copies the object selected and appends it to the end of the selected object.
+* Remove: The remove option deletes the field from the entry.
+
+[[editing-using-the-raw-json-editor]]
+===== Editing Using the Raw JSON Editor
+
+The Raw Editor allows for editing the JSON representation of the data. It is important to ensure that the data entered is in valid JSON format. The JSON data can be displayed in either formatted or compact form.
+
+[[services-deploy]]
+== Deploy
+
+The Deploy section allows users to manage the deployment of their current mBaaS code. Deployment targets can be created and selected, and deploys can be staged to either the live or development environments. As the Cloud Instance is being deployed, a deployment log is displayed, allowing users to closely examine all details of the deploy.
+
+[[services-stats]]
+== Stats
+
+There are 2 types of stats available in the Studio: App Endpoint stats and Custom Stats. These are found in the 'Stats' section for any Cloud Instances.
+
+There are some common UI features in the charts that represent this stats data. The data can be downloaded in different formats (for example, csv). The date range can be altered using the scrollbar and sliders below each chart. Each line in a chart can be toggled on/off by clicking that item in the legend.
+
+[[services-app-endpoints]]
+=== App Endpoints
+
+App Endpoint stats are available for all Apps without any additional setup required. Any endpoints defined in 'main.js' will begin to produce stats as soon as the endpoint is called. A combined chart for 'All Endpoints' will also become available when stats are produced.
+
+For each endpoint that is producing stats, the following summary information is available:
+
+* Requests per minute - Number of requests in the last minute (calculated value based on smaller intervals)
+* Average Request Time - Average time per request in the last interval
+* Average Concurrent Requests - Average number of concurrent requests being processed in the last interval (calculated based on requests per interval and average request timer per interval)
+
+The default chart view shows the following data series:
+
+* Requests per second - Number of requests processed by the App per second (based on last interval)
+* Average Concurrent Requests - Average number of concurrent requests being processed in the last interval (calculated based on requests per interval and average request timer per interval)
+* Average Request Time (90th percentile) - Average duration of the requests in the last interval, ignoring outliers
+
+The other graph items, Longest Request Time and Shortest Request Time, can be shown, by clicking on their names in the legend above the graph. The graph below show those stats included, and the Requests per second and Average Concurrent Requests, deselected.
+
+[[services-custom-stats]]
+=== Custom Stats
+
+Custom stats are defined by the developer using the link:{CloudAPI}#fh-stats[$fh.stats] API.
+
+[[services-counters]]
+==== Counters
+
+Counters can be viewed on a line graph, showing the counter value for each interval.
+
+NOTE: Counters are reset after each interval
+
+[[services-timers]]
+==== Timers
+
+Timers can also be viewed on a line graph. Each timer value is the average value (90th percentile) of that timer for that interval. The upper and lower values in each interval are also graphed on separate lines. These value give an overview of how the timer varies around the average time.
+
+[[services-notifications-and-events]]
+== Notifications and Events
+
+An app will generate events when certain actions are invoked against it. Those events will be recorded by the platform and presented to the developers through the App Studio and FHC. For example, when an app is deployed by an developer, the platform will record when the deployment happened, who invoked it and what are the results.
+
+Each event has a category, a severity level and a name. The following events are generated by the platform at the moment:
+
+[cols="4*",options="header"]
+|===
+| Event Name        | Event Category  | Event Severity | Description
+| CREATE_REQUESTED  | APP_STATE       | INFO | App creation is requested
+| CREATED           | APP_STATE       | INFO | App is created
+| CREATE_FAILED     | APP_STATE       | ERROR | App creation failed
+| DEPLOY_REQUESTED  | APP_STATE       | INFO | App deploy is requested
+| DEPLOYED          | APP_STATE       | INFO | App is deployed
+| DEPLOY_FAILED     | APP_STATE       | ERROR | App deploy failed
+| START_REQUESTED   | APP_STATE       | INFO | App start is requested
+| START_SUCCESSFUL  | APP_STATE       | INFO | App started
+| START_FAILED      | APP_STATE       | ERROR | App start failed
+| SUSPEND_SUCCESSFUL| APP_STATE       | INFO | If there is no activity, that is, no HTTP calls to the Cloud App for a period, typically one week, the Cloud App is stopped. The next HTTP call to the Cloud App automatically restarts it.
+| STOP_REQUESTED    | APP_STATE       | INFO | App stop is requested
+| STOP_SUCCESSFUL   | APP_STATE       | INFO | App is stopped
+| STOP_FAILED       | APP_STATE       | ERROR | App stop failed
+| CRASHED           | APP_STATE       | ERROR | Uncaught exception is thrown from the app and causes it to stop. It will be restarted automatically by the system monitoring process.
+| KILLED_RESTARTED  | APP_STATE       | ERROR | App is stopped then started
+| TERMINATED        | APP_STATE       | FATAL | App is terminated by the system due to too many restarts within a short time (currently 10 restarts in 20 seconds). It will not be restarted by the system monitoring process.
+| DELETE_REQUESTED  | APP_STATE       | INFO | App deletion is requested
+| DELETED           | APP_STATE       | INFO | App deleted
+| DELETE_FAILED     | APP_STATE       | ERROR | App deletion failed
+| CHANGE_REQUESTED  | APP_ENVIRONMENT | INFO | Environment variables change is requested
+| CHANGE_SUCCESSFUL | APP_ENVIRONMENT | INFO | Environment variables changed
+| CHANGE_FAILED     | APP_ENVIRONMENT | ERROR | Environment variables change failed
+|===
+//https://issues.jboss.org/browse/RHMAP-14202
+
+[[services-system-events-view]]
+=== System Events View
+
+You can view all the events generated by the platform in the "Notifications" section in the Cloud App view in the Studio. You can also use the filters to search for events. More information of an event is available when you click on an event entry.
+
+[[services-alerts-email-notifications]]
+=== Alerts & Email Notifications
+
+Email notifications can be sent to developers when certain cloud events occur. This is done through alerts. An alert is to define in what condition an email notification should be triggered and what email addresses should be used.
+
+[[services-alerts-view]]
+==== Alerts View
+
+In the alerts view, there are two tables. The first table will list all the alerts that are created for this app, and the second table will show all the cloud events that matches the selected alerts' settings. More information of an alert is available when click on the entries in the first table.
+
+[[services-creating-alerts]]
+==== Creating Alerts
+
+When click on the "Create An Alert" button, you will be presented with the alert creation view. In this view, you can specify the name of the alert, what events the alert should be monitoring on and the email address to receive the alert.
+
+When specify the events, you can use any of the three criteria (event categories, severities and names), or any combination of them. You don't need to select values in all these fields. Once an alert is created, if an event matching the criteria occurred, an email notification will be sent to the address specified in the alert.
+
+[[services-notifications-view]]
+==== Notifications View
+
+The platform will keep records of all the email notifications that have been sent and you can view them in the Studio as well. Click on the table entry will show the full details of the notification.
+
+[[services-logs]]
+== Logs
+
+Users can access current and archived service logs created in each App environment.
+
+[[services-endpoint-security]]
+== Endpoint Security
+
+The endpoint security feature allows you to decide the level of security you wish to apply to your App's endpoints.
+
+[[services-managing-endpoint-security]]
+=== Managing Endpoint Security
+
+You can find the endpoint security option in the left hand menu for a Cloud Instance. There are a couple of ways to configure security.
+
+[[services-app-security]]
+==== App Security
+
+App security defines a default level of security that will be applied across all of your endpoints. The default is HTTPS. This means all requests to your App's endpoints will be sent over HTTPS.
+The App API Key options means that HTTPS will still be used, but that in order to access an endpoint the App API Key must be sent and must match the key created with your App. You can find this key under the details menu option for your App. This key is sent by default from the {ProductShortName} SDKs. Enabling this option will mean your endpoints are only accessible when a correct App API Key is sent. If is not present, a 401 (Not Authorised) http response will be sent and your endpoint will not be called.
+
+[[services-individual-endpoint-security]]
+==== Individual Endpoint Security
+
+You can change the security applied to an App's endpoints at an individual level also. When you update the list, your Cloud Instance will be restart.
+
+NOTE: If you have a running App and have not staged it for sometime, that you may need to re-stage the App once in order to pick up the latest version of the software.
+
+[[services-the-audit-log]]
+=== The Audit Log
+
+In order to allow you to transparently see what has been done to your App, whenever a change is made to your security setting, an entry is created in the audit log. You can view this log by clicking the Audit Log tab at the top of the Endpoint Security screen. The audit log shows you a clear log of what has happened with your App's security settings. The filters allow you to get a smaller selection of the audit log.
+
+[[services-cors-support]]
+=== CORS Support
+
+Cross-origin resource sharing (CORS) is a mechanism that allows JavaScript on a web page to make XMLHttpRequests to another domain, not the domain the JavaScript originated from. For more on CORS, see  http://en.wikipedia.org/wiki/Cross-origin_resource_sharing[CORS on Wikipedia^]. {ProductShortName} automatically enables CORS for all cloud requests.
+
+You can restrict this access to a domain of your choice as follows:
+
+* Under the 'Cloud Management' section of the Studio, click on 'Environment Variables'
+* Add a new Environment Variable called `CORS_WHITELIST`
+* Set its value to be the domain you wish to restrict access to
+* Hit the 'Push Environment Variables' button in order for the changes to apply

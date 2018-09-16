@@ -1,0 +1,39 @@
+// include::shared/attributes.adoc[]
+
+[[fh-sync-handleread-dep]]
+== $fh.sync.handleRead {oldsync}
+
+[source,javascript]
+----
+$fh.sync.handleRead(dataset_id, callback)
+----
+
+Defines a handler function for reading a single row of data from the back end. Should be called after the dataset is initialised.
+
+[[fh-sync-example-8]]
+=== Example
+
+[source,javascript]
+----
+// data source for a dataset
+$fh.sync.handleRead(dataset_id, function(dataset_id, uid, cb, meta_data) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // Unique Identifier for row to read
+  console.log(uid);
+
+  // Sample back-end storage call
+  var data = readData(uid);
+  /* sample response
+    {
+      "userid": "1234",
+      "name": "Jane Bloggs",
+      "age": 27
+    }
+  */
+
+  // The callback into the sync service to return the row of data
+  return cb(null, data);
+});
+----

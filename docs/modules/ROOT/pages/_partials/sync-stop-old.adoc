@@ -1,0 +1,30 @@
+// include::shared/attributes.adoc[]
+
+
+[[fh-sync-stop-dep]]
+== $fh.sync.stop {oldsync}
+
+[source,javascript]
+----
+$fh.sync.stop(dataset_id, callback)
+----
+
+Stop cloud data sync for the specified dataset_id.
+
+[[fh-sync-example-2]]
+=== Example
+
+[source,javascript]
+----
+// This will remove any reference to the dataset from the sync service.
+// Any subsequent cloud calls to sync.invoke will fail with an unknown_dataset error.
+// The dataset can be put back under control of the sync service by calling the
+// sync.init() function again.
+// Calling stop on a non-existent dataset has no effect.
+// Calling stop multiple times on the same dataset has no effect.
+$fh.sync.stop(dataset_id, function() {
+  // Callback to invoke once the dataset has been removed from the management
+  // of the service.
+  // There are no parameters passed to this callback.
+});
+----

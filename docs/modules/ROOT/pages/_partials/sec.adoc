@@ -1,0 +1,122 @@
+// include::shared/attributes.adoc[]
+
+[[fh-sec]]
+= $fh.sec
+
+[source,javascript]
+----
+$fh.sec(options, callback)
+----
+
+Key generation, data encryption and decryption.
+
+[[fh-sec-example]]
+== Example
+
+.RSA Key Generation
+[source,javascript]
+----
+$fh.sec({
+  "act": 'keygen',
+  "params": {
+    "algorithm": "RSA", // RSA or AES
+    "keysize": 1024 // 1024 or 2048 for RSA
+  }
+}, function (err, res) {
+  if (err) {
+    return console.log("RSA key generation failed. Error: " + err);
+  }
+  return console.log("Public key is " + res.public + " Private key is " + res.private + ' Modulu is ' + res.modulu);
+});
+----
+
+.RSA Encryption
+[source,javascript]
+----
+$fh.sec({
+  "act": 'encrypt',
+  "params": {
+    "algorithm": "RSA", // padding: PKCS#1
+    "plaintext": "Need more starting pages",
+    "public": pubkey
+  }
+}, function (err, result) {
+  if (err) {
+    return console.log("Encryption failed: " + err);
+  }
+  return console.log("Encrypted data is " + result.ciphertext);
+});
+----
+
+.RSA Decryption
+[source,javascript]
+----
+$fh.sec({
+  "act": 'decrypt',
+  "params": {
+    "algorithm": "RSA",
+    "ciphertext": "23941A28432482E374102FF48723BCB9847324",
+    "private": privatekey
+  }
+}, function (err, result) {
+  if (err) {
+    return console.log("Decryption failed: " + err);
+  }
+  return console.log("Decryption data is " + result.plaintext);
+});
+----
+
+.AES Key Generation
+[source,javascript]
+----
+$fh.sec({
+  "act": 'keygen',
+  "params": {
+    "algorithm": "AES", // AES or RSA
+    "keysize": 128 // 128 or 256 for AES
+  }
+}, function (err, res) {
+  if (err) {
+    return console.log("AES key generation failed. Error: " + err);
+  }
+  return console.log("AES secret key is " + res.secretkey + " Initialisation Vector is " + res.iv);
+});
+----
+
+.AES Encryption
+[source,javascript]
+----
+$fh.sec({
+  "act": 'encrypt',
+  "params": {
+    "algorithm": "AES", // mode : CBC, padding: PKCS#5
+    "plaintext": "Need more starting pages",
+    "key": secretkey,
+    "iv": iv
+  }
+}, function (err, result) {
+  if (err) {
+    return console.log("Encryption failed: " + err);
+  }
+  return console.log("Encrypted data is " + result.ciphertext);
+});
+----
+
+.AES Decryption
+[source,javascript]
+----
+$fh.sec({
+  "act": 'decrypt',
+  "params": {
+    "algorithm": "AES",
+    "ciphertext": "23941A28432482E374102FF48723BCB9847324",
+    "key": secretkey,
+    "iv": iv
+  }
+}, function (err, result) {
+  if (err) {
+    return console.log("Decryption failed: " + err);
+  }
+  return console.log("Decryption data is " + result.plaintext);
+});
+----

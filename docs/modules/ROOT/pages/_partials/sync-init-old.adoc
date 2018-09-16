@@ -1,0 +1,35 @@
+// include::shared/attributes.adoc[]
+[[fh-sync-init-dep]]
+== $fh.sync.init {oldsync}
+
+[source,javascript]
+----
+$fh.sync.init(dataset_id, options, callback)
+----
+
+Initialise cloud data sync service for specified dataset.
+
+[[fh-sync-example]]
+=== Example
+
+[source,javascript]
+----
+// Unique Id for the dataset to initialise.
+var dataset_id = 'tasks';
+// Configuration options
+var options = {
+  "syncFrequency": 10, // How often to synchronise data with the back end data store in seconds. Default: 10s
+  "logLevel":"info" // The level of logging. Can be usful for debugging. Valid options including: 'silly', 'verbose', 'info', 'warn', 'debug', 'error'
+};
+$fh.sync.init(dataset_id, options, function(err) {
+  // Check for any error thrown during initialisation
+  if (err) {
+    console.error(err);
+  } else {
+    //you can now provide data handler function overrides (again, not required at all). For example,
+    $fh.sync.handleList(dataset_id, function(dataset_id, params, cb, meta_data){
+      //implement the data listing logic
+    });
+  }
+});
+----

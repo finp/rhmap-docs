@@ -1,0 +1,234 @@
+// include::shared/attributes.adoc[]
+
+[[push-notifications]]
+= Push Notifications
+
+[[push-notifications-overview]]
+== Overview
+
+Push notification is a mechanism that allows server-side applications to initiate communication with mobile clients, to notify the user about availability of new content on the server, or to send a short message.
+This is commonly used, for example, in messaging and social network applications, or any other situation where the user might wish to be informed at all times, even when not handling the mobile device.
+
+{ProductName} ({ProductShortName}) has integrated support for push notification networks.
+Through a single unified API, you can deliver notifications to all client devices, even across multiple different networks simultaneously with a single function call.
+Do note that individual push notification networks handle the actual delivery of a notification to mobile devices.
+Push notification support in {ProductShortName} is based on the open-source project https://aerogear.org/getstarted/downloads/#unifiedpush[AeroGear UnifiedPush Server^] (UPS).
+
+In the Studio, there are 4 sections that provide information about push notifications:
+
+. Analytics - See xref:push-notifications-analytics[*Analytics*] for more information
+. Variants - Create and manage a group of devices that are targeted by notifications
+. Sender API - Sender APIs are supported and enable the backend server to send push notifications
+. Activity log - Displays the details for all push messages
+
+To start using push notifications now, see the Push Notifications link:{ClientAPI}#fh-push[Client API] and link:{CloudAPI}#fh-push[Cloud API] documentation, or try the step-by-step guide
+link:{ServerSideDeveloperGuide}#developing-an-application-using-push-notifications[Developing An Application Using Push Notifications].
+
+[[supported-platforms]]
+== Supported Platforms
+
+Support for push notifications is available for supported mobile platforms through their corresponding push notification networks:
+
+* Android -- Firebase Cloud Messaging (FCM) (previously Google Cloud Messaging - GCM)
+* iOS -- Apple Push Notification Service (APNS)
+
+[[push-notifications-how-it-works]]
+== How It Works
+
+{ProductShortName} push notification acts as a broker that distributes notifications from your Cloud App to individual push networks, for example, FCM or APNS.
+Individual push notification networks handle the actual delivery to mobile devices.
+
+image:push_notifications.png[Push notifications]
+
+1.  *Initial setup*
+* Enable push notification support, separately for each Client App
+* Enable all targeted _variants_ for push notification networks such as, FCM or APNS, and provide credentials for access to the networks, such as certificates and private keys.
+See xref:obtaining-credentials-for-push-networks[Obtaining credentials for push networks] for more details on setting up individual networks.
+For Cordova apps, create a variant for each targeted platform, just like for native Client Apps.
+2.  *Registration* +
+Upon start-up, the Client App registers with the push server by calling
+link:{ClientAPI}#fh-push[`$fh.push`] and thus becomes ready to receive notifications. During
+registration, identification and preferences of the client are sent to the server.
+3.  *Push API call* +
+A Cloud App sends a push notification by calling link:{CloudAPI}#fh-push[`$fh.push`]. The API lets
+you target all, or only specific Client Apps in your project.
+4.  *Distribution* +
+The call to `$fh.push` is handled by the integrated push server which distributes the notification to all corresponding
+push networks, depending on the variants enabled in targeted Client Apps.
+5.  *Delivery* +
+Individual push notification networks handle the actual delivery to mobile devices.
+6.  *Reporting* +
+Metadata is reported back to {ProductShortName}, including the information that the notification was delivered and whether it was
+opened by the end user.
+
+[NOTE]
+--
+The fact that push notifications pass through 3rd party networks has some implications on the design of applications using them:
+
+* *Delivery:* the delivery to the target mobile devices can't be guaranteed by {ProductShortName}, since most push networks do not guarantee delivery.
+* *Security:* it is recommended never to send any sensitive or confidential information as part of a push notification. See xref:security-considerations[Security Considerations] for more information.
+--
+
+[[sending-notifications]]
+== Sending notifications
+
+The simplest use case is delivering a mass notification to all devices, as demonstrated in the following example:
+
+[source,javascript]
+----
+$fh.push(
+  {alert: "Hello from {ProductShortName} to all devices!"},
+  {broadcast: true},
+  function (err, res) {
+    if (err) {
+      console.log(err.toString());
+    } else {
+      console.log("status : " + res.status);
+    }
+  }
+);
+----
+
+The Platform is capable of several modes of delivery: all devices, a filtered set of devices, or a single device. You
+can also choose which Client Apps in your project receive push notifications.
+
+[[client-app-filtering]]
+=== Client App filtering
+
+In the cloud-side `$fh.push` call, you need to explicitly choose one of two modes of notification delivery:
+
+* *broadcast* - notification delivered to all Client Apps in the project
+* *selected client apps* - only chosen Client Apps, identified by their App IDs, will receive the notification
+
+See the link:{CloudAPI}#fh-push[cloud Push API documentation] for examples and full
+documentation.
+
+[[recipient-filtering]]
+=== Recipient filtering
+
+When registering with the server, Client Apps report their identification and preferences to enable filtering of
+notifications. You can choose to deliver push notifications to all registered devices, or only to a specific
+subset, filtered by the available criteria:
+
+* *alias* - one or more users represented by user identification, such as a user names or an e-mail addresses (possibly each with multiple devices).
+* *categories* - additional filtering criterion, enabling a _publish-subscribe_ communication model
+* *device type* - automatically set by the client device; a short identifier of the mobile device hardware
+* *variant ID* - automatically configured by the platform; can be used for addressing only chosen push networks
+
+See the link:{ClientAPI}#fh-push[client Push API documentation] for examples and full
+documentation.
+
+[[security-considerations]]
+== Security Considerations
+
+[[notification-contents]]
+=== Notification contents
+
+As noted before, the payload of the push notification is delivered to third-party push notification network providers,
+like Google or Apple. It is highly recommended not to send any sensitive personal or confidential information
+belonging to an individual (for example, a social security number, financial account or transaction information), or any
+information where the individual may have a reasonable expectation of secure transmission, as part of any push
+notification.
+
+If sensitive content needs to be delivered to the device, the recommended solution is only to send a notification
+informing the user about availability of new content on the server. Such content can then be securely transmitted
+to the device through a separate trusted channel once the user reacts to the notification.
+
+[[variant-secrets]]
+=== Variant secrets
+
+A configuration file containing the *variant ID* and *variant secret* is distributed in Client App binaries to
+mobile devices. These credentials authorize the Client App to register with the push server. These keys should be
+kept secure and should not be distributed through any other channels than through the Client App binary.
+
+In case the variant secret key is ever compromised, it can be invalidated and replaced with a new one. You can perform
+the key renewal in Studio, by opening a Client App's Push section, Variants tab and clicking on __Renew Variant Secret__.
+
+WARNING: Note that after renewing the variant secret key, existing installations can no longer use push notifications and the new key has to be redistributed through a new version of the Client App binary.
+
+[[obtaining-credentials-for-push-networks]]
+== Obtaining Credentials for Push Networks
+
+For the built-in UnifiedPush Server (UPS) to be able to access the push notification networks of individual providers -
+Google and Apple - it needs to supply credentials for authentication with the provider's push server. The
+required credentials and the ways to obtain them are very different for each provider. Follow the guide for your target
+platform and save or make note of the required credentials, which you'll need to supply to {ProductShortName} when setting up push
+network variants for your app.
+
+[[android]]
+=== Android
+
+For step-by-step setup instructions, follow the https://aerogear.org/docs/unifiedpush/aerogear-push-android/guides/#google-setup[Obtaining FCM Credentials Guide^]
+
+Required credentials:
+
+* Server API key
+* Project number
+
+[[ios]]
+=== iOS
+
+For step-by-step setup instructions, follow the https://aerogear.org/docs/unifiedpush/aerogear-push-ios/guides/#app-id-ssl-certificate-apns[APNs Push Notifications with AeroGear's UnifiedPush Server Guide^]
+
+Required credentials:
+
+* Client SSL Certificate
+* Certificate passphrase
+
+The guide asks you to provide a _Bundle ID_ - a unique identifier of an iOS app. If you created your iOS app in Xcode
+and imported it into {ProductShortName}, you most likely already have a bundle ID set up. See https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/ConfiguringYourApp/ConfiguringYourApp.html#//apple_ref/doc/uid/TP40012582-CH28-SW8[About Bundle IDs^]
+in official Apple documentation for more information on bundle ID and how to set it in Xcode.
+
+If you created your iOS app in {ProductShortName}, your app got a default bundle ID assigned, which needs to be changed to a custom
+value. The bundle ID is set in the property list file of your project, located at
+`<name-of-your-project>/<name-of-your-project>-Info.plist`, under the `CFBundleIdentifier` key.
+
+For Cordova apps, the Bundle Identifier can be set manually. Open the app’s config.xml file in an editor and set the value in the `<widget id="">` field.
+
+WARNING: The generated Client SSL Certificate for push notifications is bound to a particular bundle ID. Therefore a change in bundle ID would require re-generation of the certificate.
+
+[[push-notifications-analytics]]
+== Analytics
+
+Statistics about push notifications sent to a Client App can be found in the Studio. Navigate to a Client App's _Push_
+section and then to the _Analytics_ tab. The available statistics include:
+
+* number of push messages sent to the integrated push server for dispatching to registered devices
+* number of delivered notifications opened by a user
+* average open rate
+* number of currently registered devices
+* number of notifications dispatched via push networks to registered devices
+** to activate the notifications dispatched metric, turn it on in the relevant Client SDK:
+link:https://aerogear.org/docs/specs/aerogear-ios-push/Classes/AGPushAnalytics.html[iOS, ]
+link:https://aerogear.org/docs/specs/aerogear-android-push/[Android, ]
+link:https://aerogear.org/docs/guides/aerogear-cordova/AerogearCordovaPush/[Cordova]
+
+The Push Analytics screen also provides charts for:
+
+* open rate
+* breakdown by push networks
+
+[[building-cordova-apps-with-push-notification-support]]
+== Building Cordova apps with Push Notification Support
+
+Support for push notifications in Cordova apps is provided through the
+https://www.npmjs.com/package/aerogear-cordova-push[`aerogear-cordova-push`^] plugin. When a push-enabled app is built
+in the {ProductShortName} Build Farm, this plugin is added automatically for the particular build if it's configured in the
+`www/config.json` file. All {ProductShortName} Cordova templates have this plugin configured.
+
+When building the app locally, you need to add the plugin manually using the following command:
+
+[source,bash]
+----
+cordova plugin add aerogear-cordova-push
+----
+
+See link:{MobileDeveloperGuide}#using-cordova-plug-ins[Using Cordova Plugins] for more information.
+
+[[community-version-of-unifiedpush-server]]
+== Community Version Of UnifiedPush Server
+
+The open-source community version of AeroGear UnifiedPush Server (UPS) can still be used in your apps, by deploying UPS to
+OpenShift and connecting it to the Platform through the Cloud Service _AeroGear Community Push Connector_ which is
+available in the Platform for this purpose. However, note that the community version is only available for evaluation
+purposes and is not officially supported.

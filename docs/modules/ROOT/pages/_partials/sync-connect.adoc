@@ -1,0 +1,56 @@
+[[fh-sync-connect]]
+== $fh.sync.connect
+
+Make sure the sync server is connected to the required resources, that is, MongoDB and Redis.
+
+NOTE: When using the sync server from `fh-mbaas-api`, `sync.connect` is called automatically, and uses the Cloud App's database. There is no need to call `sync.connect` in this scenario.
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.connect(mongodbConnectionString, mongodbConf, redisConnectionString, callback)
+----
+
+=== Parameters
+
+==== mongodbConnectionString
+* Description: The connection url of MongoDB. The url is passed straight to the `mongodb` module.
+* Type: String
+
+==== mongodbConf
+
+* Description: The MongoDB connection options. For more details of this option, see http://mongodb.github.io/node-mongodb-native/2.1/api/MongoClient.html[MongoClient.connect API doc].
++
+Typically, you do not need to call this API. 
+However, you can control some of the MongoDB connection options using environment variables:
++
+** SYNC_MONGODB_POOLSIZE
+*** Description: Specify the MongoDB connection pool size
+*** Type: Number
+*** Default: 50
+* Type: Object
+
+==== redisConnectionString
+* Description: The connection URL of Redis, which can include authentication information if required. The URL is passed directly to the `redis` module.
+* Type: String
+
+==== callback
+* Description: the callback function
+* Type: function
+
+=== Example
+
+[source,javascript]
+----
+var mongodbUrl = "mongodb://mongouser:mongopass@127.0.0.1";
+var redisUrl = "redis://redisuser:redispass@127.0.0.1";
+
+$fh.sync.connect(mongodbUrl, {}, redisUrl, function(err){
+  if (err) {
+    console.error('Connection error for sync', err);
+  } else {
+    console.log('sync connected');
+  }
+});
+----

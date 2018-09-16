@@ -1,0 +1,32 @@
+[[fh-sync-stopall]]
+== $fh.sync.stopAll
+{syncnote} xref:fh-sync-stopall-dep[section for the old version]
+
+Stop the synchronization of all Datasets with the Dataset Backend.
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.stopAll(callback)
+----
+
+=== Parameters
+
+==== callback
+
+* Description: The callback function.
+* Type: Function
+
+=== Example
+
+[source,javascript]
+----
+$fh.sync.stopAll(function(err){
+  if (err) {
+    console.error('sync stopAll failed due to error', err);
+  } else {
+    console.log('sync stopAll finished successfully');
+  }
+});
+----

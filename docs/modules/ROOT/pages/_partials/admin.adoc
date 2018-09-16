@@ -1,0 +1,530 @@
+// include::shared/attributes.adoc[]
+
+[[administration]]
+= Administration
+
+.Overview
+The Administration section of the platform allows Users, Auth Policies and Deploy Targets to be managed.
+It also allows you to control all aspects of distributing apps to end user devices as well as tracking and managing this usage.
+
+.Requirements
+The user must be a member of one or more teams with the following permissions:
+
+* Domain -- Authorization Policy (View & Edit)
+* Domain -- Authorization Policy (View & Edit)
+* Domain -- Deploy Target(View & Edit)
+* Domain -- App Store (View & Edit)
+* Domain -- Administrator (View & Edit)
+
+.Related Resources
+* https://www.npmjs.com/package/fh-fhc[FHC CLI^]
+* link:{PlatformAPI}#mobile-app-management-api[Platform API - MAM]
+* link:{PlatformAPI}#users-administration-api[Platform API - User Administration]
+* link:{PlatformAPI}#user-roles-api[Platform API - User Roles]
+
+[[users]]
+== Users
+
+All aspects of User management from creating Users, assigning Roles, disabling Users to deleting Users are available to Administrators.
+
+A full list of available options:
+
+* View, create and update a user's details, be they App users (used in conjunction with our link:{ClientAPI}#fh-auth[$fh.auth] API) or App Studio users
+* Assign roles to users
+* Disable users - rendering them unable to login
+* Mark a user for data purge (used with link:{ClientAPI}#fh-auth[$fh.auth], this flag can be checked to wipe data from a user's app/device)
+* Send/re-send an invite email to a user
+* Delete Users
+
+[[viewing-users]]
+=== Viewing Users
+
+In the User list overview area, details such as the User's user id, name, email, active status and when they last signed in are shown. There is an option to search for a specific user, which updates automatically as you type. There is an option to create new User's, or edit a specific User. Additional User details are available in the user edit area.
+
+A user also can be deleted from the list view. You have to confirm the deletion before it's actually executed. A user can only be deleted if there are no apps in the Studio created by that user. If there are still apps owned by that user, the deletion will throw an error.
+
+[[creating-users]]
+=== Creating Users
+
+When creating a new user you need to specify the user id. User id is the unique identifier of the user and it has to be unique in your domain and it cannot be changed. You will get an error message if the user id is already taken. You can also optionally specify email, name and password for the user. If you want an invitation email to be sent to the user, you need to specify the email address for the user. You can allow users to specify their own passwords by checking the "Send Invite Email" option.
+
+Roles can be assigned to a new User as well. More details on User Roles is available below.
+
+Users can also be associated with Auth policies in the "Auth Policies" section.
+
+[[updating-users]]
+=== Updating Users
+
+User fields such as their name, email and password can be updated. A User's password cannot be viewed, but it can be set to be a different value.
+
+In addition, the `Teams` that the User is a `Member` of will be displayed. To add a User as a `Member` of a `Team`, click into the Teams box and select the team to add.
+
+A user can be disabled or enabled in this view. Once a user is disabled, that user will not be able to authenticate in link:{ClientAPI}#fh-auth[$fh.auth] API. A special value will be returned by the API to indicate that the user has been disabled.
+
+There is another option here called "Purge User Data". If this option is checked, two things will happen:
+
+* The user will be disabled.
+* Next time when the user login using link:{ClientAPI}#fh-auth[$fh.auth], a special value will be returned by the API to indicate all the existing app data should be deleted (the data delete function is subject to developers to implement).
+
+For more details, check the link:{ClientAPI}#fh-auth[$fh.auth] API.
+
+[[invitation-emails]]
+=== Invitation emails
+
+An invitation email contains a unique link, which when opened, allows a user to activate their account by inputting the password to use. The text of this email is typically something like:
+
+....
+Hello User,
+
+Your account has been created and is awaiting activation.
+
+To activate your account, please click on the link below where you can also set your password.
+
+  https://[your-studio-domain].feedhenry.com/studio/activate.html?t=123456789012345678901234
+
+Regards
+....
+
+When creating a new user, there is an option to automatically send an invitation email. Alternatively, there is an option in the update user area to resend invitation emails.
+
+[[user-roles]]
+== User Roles
+
+NOTE: The permissions system in {ProductName} is based around the concept of teams, as opposed to the role-based system previously used in the FeedHenry v2 platform. If the *Teams* based permissions system is active, your User Profile in Studio will contain a `Teams` section. If not, the *Roles* based permissions system is active. For a comparison of Roles and Teams, click link:{ServerSideDeveloperGuide}#migrating-from-roles-to-teams[here].
+
+User Roles are added to user accounts in order to grant them different privileges within the Platform. Users can perform different tasks, and access different sections of the Platform, depending on what roles have been assigned to their account. For example, only a user with the `Analytics` role can access the `Analytics` section of the Platform. Only `Admin` or `Domain Admin` users have the authority to add or remove user roles to an account.
+
+[[analytics-analytics]]
+=== Analytics (analytics)
+
+* Can access the Analytics section of the Platform.
+* Can monitor project usage.
+
+[[forms-editor-formseditor]]
+=== Forms Editor (formseditor)
+
+* Can create forms and themes.
+* Can create Form Projects.
+* Can edit forms, themes, and Projects associated with their group(s).
+* Can associate forms and themes with projects in their group(s).
+
+[[forms-administrator-formsadmin]]
+=== Forms Administrator (formsadmin)
+
+* Can create forms and themes.
+* Can create Form Projects.
+* Can create groups.
+* Can assign users to groups.
+* Can view, access and manage all forms & themes created on a specific domain.
+* Can view submissions from all projects on the domain.
+* Can edit submissions from any project on the domain.
+
+NOTE: It is the responisiblilty of the Forms Administrator to add users to groups. If a Forms Editor is not associated with a group, they will not be able to see any forms/themes they create, even though they have sufficient privileges to edit them.
+
+[[submission-viewer-submissionsviewer]]
+=== Submission Viewer (submissionsviewer)
+
+* Has access to view submissions from any project in their group(s).
+
+[[submission-editor-submissionseditor]]
+=== Submission Editor (submissionseditor)
+
+* Has access to view submissions from projects in their group(s).
+* Has access to edit submissions from projects in their group(s).
+
+[[developer-dev]]
+=== Developer (dev)
+
+* Can create and manage any type of Project.
+* Can build App binaries for all available platforms.
+* Can upload development resources such as private keys and certificates.
+* Can create, edit, and maintain deployment targets.
+* Can add public services to a project.
+
+[[developer-administrator-devadmin]]
+=== Developer Administrator (devadmin)
+
+* Can create and manage any type of Project.
+* Can build App binaries for all available platforms.
+* Can upload development resources such as private keys and certificates.
+* Can create, edit, and maintain deployment targets.
+* Can view and access all Projects & Apps on a specific domain.
+* Can view and edit all deployment targets on a specific domain.
+
+[[service-administrator-serviceadmin]]
+=== Service Administrator (serviceadmin)
+
+* Can provision mBaaS Services.
+* Can manage mBaaS Services.
+
+[[domain-administrator-portaladmin]]
+=== Domain Administrator (portaladmin)
+
+* Can create and edit Auth Policies.
+* Can update the App Store for their domain.
+* Can create and manage App Store Apps.
+* Can create and manage App Store Groups.
+* Can manage App Store Devices.
+* Can view App Store Logs.
+* Can access the 'Mobile App Management' section on the Admin page.
+* Can add and remove users.
+* Can assign roles to users.
+
+[[customer-administrator-customeradmin]]
+=== Customer Administrator (customeradmin)
+
+* Can manage users in any domain belonging to this customer.
+
+[[reseller-administrator-reselleradmin]]
+=== Reseller Administrator (reselleradmin)
+
+* Can manage users in any domain belonging to any of its customers.
+* Can assign the Customer Admin role to users.
+
+[[administrator-admin]]
+=== Administrator (admin)
+
+* Can perform any action in the Platform.
+* Can assign Reseller Admin and Customer Admin roles to users.
+
+[[auth-policies]]
+== Auth Policies
+
+The Platform has a feature rich Authentication and Authorization mechanism. At the core of this is the concept of Auth Policies. An Auth Policy allows you to define how your Users will Authenticate themselves when accessing your Applications and App Store Apps, and also allows you to define various Authorization checks.
+
+{ProductShortName} supports the following Authentication providers:
+
+* OAuth: Specifically, OAuth2, this allows you to authenticate your users against OAuth providers such as Google.
+* LDAP: Both Active Directory and Open LDAP servers are supported, typically used for more 'Enterprise' type integrations.
+* FeedHenry: The {ProductShortName} platform authentication mechanism.
+* MBAAS: Authenticating users via an xref:mbaas-services[mBaaS Service], which means you can use any authentication mechanisms.
+
+[[viewing-auth-policies]]
+=== Viewing Auth Policies
+
+In the Auth Policy list overview area, details such as the Policy Id and Authentication Type are shown. There are options to create a new Policy or Edit an existing Policy.
+
+[[creating-an-auth-policy]]
+=== Creating an Auth Policy
+
+When you create an Auth Policy you need to specify an Id for the Policy, along with specific information for the Authentication Type.
+
+[[oauth-auth-type]]
+=== OAuth Auth Type
+
+OAuth Authentication allows for application developers to access user specific information from a third party service without that user having to divulge their username and password for accessing that service. The basic flow is as follows:
+
+* The user wishes to login to your application and click the sign in with Google option.
+* The application retrieves a request token from the provider and redirects the user with this token to the provider.
+* The user logs in to their account and approves access to requested information and are redirected back to the application.
+* The application receives an OAuth token and a OAuth verifier which it exchanges with the provider for an OAuth access token.
+* The access token is sent with any future requests to access the user's information.
+
+[[ldap-auth-type]]
+=== LDAP Auth Type
+
+The following LDAP Authentication methods are supported in the Platform:
+
+* Simple: Simple Bind, where the users DN and password are sent to the LDAP Server. This option is supported out of the box with Active Directory and OpenLDAP.
+* SASL: Two types of Simple Authentication and Security Layer are supported, Digest MD5 and CRAM MD5. Consult your LDAP servers documentation for information on the type of SASL it supports.
+
+[[url]]
+==== URL
+
+The URL field is the address of your LDAP server, for example, ldap://foo.example.com:389. Note that '389' is the standard LDAP port.
+
+[[dn-prefix]]
+==== DN Prefix
+
+The 'Distinguished Name (dn) prefix' field is the prefix for the full user DN. The format of a Users full DN required for Authentication is typically: `<prefix><user><dn>`, for example, `uid=fred,ou=people,dc=example,dc=com`. The prefix is typically 'cn' for Active Directory or 'uid' for Open LDAP. Consult with your LDAP Administrator for what this setting should be. Note that this can also be blank, it is not a mandatory setting.
+
+[[dn]]
+==== DN
+
+The 'Distinguished Name (dn)' field can be used to provide the full directory path to the user, for example, the `ou=people,dc=example,dc=com` in the example above. Again, this can be blank, consult with your LDAP Administrator regarding this setting.
+
+[[dn-and-dn-prefix]]
+==== DN and DN Prefix
+
+The DN and DN Prefix fields are used together to build the name that the platform uses to Bind to the LDAP server.
+In the example `uid=fred,ou=people,dc=example,dc=com`, the prefix could be set to `uid=` and the `dn` could be set to `,ou=people,dc=example,dc=com`. This would allow users to use `fred` as the user name. These fields can be left blank and the platform will attempt to bind using the data entered by the user. These fields can be used to construct whatever value that the LDAP server allows for binding, including the `userPrincipalName`. If the `userPrincipleName` is an email address, the `dn` field could be used to add a common domain name, for example, if the `dn` field is set to `@example.com`
+and a user uses a login name of `fred` the platform will attempt to bind to the LDAP server as `fred@example.com`.
+
+[[sample-active-directory-settings]]
+=== Sample Active Directory Settings
+
+Here are some sample instructions for how to Authenticate Users against your Active Directory (AD) server:
+
+* First, your server needs to be accessible from the {ProductShortName} Cloud. For private {ProductShortName} deploys this is usually not an issue as all services will be behind the same firewall. For public {ProductShortName} cloud, you will either need to set up a VPN for us to access your AD Server, you will need to contact us to discuss this. Alternatively, ensure your AD Server is publicly accessible.
+* Next, create an Auth Policy and specify the following values:
+- By default, AD supports the 'Simple' Authentication Method out of the box, so choose 'Simple'as the Authentication Method.
+- In the URL field, enter the address of your AD server, for example, `ldap://foo.example.com:389`.
+- Leave the 'DN Prefix' and 'DN' fields blank. These are not required by default for AD. When a User authenticates, their email address alone is passed on to AD and this is normally sufficient to identify the AD User.
+
+[[feedhenry-auth-type]]
+=== FeedHenry Auth Type
+
+You can use the Platform Authentication as a means of Authenticating Users. Using this method, a User must exist in the Platform. See the Users section for instructions on how to administer Platform Users.
+
+There are no additional configurations options if you choose the FeedHenry Authentication Policy Type, simply specify the Authentication Type as 'FEEDHENRY'.
+
+[[mbaas-auth-type]]
+=== MBAAS Auth Type
+
+This type supports user authentication via xref:mbaas-services[mBaaS Services]. If your application needs an authentication type that is not supported by the Core platform, you can easily create new mBaaS services to support it.
+
+[[service]]
+==== Service
+
+The name of the mBaaS service this auth policy should use. You should create the mBaaS service first and then select the name from the dropdown list.
+
+[[endpoint]]
+==== Endpoint
+
+The full path of an endpoint defined by the mBaaS service this auth policy should be calling.
+
+The endpoint will receive the 'params' object specified in the link:{ClientAPI}#fh-auth[Auth API] in the request body, and it should return 200 if authentication is succeeded.
+
+If Authorization is required, this endpoint should also return a JSON response with a `userId` key. The value of this key will be used to lookup user in the system for authorization checks.
+
+[[default-environment]]
+==== Default Environment
+
+The environment to use, if the environment value is missing in a request.
+
+[[authorization]]
+=== Authorization
+
+Further to your User Authenticating themselves, you can also specify Authorization measures:
+
+[[check-user-exists]]
+==== Check User Exists
+
+This check will ensure the User is a valid User that exists on the Platform. See the Users section for more information on Administering Users in the Platform.
+
+[[check-user-is-approved]]
+==== Check User is Approved
+
+This simply allows you to add specific Users that you want to be Authorized to access your App. If the User is not in this list, they will not be allowed access to your App.
+
+[[mobile-app-management]]
+== Mobile App Management
+
+{ProductShortName} contains a built-in App Store for distribution of binaries to mobile devices. Integrations for some third-party mobile application management solutions are also supported and listed in the section xref:third-party-mam-mdm[Third Party MAM/MDM].
+
+[[app-store]]
+=== App Store
+
+The App Store gives end users the ability to install mobile apps for iOS and Android directly onto their mobile devices.
+
+[[configuring-the-app-store]]
+==== Configuring the App Store
+
+Each domain comes with an App Store. In order to use this App Store you will first need to update some of the details:
+
+* Name: this name shown to users of the App Store
+* Description: the description to display on the App Store landing page
+* App Store icon: this is the icon that will be displayed along with your App Store
+* App Store Apps: items available to install from the Store
+* Auth Policies: used to configure which users can access the Store, and which Items they are allowed to install
+
+[[using-the-app-store]]
+==== Using the App Store
+
+To visit the App Store, go to the App Store URL on you mobile browser. This URL can be obtained from the _Admin > Mobile App Management > App Store_ page, and is typically located at `domain.feedhenry.com/store`.
+
+When you browse to the App Store URL on your device, you will be presented with the login screen of the Mobile App Store. This screen shows some details about the App Store, and a list of available authentication mechanisms for example, OAuth or LDAP. These mechanisms are preconfigured by following other parts of this guide. If no authentication mechanisms have been setup, it will not be possible to log in to the App Store, even if Apps have been added to it.
+
+image:MobileAppStoreLoginScreen.png[App Store Login]
+
+After logging in, a list of available Apps for your device will be shown.
+
+image:MobileAppStoreAppList.png[App Store List]
+
+Choosing an app will display more information, including an install button.
+
+image:MobileAppStoreAppDetail.png[App Store Details]
+
+There are several possible installation binary types for iOS applications:
+
+* iPhone - can be installed on iPhone, iPod Touch and iPad.
+* iPad - can be installed on iPad.
+* iOS - universal application which can be installed on iPod Touch, iPhone and iPad in one package.
+
+The options available depend on the package produced at App build time. For Android apps, there is typically only 1 installation option available.
+
+[[app-store-apps]]
+=== App Store Apps
+
+App Store Apps (formerly Store Items) can be added for distribution via the App Store. You can upload native binaries for new and existing Apps for Android, iOS (Universal), iPhone & iPad. You can also assign icons to your App Store Apps which will appear in your App Store, and give your App a name and a description.
+
+Here's a list of all actions for App Store Apps:
+
+* Add new App Store Apps (typically mobile apps) for distribution.
+* Upload native binaries for new and existing Apps.
+* View the App binary history for existing Apps.
+* View the Audit Logs for App binary history for existing Apps.
+* Add Auth Policies to be used with the application.
+* Add an icon for your App.
+* Restrict a App to be displayed only to users in the same App Groups.
+* Add a App to a App Group.
+
+[[adding-app-store-apps]]
+==== Adding App Store Apps
+
+To create a new App, click on the App Store Apps option in the menu. A form with a Name field will appear. Once the field has been filled out, you can click the "Create Item" button.
+
+[[updating-app-store-apps]]
+==== Updating App Store Apps
+
+To update an App, click the Edit button for the App. You will then be on the "Details" tab of the Update App page.
+
+A form with various input fields will appear.
+
+* The Name field: this is for the unique name of your App.
+* The Icon field: click the "Choose File" button. Choose an appropriate icon and press OK. This icon will now upload immediately and be displayed along with your App.
+* The Auth Token Field: this token is a unique string which is then used with the $fh.auth API to identify your application and perform the authentication checks you have specified in your Auth Policies.
+* The Description Field: this field is for adding a description which will be visible to viewers of your App Store.
+* Auth Policies: This swap select shows the policies you have available for use with your App Store Apps. These policies define authentication methods to be used to authenticate a user who is attempting to access your App application.
+* Restrict to Groups: This check box controls the App Groups functionality for this App. If it is checked then the user must be in one of the same App Groups as the App.
+* App Groups: This swap select shows the App Groups you have available for use with your App Store Apps. These groups restrict the visibility of these items to users who are in the same App Group or App Groups (assuming that "Restrict to Groups" is checked).
+
+Once these fields have been filled out with the required information, you can click the "Update Item Details" button.
+
+NOTE: If this is the first time you are updating a App after creating it, the Studio will show the Binaries tab on the assumption that you need to add a binary to make this App visible in your App Store.
+
+[[uploading-binaries]]
+==== Uploading Binaries
+
+In order to upload a binary or view the history, you must first have an existing App.
+
+[[upload-binary]]
+===== Upload Binary
+
+Click the edit button on one of your existing App Store Apps and then click the "Binaries" tab of the Update App page. To upload a binary for your App you will need to have a valid binary built either through the Platform or via Xcode or Eclipse, for example.
+
+Select the type of binary to upload.
+
+The maximum binary size accepted is 64MB.
+Click "Choose File". Select your binary file and the upload should begin. Once it has completed it will then be available as an option for download with that App.
+
+[[ios-binaries]]
+===== iOS Binaries
+
+Next to the iOS binary options, you will notice an empty configuration field. This field is for the bundle identifier of your iOS app. You can find this identifier in the App Studio under configuration and then iPhone | iPad | iOS Universal. It is labeled under Bundle Identifier.
+
+Also for iOS based apps you will need to upload the .ipa file. If you are building your application using the Platform, you can download this file when you do an iOS build. If you are building the app with Xcode, the .ipa file can be obtained by using the archive option.
+
+
+[[binary-history]]
+===== Binary History
+
+Click the edit button on one of your existing App Store Apps and then click the "Binaries" tab of the Update App page. To view the current and older binaries click the "[+] History" link of the desired binary. This will cause a list of the binary history to be displayed.
+
+[[third-party-mam-mdm]]
+=== Third Party MAM/MDM
+
+You can enable or disable integrations with individual mobile application management (MAM) and mobile device management (MDM) providers. Enabling the integration does not result in all binaries being automatically published. To enable publishing, see xref:publishing-app-binaries-to-third-party-mam-and-mdm-providers[Publishing App Binaries to Third-party MAM and MDM providers].
+
+[[audit-log]]
+== Audit Log
+
+Audit logs are available for information about the number of downloads of App App binaries. In order to view the Audit Log, you must first have an existing App.
+
+Click the edit button on one of your existing App Store Apps and then click the "Audit Logs" tab of the Update App page. This will show the current Audit Log entries for this App. The full list of Audit Log entries for all the Apps can be viewed and more comprehensively processed by clicking the "Audit Log" menu item in the "Mobile App Management" menu on the left hand side of the page.
+
+[[searching-filtering]]
+=== Searching & Filtering
+
+The search box allows you to search through the audit logs. The options at the top of the tab allows you to filter Audit Logs by :
+
+* App name
+* user email
+* App type (iOS, iPhone, iPad or Android)
+* number of records to display (10, 100 or 1000)
+
+Once the filter options are selected , pressing the "Filter" button will get the matching Audit Logs. Pressing the "Reset" button will get the default Audit Logs.
+
+[[groups]]
+== Groups
+
+App Store groups (formerly Store Item Groups) can be created to restrict Apps to a particular set of users. Apps can be marked as restricted to a particular set of groups, and only users in those groups will be able to view those items in the app store.
+
+The App Groups Administration section of the App Studio allows an administrator to:
+
+* Create a new App Group
+* Assign users to a group
+* Assign App Store Apps to a group
+
+[[overview-1]]
+=== Overview
+
+Create your Users and App Store Apps as usual. When creating App Store Apps, you can mark them as being restricted to groups, you don't have to select groups at this stage, since you may not have created them yet.
+
+Once your Users and App Store Apps are created you can create your App Groups. The groups that you create could correspond to departments within your organisation, you might create a Sales group containing apps for your sales department, and Engineering group containing apps for your engineering department.
+Once the groups are created, it's possible to assign App Store Apps and Users to them.
+
+For example, you could assign your Sales users your Sales App Store Apps to your Sales group, so that when a Sales user logs into your App Store, they can see the Sales App Store Apps. Users and App Store Apps can be assigned to multiple groups, for example, your Sales and Engineering managers might be members of both groups, to get access to both departments App Store Apps. Of course, you don't have to restrict your App Store Apps to groups, so that they will be visible to all users who log into your App Store.
+
+[[adding-a-new-group]]
+=== Adding a New Group
+
+To create a new App Group, click on the Groups option in Mobile App Management section of the menu, then click the "Create" button. A form with 2 input fields will appear.
+
+* The Name field: this is for the unique name of your App Group.
+* The Description Field: this field is for adding a memorable description to help describe the purpose of the group.
+
+Once these fields have been filled out with the required information, you can click the "Create group" button.
+
+[[editing-a-group]]
+=== Editing a Group
+
+Groups can be edited to change the description text, or to assign users or Apps to the group. To edit your App Group, click on the Groups option in Mobile App Management section of the menu, then click the "Edit" button corresponding to the particular group to be edited.
+
+* App Store Apps: items which are currently assigned to your group.
+* Group Users: users which are currently assigned to your group.
+
+[[devices]]
+== Devices
+
+Active Devices can be viewed, assigned friendly names, blocked or marked for data purge. Active Apps and Users on a Device are also available.
+
+Here are all the actions that can be performed:
+
+* View Active Devices.
+* Assign friendly names to device Ids.
+* View Apps in use on devices.
+* View Users active on device.
+* Block a device -- prevents any apps or users from authenticating from that device.
+* Purge device data - sends a kill pill signal to any app on the device the next time the app attempts to authenticate.
+
+[[viewing-devices]]
+=== Viewing Devices
+
+In the device list view, all the devices that have used $fh.auth to access apps will be listed here. The device label, device id, device status and the last access time will be displayed in the list. Clicking on any of the control buttons will bring you to the device update view.
+
+The device id is a unique identifier of the device and it can not be changed. It is sent from the device and will remain the same across different apps on the same device (for hybrid or native apps). The only exception is web apps loaded in web browsers: the device id is a generated value and it is saved to the cookie. If the cookie is deleted, a new value will be generated.
+
+[[updating-devices]]
+=== Updating Devices
+
+In this view, you can assign a friendly label name to a device, disable it from authentication or mark it for data purge. You can also check which users on the platform have been using the device and what apps have been accessed from the device.
+
+If a device is disabled from authentication, all the apps on that particular device that are using $fh.auth to authenticate will fail and a special value will be returned to indicate that the device has been disabled. This is useful when a device is lost or stolen.
+
+If the "Mark for Data Purge" option is checked, two thing will happen:
+
+* The device is disabled from authentication.
+* When apps on that device are using $fh.auth to authenticate, the authentication process will fail and a special value will be returned by the API to indicate all the existing app data should be deleted (the data delete function is subject to developers to implement).
+
+[[viewing-users-of-devices]]
+=== Viewing Users of Devices
+
+Every time $fh.auth is called from an app on a device, an access log entry will be created if the authentication process is succeeded and the user is a platform user. Thus you can see which users have been accessing from which devices in the "View Device" area.
+
+There is a "Users" section showing a list of users ids that have been accessing using that device. Hovering on each user id will show more details about the user, and clicking on it will bring you to the user manage view of that user.
+
+[[viewing-apps-on-devices]]
+=== Viewing Apps on Devices
+
+Similar to capturing user access, app information is captured every time $fh.auth is called. You can view the list of apps in the "App" section in the "View Device" area. You can hover on each App entry to get an overview of the app. If you click on any of them will bring you to the manage view of that particular App.

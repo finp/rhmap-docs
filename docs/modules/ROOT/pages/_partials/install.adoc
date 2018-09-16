@@ -1,0 +1,128 @@
+// include::shared/attributes.adoc[]
+
+[[installing-fhc]]
+= Installing FHC
+
+.Overview
+
+`fhc` is the {ProductName} ({ProductShortName}) command line interface (CLI) and it is Node.js based.
+Almost all functionality in the {ProductShortName} Studio is exposed through the {ProductShortName} APIs and is accessed using `fhc`.
+This allows `fhc` to be included in other Node.js applications thus allowing access to the Platform programmatically.
+Interaction with the Platform's exposed functionality can be integrated into automated processes such as build systems and continuous integration systems.
+
+.Requirements
+
+To use `fhc`, install Node.js and NPM. To install Node.js, see http://nodejs.org[nodejs.org^].
+
+Once installed, two new command line applications are available, `node` and `npm`.
+
+[[install-fhc]]
+== Installing FHC
+
+In a terminal/command prompt, run:
+
+[source,bash]
+----
+npm install -g fh-fhc
+----
+
+If installing on Linux, you may need to run this command as a sudoer:
+
+[source,bash]
+----
+sudo npm install -g fh-fhc
+----
+
+This will install fhc from http://www.npmjs.org[npm^] -- the central registry of Node.js modules.
+
+The `-g` flag tells npm to install fhc globally so that it will be available from any directory.
+
+Once installation is complete, `fhc` will be available from your command line. 
+If you use *_Z shell (zsh)_*, use `hash -r` to reset the hash table for the command to be available.
+
+
+To test FHC is installed correctly, and to show the version you have installed, use:
+
+
+[source,bash]
+----
+fhc -v
+----
+
+[[command-completion-linux-and-mac-only]]
+=== Command Completion (Linux and Mac only)
+
+The `fhc` bash completion script allows Tab completion of the various `fhc` commands.
+Install `fhc` bash completion script:
+
+[source,bash]
+----
+fhc completion >> ~/.bashrc
+----
+
+NOTE: Append the output of `fhc completion` to a relevant file if you use an alternative shell (not `bash`), for example, `~/.zshrc` for zsh.
+
+[[usage]]
+== Usage
+
+Set the target and login:
+
+[source,bash]
+----
+fhc target https://[your-studio-domain].feedhenry.com
+fhc login [email address] [password]
+----
+
+To list projects:
+
+[source,bash]
+----
+fhc projects list
+----
+
+To list all `fhc` commands:
+
+[source,bash]
+----
+fhc help
+----
+
+
+
+[[configuration]]
+=== Configuration
+
+fhc is extremely configurable. It reads its configuration options from
+5 places.
+
+* Command line switches: +
+Set a config with `--key val`. All keys take a value, even if they
+are booleans (the config parser doesn't know what the options are at
+the time of parsing.) If no value is provided, then the option is set
+to boolean `true`.
+
+* Environment Variables: +
+Set any config by prefixing the name in an environment variable with
+`fhc_config_`. For example, `export fhc_config_key=val`.
+
+* User Configs: +
+The file at $HOME/.fhcrc is an ini-formatted list of configs. If
+present, it is parsed. If the `userconfig` option is set in the cli
+or env, then that will be used instead.
+
+* Global Configs: +
+The file found at `../etc/fhcrc` (from the node executable, by default
+this resolves to `/usr/local/etc/fhcrc`) will be parsed if it is found.
+If the `globalconfig` option is set in the cli, env, or user config,
+then that file is parsed instead.
+
+* Defaults: +
+fhc's default configuration options are defined in `lib/utils/config-defs.js`. These must not be changed.
+
+Execute `fhc help config` for more information. Use `fhc help` for a list of all commands, or `fhc [command] --help` for help on a specific command.
+
+[[installing-fhc-next-steps]]
+== Next Steps
+
+* xref:working-with-projects-apps[Working with Projects & Apps]
+* xref:developing-code-locally[Local App Development]

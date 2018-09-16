@@ -1,0 +1,10 @@
+* xref:getting-started/master.adoc[Getting Started]
+* xref:product-features/master.adoc[Product Features]
+* xref:drag-and-drop-apps-guide/master.adoc[Drag and Drop Apps]
+* xref:mobile-developer-guide/master.adoc[Mobile Developer Guide]
+* xref:server-side-developer-guide/master.adoc[Server-side Developer Guide]
+* xref:client-api/master.adoc[Client API]
+* xref:client-sdk/master.adoc[Client SDK]
+* xref:cloud-api/master.adoc[Cloud API]
+
+// include::shared/attributes.adoc[]

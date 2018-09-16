@@ -1,0 +1,70 @@
+// include::shared/attributes.adoc[]
+
+[[create-a-form-theme-using-fhc]]
+= Create a form theme using FHC
+
+.Overview
+This tutorial will teach you how to create a theme for a form using FHC.
+
+.Requirements
+The user must be a member of one or more teams with the following permissions:
+
+* Domain -- Drag & Drop Apps
+* Theme (View & Edit)
+
+For more information on Permissions, see link:{ProductFeatures}#teams-and-collaboration[Teams & Collaborations].
+
+[[list-all-themes]]
+== List all themes
+
+Target your domain using the `fhc target` command, and log in using `fhc login`.
+
+To list all themes on a domain, you can use the `fhc themes` command.
+
+[[create-a-form-theme-using-fhc-create-a-theme]]
+== Create a theme
+
+To create a theme, you must use the `fhc themes create` command. This command requires you to pass a json file as a paramter.
+
+`fhc themes create <theme-file.json>`
+
+For example:
+
+[source,bash]
+----
+fhc themes create ~/Desktop/themes/theme.json
+----
+
+This will create the specified theme on the Platform. It will also assign an id to the theme.
+
+When the theme is successfully created, it will be output to the console.
+
+Save the output to a file and take note of its path. This will be used to update a theme. To save the output to file
+
+[[associating-a-theme-with-an-app]]
+== Associating a theme with an app
+
+Before adding a theme to an app, you must have an app associated with a project. If you do not know how to add an app to a project, please refer to guide xref:working-with-projects-apps[Working with Projects and Apps].
+
+Themes are associated with apps using the `fhc themes app set` command.
+
+`fhc themes app set <app-id> <theme-id>`
+
+For example:
+
+[source,bash]
+----
+fhc themes app set x5KmSy0gXPZOvpD_hHqCOwZe zRdUezAD3l11huedCk-WJswZ
+----
+
+[[updating-a-theme]]
+== Updating a theme
+
+If you want to update a theme at any stage, you can do so via the `fhc themes update` command. Navigate to where you saved the theme after you created it. Make whatever changes you wish, and then save the file. You can now update the theme.
+
+[source,bash]
+----
+fhc themes update ~/Desktop/themes/theme.json
+----
+
+This will load in the changes you have made. The newly updated theme will once again be output to the console.

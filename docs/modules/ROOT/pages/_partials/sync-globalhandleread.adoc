@@ -1,0 +1,60 @@
+[[fh-sync-globalhandleread]]
+== $fh.sync.globalHandleRead
+{syncnote} xref:fh-sync-globalhandleread-dep[section for the old version]
+
+
+Defines a global handler function to read a single row of data from the Dataset Backend.
+
+It can be used by multiple datasets, but is only used if there is no handler assigned to the dataset using the xref:fh-sync-handleread[handleRead API].
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.globalHandleRead(function readHandler(dataset_id, uid, meta_data, cb){});
+----
+
+=== Parameters
+
+==== readHandler
+* Description: The function that is invoked when reading a record.
+* Type: Function
+* Invoked Parameters:
+** *dataset_id*
+*** Description: the id of the dataset
+*** Type: String
+** *uid*
+*** Description: the unique id of the record to read
+*** Type: String
+** *meta_data*
+*** Description: the meta data associated with the data, can be null.
+*** Type: Object
+** *cb*
+*** Description: the callback function
+*** Type: Function
+
+=== Example
+
+[source,javascript]
+----
+$fh.sync.globalHandleRead(function(dataset_id, uid, meta_data, cb) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // Unique Identifier for row to read
+  console.log(uid);
+
+  // Sample back-end storage call
+  var data = readData(uid);
+  /* sample response
+    {
+      "userid": "1234",
+      "name": "Jane Bloggs",
+      "age": 27
+    }
+  */
+
+  // The callback into the sync service to return the row of data
+  return cb(null, data);
+});
+----

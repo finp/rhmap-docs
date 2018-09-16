@@ -1,0 +1,103 @@
+// include::shared/attributes.adoc[]
+
+[[fh-sec]]
+= $fh.sec
+
+[source,javascript]
+----
+$fh.sec(options, success, failure);
+----
+
+Key pair generation and data encryption and decryption.
+
+[[sec-supported-platforms]]
+.Supported Platforms
+
+* JavaScript SDK
+** Cordova
+** Web Apps
+
+For detailed version information, see link:https://access.redhat.com/node/2357761[Supported Configurations^].
+
+[[sec-example]]
+== Example
+
+[source,javascript]
+----
+// Generate a new Key
+var options = {
+  "act": "keygen",
+  "params": {
+    "algorithm": "AES", // Only AES supported
+    "keysize": "128" // 128 or 256
+  }
+};
+
+$fh.sec(options, function(res) {
+  // The algorithm used for the generation
+  var algorithm = res.algorithm;
+
+  // The generated key (hex format)
+  var secretkey = res.secretkey;
+
+  // The generated initial vector (hex format)
+  var iv = res.iv;
+}, function(code) {
+  // Error code. One of:
+  //  bad_act   : invalid action type
+  //  no_params : params missing
+  //  no_params_algorithm : missing algorithm in params
+  console.error(code);
+});
+
+
+// Encrypt data
+var options = {
+  "act": "encrypt",
+  "params": {
+    // The data to be encrypted
+    "plaintext": "Need a new page to start on",
+    // The secret key used to do the encryption. (Hex format)
+    "key": secretkey,
+    // The algorithm used for encryption. Should be either "RSA" or "AES"
+    "algorithm": "AES",
+    // IV only required if algorithm is "AES"
+    "iv": iv
+  }
+};
+$fh.sec(options, function (res) {
+  // The encrypted data (hex format)
+  var ciphertext = res.ciphertext;
+}, function (code) {
+  // Error code. One of:
+  //  bad_act   : invalid action type
+  //  no_params : params missing
+  //  no_params_algorithm : missing algorithm in params
+  console.error(code);
+});
+
+// Decrypt data
+var options = {
+  "act": "encrypt",
+  "params": {
+    // The data to be decrypted
+    "ciphertext": "dc87f02ae3fce8149d1e2b97a747581f8bc7c0c01b435a87ba56661b1ae",
+    // The secret key used to do the decryption. (Hex format)
+    "key": secretkey,
+    // The algorithm used for decryption. Should be either "RSA" or "AES"
+    "algorithm": "AES",
+    // IV only required if algorithm is "AES"
+    "iv": iv
+  }
+};
+$fh.sec(options, function (res) {
+  // The decrypted data (hex format)
+  var plaintext = res.plaintext;
+}, function (code) {
+  // Error code. One of:
+  //  bad_act   : invalid action type
+  //  no_params : params missing
+  //  no_params_algorithm : missing algorithm in params
+  console.error(code);
+});
+----

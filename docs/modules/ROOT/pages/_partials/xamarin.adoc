@@ -1,0 +1,187 @@
+// include::shared/attributes.adoc[]
+
+[[xamarin]]
+= Xamarin
+
+[[xamarin-download]]
+== Download
+
+* https://github.com/feedhenry/fh-dotnet-sdk/releases[SDK^]
+* https://github.com/feedhenry-templates/blank-xamarin[Sample App^]
+
+[[xamarin-introduction]]
+== Introduction
+
+This is a standard Xamarin App which allows you to create Native iOS and Android apps in C#.
+
+The SDK itself is an open source project that is hosted https://github.com/feedhenry/fh-dotnet-sdk[here^]. Feel free to fork it and make contribution to this project.
+
+Before using this SDK, make sure you have Xamarin developer tools installed. You can download them from https://xamarin.com/studio[here^].
+
+We recommend you install http://xamarin.com/visual-studio[Xamarin For Visual Studio^] as well.
+
+[[xamarin-new-app]]
+== New App
+
+Download the https://github.com/feedhenry-templates/blank-xamarin[sample app^] to get started with a new Xamarin App which has the {ProductShortName} SDK already included.
+
+The app contains 4 sub-projects. It is setup to use Portable Class Libraries to share code across all the apps. More details about this approach can be found http://docs.xamarin.com/guides/cross-platform/application_fundamentals/pcl/introduction_to_portable_class_libraries/[here^].
+
+* `App.Core` - A PCL project. The code in this project is shared by other apps. Most of the app's business logic should be defined here.
+* `App.Android` - An Android app project depends on the `App.Core` project. Normally it should contain UI code and Android-specific code.
+* `App.iOS` - An iOS app project depends on the `App.Core` project. Normally it should contain UI code and iOS-specific code.
+
+image:xamarin_sdk_install1.png[image]
+
+[[xamarin-existing-app]]
+== Existing App
+
+You can install the SDK to your project either automatically (using NuGet) or manually.
+
+[[xamarin-nuget-recommended]]
+=== NuGet (Recommended)
+
+FH SDK is available on NuGet: https://www.nuget.org/packages/FH.SDK/.
+If you are using the NuGet plugin inside Xamarin Studio, search for FH.SDK.
+NuGet will install dependecy libraries automatically.
+
+image:xamarin_sdk_install2.png[image]
+
+[[xamarin-manually]]
+=== Manually
+
+Download the SDK and unzip it. Adding the `.dll` assembly files from the folder that is corresponding to your project's build target as references.
+
+image:xamarin_sdk_install3.png[image]
+
+image:xamarin_sdk_install4.png[image]
+
+If you are developing a Portable Class Library project, only reference the `FHSDK.dll` file.
+
+The SDK depends on https://www.nuget.org/packages/Newtonsoft.Json/[Json.Net^] and https://www.nuget.org/packages/Microsoft.Net.Http/[Microsoft HTTP Client Libraries^]. You need to install the assemblies of those libraries as well if they are not available in your project.
+
+[[xamarin-set-up-configuration]]
+=== Set up Configuration
+
+For each platform-specific application, you need to create the corresponding configuration files. The content of each file should be the same as described in each platform's native SDK doc.
+
+[[xamarin-ios]]
+=== iOS
+
+`fhconfig.plist` in the root of the application. Set build action to *BundleResource*.
+
+image:xamarin_sdk_install6.png[image]
+
+
+`fhconfig.plist` file contents:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>host</key>
+  <string>__APP_STUDIO_HOST__</string>
+  <key>appid</key>
+  <string>__ID_OF_APP_IN_PROJECT__</string>
+  <key>projectid</key>
+  <string>__PROJECT_ID__</string>
+  <key>appkey</key>
+  <string>__APP_API_KEY_OF_APP_IN_PROJECT__</string>
+  <key>connectiontag</key>
+  <string>__CONNECTION_TAG_TO_USE_FOR_CLOUD__</string>
+</dict>
+</plist>
+----
+
+[[xamarin-android]]
+=== Android
+
+`fhconfig.properties` in the _Assets_ directory of the application. Set build action to *AndroidAsset*.
+
+image:xamarin_sdk_install5.png[image]
+
+`fhconfig.properties` file contents:
+
+----
+host = __APP_STUDIO_HOST__
+projectid = __PROJECT_ID__
+connectiontag = __CONNECTION_TAG_TO_USE_FOR_CLOUD__
+appid = __ID_OF_APP_IN_PROJECT__
+appkey = __APP_API_KEY_OF_APP_IN_PROJECT__
+----
+
+[[xamarin-initialise]]
+=== Initialise
+
+To use the {ProductShortName} .NET SDK, you will need to initialise the SDK like this in the platform-specific project (not the PCL project) when app finish starting.
+
+[source,csharp]
+----
+try
+{
+  bool inited = await FHClient.Init();
+  if(inited) {
+    //Initialisation is successful
+  }
+}
+catch(FHException e)
+{
+  //Initialisation failed, handle exception
+}
+----
+
+FHClient is available in the following namespaces:
+
+* `FHSDK.Phone` -- For WP8
+* `FHSDK.Droid` -- For Android
+* `FHSDK.Touch` -- For iOS
+
+Depending on your app's build target, only one of these name spaces should be available to your app.
+
+The main reason for having the same `FHClient` class defined in different name spaces is to ensure that the platform-specific assembly file is loaded correctly.
+
+[NOTE]
+--
+The `Init` method is the only one that is called using `FHClient` class, and is the only one that needs to be called from a platform-specific project (for example, Can not be called from a PCL project).
+
+All the other SDK methods are called using `FH` class which is defined in the `FHSDK.dll` assembly. This assembly can be references by other PCL projects. This way if your cross-platform solution contains a PCL project, you can reference this assembly file and call SDK functions from there.
+--
+
+[[xamarin-use-your-own-choice-of-httpclient]]
+== Use your own choice of HttpClient
+
+By default, the .NET SDK will use the https://www.nuget.org/packages/Microsoft.Net.Http/[Microsoft HTTP Client Libraries^] to perform all the http requests. However, if you are developing iOS and Android apps using Xamarin, the https://components.xamarin.com/view/modernhttpclient[ModernHttpClient^] is a better choice. If you want to use that, all you have to do is to install the ModernHttpClient component in your app, then use it like this:
+
+[source,csharp]
+----
+//the following should be called BEFORE FHClient.Init is called
+//use ModernHttpClient on Android
+FHHttpClientFactory.Get = (() => new HttpClient(new OkHttpNetworkHandler()));
+----
+
+If you don't like either of these, you can use whatever HTTP (or REST) client you like. All you need is the cloud host of the app, which you can get using the following method:
+
+[source,csharp]
+----
+string cloudHost = FH.GetCloudHost();
+----
+
+However, the downside of the approach is that your app won't be able to use the analytics service provided by the platform as some meta data is missing in the requests. To re-enable that, all you have to do is to add the meta data returned by the following method as a set of headers to each HTTP request:
+
+[source,csharp]
+----
+IDictionary<string, string> metaData = FH.GetDefaultParamsAsHeaders();
+HttpRequestMessage requestMessage = new HttpRequestMessage(...);
+//then loop through the metaData and add each entry as a http header to your request, using the key as the header name and value as the header value
+foreach(var item in metaData){
+  requestMessage.Headers.Add(item.Key, item.Value);
+}
+...
+----
+
+[[xamarin-use-sdk]]
+== Use SDK
+
+See link:{ClientAPI}[API Docs] for full details on the APIs available within the SDK.

@@ -1,0 +1,88 @@
+// include::shared/attributes.adoc[]
+
+[[web]]
+= Web
+
+:suffix: _2
+include::npm.adoc[]
+
+
+[[web-introduction]]
+== Introduction
+
+This is a Node.js + Express web application. These apps provide more advanced desktop/tablet web portals and mobile websites.
+
+They expose the full power of Node.js for web app development including functionality such as https://github.com/visionmedia/express[Express 4^] and server side templating using template engines such as https://github.com/visionmedia/ejs[ejs^].
+
+They also support static file serving for standard HTML5, CSS and JavaScript.
+
+[[web-new-app]]
+== New App
+
+Download the https://github.com/feedhenry/fh-advanced-webapp-blank-app.git[sample app^] to get started with a new Web App which has the {ProductShortName} SDK already included.
+
+[[web-existing-app]]
+== Existing App
+
+Web Apps apps use our standard JavaScript SDK -- included in the `index.html` file.
+
+[[web-download-copy-sdk]]
+=== Download SDK
+
+[NOTE]
+--
+`fh-js-sdk` is distributed using link:https://www.npmjs.com/[npm^]. To be able to complete the steps below, you must link:{ClientSDK}#install-npm[install npm].
+--
+
+. In the `/public` folder of your app project, open the `package.json` file and add the link:https://github.com/feedhenry/fh-js-sdk/releases/latest[latest version] of `fh-js-sdk` onto the list of dependencies:
++
+[source,json]
+--
+  "dependencies": {
+    "fh-js-sdk": "^2.17.5",
+  }
+--
++
+. In the root folder of your app, execute the following command to install the SDK:
++
+[source,bash]
+--
+sudo npm install fh-js-sdk
+--
++
+This installs the SDK version specified in the dependencies in the `package.json` file
+
+[[web-integrate-sdk]]
+=== Integrate SDK
+
+Add the following code to your `index.html` file.
+
+[source,html]
+----
+<head>
+  <script src="feedhenry.js" type="text/javascript"></script>
+</head>
+----
+
+[[web-set-up-configuration]]
+=== Set up Configuration
+
+Create a new file in the same directory as the SDK file (`feedhenry.js`) called `fhconfig.json`, with the following contents:
+
+[source,javascript]
+----
+{
+  "appid": "__ID_OF_APP_IN_PROJECT__",
+  "appkey": "__APP_API_KEY_OF_APP_IN_PROJECT__",
+  "connectiontag": "__CONNECTION_TAG_TO_USE_FOR_CLOUD__",
+  "host": "__APP_STUDIO_HOST__",
+  "projectid": "__PROJECT_ID__"
+}
+----
+
+More information on connections link:{ProductFeatures}#projects-connections[can be found here].
+
+[[web-use-sdk]]
+== Use SDK
+
+See link:{ClientAPI}[API Docs] for full details on the APIs available within the SDK.

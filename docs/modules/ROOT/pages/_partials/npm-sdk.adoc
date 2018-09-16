@@ -1,0 +1,32 @@
+
+// include::shared/attributes.adoc[]
+
+[#install-npm{suffix}]
+== npm
+
+npm is the package manager for distributing JavaScript code. It is used to install the {ProductShortName} JavaScript SDK for developing Cordova apps.
+
+[#install-npm-installer{suffix}]
+=== Installing Node.js and npm
+
+You must have Node.js installed on your system to use npm.
+It is recommended that you install NodeJS version 4.x or later, which includes npm version 2.x by default.
+
+[#install-npm-package-manager{suffix}]
+==== Install Node.js Using a Package Manager
+
+To install Node.js using your system package manager, follow the instructions appropriate for your system on the link:https://nodejs.org/en/download/package-manager/[Node.js site^]
+
+To check the version of npm you are currently using, execute the following command:
+
+[source,bash]
+--
+sudo npm -v
+--
+
+[#install-npm-rhel{suffix}]
+=== Installing Node.js and npm on Red Hat Enterprise Linux
+
+To install NodeJS on systems running RHEL, you must obtain the installation files from the Red Hat Software Collections. Installing NodeJS requires a subscription to the Red Hat Subscription Manager.
+
+To install NodeJS on RHEL, follow the link:https://developers.redhat.com/products/softwarecollections/hello-world/[guide^] on the Red Hat Developers Portal.

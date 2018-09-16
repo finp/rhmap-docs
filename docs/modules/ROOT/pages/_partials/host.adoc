@@ -1,0 +1,24 @@
+// include::shared/attributes.adoc[]
+
+[[fh-host]]
+= $fh.host
+
+[source,javascript]
+----
+$fh.host(callback);
+----
+
+Fetch the public host name of the MBaaS. Useful for configuring callback URLs in various authentication libraries.
+
+[[fh-host-example]]
+== Example
+
+[source,javascript]
+----
+// Fetch our own host
+$fh.host(function (err, host) {
+  if (err) return console.error(err);
+
+  console.log('Host: ', host);
+});
+----

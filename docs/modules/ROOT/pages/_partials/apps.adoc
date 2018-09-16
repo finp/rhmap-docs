@@ -1,0 +1,228 @@
+// include::shared/attributes.adoc[]
+
+[[apps]]
+= Apps
+
+[[apps-overview]]
+== Overview
+
+There are a wide variety of Apps that can be built via the {ProductName} ({ProductShortName}), including hybrid, HTML5, or Native Apps. Both Client and Cloud Apps can be added to any project. Apps have access to a number of JavaScript API's that offer access to features such as geolocation or back-end storage. Form based Apps can now be created via a simple drag and drop interface.
+
+.Requirements
+The user must be a member of one or more teams with the following permissions:
+
+* Domain -- Project (View)
+* Client App (View & Edit) -- Analytics (View)
+
+.Related Resources
+* https://www.npmjs.com/package/fh-fhc[FHC CLI^]
+
+[[details]]
+== Details
+
+The Details page is opened by default when the *Apps, Cloud Apps and Services* screen is selected. Here users can access overview information regarding the currently selected App. This information includes:
+
+* App Type: The type of your App.
+* App Name: The name of your App. For Client Apps, this is also the name of the App as it will appear on a device.
+* App Description: A description of your App.
+* App ID: Unique identifier for the App. This can be used to perform actions on this App with FHC.
+* App Description: Brief description of the App.
+* App API Key: This is used in conjunction with App ID to allow the App to communicate with a chosen Cloud App.
+* Source Path (Cordova only): The folder containing all source files of the app.
++
+Typically this is `www`. If you want to use a different folder when building or deploying your App, it can be changed here. Preceding and trailing slashes are stripped from paths. For example, if your source folder is `/mysource/folder/`, the path you enter here should be `mysource/folder`. Any build processes you have for your App (Grunt minification etc.) should place finalised assets in this folder.
+* Git SSH URL: URL to clone repository. If this repository is shared with other Apps, these Apps will be listed here.
+* Git Branch: The branch to checkout from the Git repository.
+
+Any of the App details can be updated from this page. In Studio, there is also an App Preview on this screen. Users can choose to preview how the App would appear on either a phone, tablet, or desktop. After one of the devices has been selected in the App preview window, the user can preview how the App would appear on specific device by selecting a specific device from a list of dropdown options.
+
+Apps can also be deleted from the *Apps, Cloud Apps & Services* page.
+
+NOTE: When an App is deleted, its associated Git Repository will be removed and if it's a Cloud App, it will be undeployed.
+
+[[apps-editor]]
+== Editor
+
+The built in editor allows users to edit code within their Apps.
+The built in syntax highlighting feature makes it easier to distinguish between syntactical elements.
+Users can create new files and folders, with saved changes being automatically pushed back to the corresponding Git repository.
+
+After a change has been made, the preview automatically refreshes so you can instantly see your changes take effect.
+Changes can also be pulled in from a Git repository by performing a 'git pull'.
+The following Git functionality is available in the Editor section of the Studio:
+
+* `branch` - see link:https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell[Git Branching - Branches in a Nutshell] for more information or see the link:https://git-scm.com/docs/git-branch[`git-branch`] API.
+* `tag` - see link:https://git-scm.com/book/en/v2/Git-Basics-Tagging[Git Basics - Tagging] for more information or see the link:https://git-scm.com/docs/git-tag[`git-tag`] API.
+* `commit` - see the *Committing Your Changes* section in link:https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository[Git Basics - Recording Changes to the Repository] for more information or see the link:https://git-scm.com/docs/git-commit[`git-commit`] API.
+* `clone` - see the *Cloning an Existing Repository* section in link:https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository[Git Basics - Getting a Git Repository] for more information or see the link:https://git-scm.com/docs/git-clone[`git-clone`] API.
+* `pull` - see the link:https://git-scm.com/docs/git-pull[`git-pull`] API for more infomation.
+
+The App Preview in the Editor section allows users to view how the current App appears on a number of selectable devices.
+
+[[docs]]
+== Docs
+
+If your App contains a `README.md` markdown file in its route, it will be rendered and shown here.
+
+[[apps-analytics]]
+== Analytics
+
+NOTE: The Analytics data is generated once per day.
+
+The Analytics section provides access to a graphical representation of App usage statistics. Data can be examined via a number of categories including Installs, Cloud Requests, StartUps, and Active Devices. This data can be further categorized by date, platform, and location. Graph content is displayed by platform, with the exception of the 'Installs by Location'. Each platform is represented by a different key in the legend. Content in the graphs can be toggled on/off by clicking on the respective platform in the legend.
+
+The date range can be also be customized. Predefined ranges include 'Last 7 days', 'Last 30 days', and 'Previous Month'. Users can also apply their own start and end date to the range.
+
+NOTE: The Analytics page is not to be confused with the 'Reporting' tab. The Reporting tab shows analytical information on a per project basis. The 'Analytics' page shows displays data on a per App basis.
+
+When an App starts for the first time, it makes a call back to the cloud and at this point, a Device Install is recorded.
+A Device Install is different from a User Install. A User Install is tracked by App Stores in the following ways:
+
+* App Stores count an install as a user account performing a download regardless of how many devices the user installs the app on
+* App Stores typically report daily figures in PST time zone while {ProductShortName} reports are aligned to UTC time
+* An App must be started at least once with a valid internet connection before {ProductShortName} tracks the install. {ProductShortName} tracks the install as having happened at the time of the first startup, not the time of download.
+
+[[push]]
+== Push
+
+The Push section allows users to configure push notifications for an App. Learn more about using push notifications in
+the link:{ProductFeatures}#push-notifications[Push Notifications] chapter.
+
+[[building]]
+== Building
+
+The Build feature enables users to build a set of binaries for a selected platform. When performing a build operation, the Cloud App you want the Binary to connect to must be selected. This can be any of the Cloud Apps associated with the project. Builds can be done for any of the following platforms:
+
+* Android
+* iPhone
+* iPad
+* iOS Universal
+
+One of a number of Build Types must also be selected. These include:
+
+* Development Build
+* Distribution Build
+* Release Build
+* Debug Build
+
+Depending on the platform that has been selected, along with the Build Type, a Credential Bundle may be needed to sign the Binary. For more information on Credentials, see the Credentials section below.
+
+Once a build has been successful, its Artifact is added to the Artifact History. The Artifact History provides summary information of the build, including the Platform the binary was built for, the Build Type, and the Credential Bundle used for the build. Selecting an Artifact from the Artifact History gives the option to download the binary again.
+
+NOTE: In order to be able to perform some build operations, you must have first uploaded the relevant credentials via the Credentials page.
+
+[[publishing-app-binaries-to-third-party-mam-and-mdm-providers]]
+=== Publishing App Binaries to Third-party MAM and MDM providers
+
+{ProductShortName} provides support for uploading app binaries to third-party MAM and MDM providers. You can enable or disable support for individual providers in the _Admin > Mobile App Management > Third-party MAM/MDM_ section.
+
+If at least one MAM or MDM provider is enabled, the _Build_ screen of Client Apps shows an _MDM integration_ section with options for individual providers.
+
+[[apperian]]
+==== Apperian
+
+To have the generated binary uploaded to the Apperian App Catalog after building, follow these steps before the build.
+
+. Ensure the domain name of your {ProductShortName} instance is added to a whitelist in Apperian's EASE Portal. See https://help.apperian.com/display/pub/Enable+a+Domain+Whitelist+for+Custom+Admin+Sites[Enable a Domain Whitelist for Custom Admin Sites^] in official Apperian documentation for detailed steps.
+
+. Ensure that the app binary meets the requirements imposed by the Apperian App Catalog. See https://help.apperian.com/display/pub/Add+an+Application#AddanApplication-BeforeYouBegin[Add an Application^] in the official Apperian documentation for the full list of requirements.
++
+[NOTE]
+--
+Some of the {ProductShortName} Client App Templates do not fulfill all of the requirements. For example, you might need to configure an icon file for the app in some cases.
+--
+
+. Enable publishing to Apperian for a particular build.
+.. Select _Push the generated app binary to the Apperian App Catalog_.
+.. Provide your Apperian username and password.
+.. Click __Apperian Login__. After a successful authentication, the _OAuth Token_ field will show a token that will be used for communication with the Apperian API.
+
+The app binary resulting from a subsequent build will be uploaded to the Apperian App Catalog.
+
+[[exporting]]
+== Exporting
+
+The Export section allows the user to export an App via a number of selected platforms. When exporting an App, the Cloud App you want the Binary to connect to, the Platform, and the Version of the Platform must all be specified. Apps are exported as a zip file. When an export is complete, the export is added to the Artifcat History where it cab be redownloaded at any time.
+
+[[credentials]]
+== Credentials
+
+The Credentials section enables users to manage Credential Bundles. New Credential Bundles can be added or imported. A list of existing Credential Bundles can also be viewed.
+
+NOTE: To build an app you must have read access to the associated credential bundle. If you do not have read access, the build will fail.
+
+
+[[credential-bundles]]
+=== Credential Bundles
+
+In order to be able to perform certain types of build, an App must be signed with a Credentials Bundle. A Credential bundle is a combination of resources, such as certificates, provisioning profiles, and private keys, necessary for performing specific types of builds, be it a development build, distribution build, debug build etc. Depending on both the platform, and the build Type, a combination of different resources will constitute a bundle. For more information regarding the individual resources that make up a Credentials Bundle, see the link:{MobileDeveloperGuide}#app-credentials-bundles[Components of a Credentials Bundle] page.
+
+NOTE: To be able to develop Apps for iOS, you must have an Apple Developer Account.
+
+The required credentials for each build type for specific platforms can be seen below:
+
+NOTE: Ensure that the Private Key and its password are stored in a secure location as the Private Key and password are required when configuring a Credential Bundle on {ProductShortName}. When generating a Certificate, ensure that the correct Private Key is used, for example: when working with an iOS Credentials Bundle, use the Development Build's Private Key to generate the Development Build’s Developer Certificate.
+
+.iOS Credentials Bundle
+
+* Development Build
+** Developer Certificate
+** Private Key
+** Development Provisioning Profile
+* Distribution Build
+** Distribution Certificate
+** Private Key
+** Distribution Provisioning Profile
+* Release Build
+** Distribution Certificate
+** Private Key
+** Distribution Provisioning Profile
+
+.Android Credentials Bundle
+
+* Debug Build
+** None
+* Release Build
+** Certificate
+** Private Key
+
+[[create-new-bundle]]
+==== Create New Bundle
+
+Here a new Credentials Bundle can be created and later used to sign binaries during a build. Depending on the platform choosen, different credentials may need to be added to the bundle. For example, when creating an Android Credentials Bundle, a Private Key, and Certificate are required, whereas when creating an iOS Credentials Bundle, a Private Key, Certificate, and Provisioning Profile are required.
+
+[[migrate-existing-dev-resources]]
+==== Migrate Existing Dev Resources
+
+This migrates existing credentials from the old App Studio, and adds them to the Credentials Bundles list.
+
+Once a new bundle is created, or imported via migration, it will appear in the Credentials Bundle List.
+
+[[integrate]]
+== Integrate
+
+The Integrate section allows users to import an existing Client App into a {ProductShortName} project. In order to import an app, you must clone the repo and integrate the app with the {ProductShortName} SDK.
+
+. Clone a Git Repo
++
+Cloning a repository creates an exact copy of an existing repository. All versions of all files in project are pulled down when a 'git clone' is performed. However before you can clone a repository, you need to upload your SSH Public Key. Once a Public Key has been uploaded, repositories can be cloned at will.
++
+For more information regarding cloning a Git repository, see the Git Documentation on http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository[Getting started with Git^].
++
+For a more in-depth list of useful Git commands, see http://git-scm.com/docs[Git Reference^].
+
+. Download SDK
++
+In order to get your app to function, you must integrate it with the {ProductShortName} SDK. An on-screen link is provided to download the most up to date {ProductShortName} JavaScript SDK.
+
+. Copy the JavaScript file to your Project
++
+After the {ProductShortName} SDK has been downloaded, it can be referenced by moving it into the Project you created.
+
+. Copy Initialisation Snippet
++
+You must create an `fhconfig.json` file that contains the id of the app, the app key, the host domain, and the id of the project to be associated with.
+
+. Git Commit and Push
++
+After the SDK has been successfully integrated with the app, the changes can be committed and pushed. The app will now be successfully associated with the project.

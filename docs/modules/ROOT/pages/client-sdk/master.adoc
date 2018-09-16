@@ -1,0 +1,20 @@
+include::{partialsdir}/attributes.adoc[]
+
+= Client SDK
+
+include::{partialsdir}/android.adoc[leveloffset=+1]
+
+
+include::{partialsdir}/androidn.adoc[leveloffset=+1]
+
+include::{partialsdir}/androido.adoc[leveloffset=+1]
+
+include::{partialsdir}/ios.adoc[leveloffset=+1]
+
+include::{partialsdir}/ios-swift.adoc[leveloffset=+1]
+include::{partialsdir}/ios-swift-tp.adoc[leveloffset=+1]
+
+include::{partialsdir}/xamarin.adoc[leveloffset=+1]
+
+include::{partialsdir}/cordova.adoc[leveloffset=+1]
+include::{partialsdir}/web.adoc[leveloffset=+1]

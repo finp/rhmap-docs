@@ -1,0 +1,24 @@
+// include::shared/attributes.adoc[]
+
+[[fh-sync-globalhandledelete-dep]]
+== $fh.sync.globalHandleDelete {oldsync}
+
+[source,javascript]
+----
+$fh.sync.globalHandleDelete(callback)
+----
+
+Similar to $fh.sync.handleDelete, but set the handler globally which means the same handler function can be used by multiple datasets.
+The global handler will only be used if there is no handler assigned to the dataset via $fh.sync.handleDelete.
+
+[[fh-sync-example-13]]
+=== Example
+
+[source,javascript]
+----
+
+$fh.sync.globalHandleDelete(function(dataset_id, uid, cb, meta_data){
+  //delete data for the specified dataset_id and uid
+});
+----
+

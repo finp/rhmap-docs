@@ -1,0 +1,111 @@
+// include::shared/attributes.adoc[]
+
+[[create-a-forms-project-using-fhc]]
+= Create a Forms Project using FHC
+
+.Overview
+This tutorial will show you how to build an Forms Project using FHC. This project will consist of an Forms Client App, along with a Cloud App.
+
+.Requirements
+The user must be a member of one or more teams with the following permissions:
+
+* Project (View & Edit)
+* Drag & Drop Apps (View & Edit)
+
+For more information on Permissions, see link:{ProductFeatures}#teams-and-collaboration[Teams & Collaborations].
+
+[[create-an-appforms-project]]
+== Create a Forms project
+
+First we must create an App Forms Project. This can be done by specifying which template to use when creating a project. This will create a project containing a Hybrid Forms App.
+
+[source,bash]
+----
+fhc projects create FormsProject appforms_project
+----
+
+[[add-a-form]]
+== Add a form
+
+Now that the Project containing the Forms App has been created, the next step is to associate a form with that App. We will do this by specifying the path to the form file we wish to use.
+
+`fhc forms create <form.json>`
+
+For example:
+
+[source,bash]
+----
+fhc forms create ~/Desktop/forms/smallForm.json
+----
+
+[[associate-a-form-with-a-project]]
+== Associate a form with a project
+
+Now that a form has been created on the Platform, we must now associate it with the app inside our project.
+
+`fhc forms apps update <project-id> <form-id>`
+
+For example:
+
+[source,bash]
+----
+fhc forms apps update 534572a3fb19a3983fd92c15 5579624572fb19ajsfig398c
+----
+
+Your App now has a form associated with it. Use the `fhc preview` command to view the current state of your form.
+
+`fhc preview <app-id>`
+
+This will load a preview of your app in the browser. You can see that the form has been successfully associated with the app, however it appears rather bare, as no theme has yet been assigned to make the form more visually appealing.
+
+[[create-a-forms-project-using-fhc-create-a-theme]]
+== Create a theme
+
+A theme is created in a similar way to that of a form. You create the theme.json file and then specify the path to that file using the `fhc themes create` command.
+
+`fhc themes create <theme.json>`
+
+For example:
+
+[source,bash]
+----
+fhc themes create ~/Desktop/themes/CustomTheme.json
+----
+
+[[associate-the-theme-with-the-app]]
+== Associate the theme with the app
+
+Now that the theme has been added to the Platform, you must apply it to the project you created.
+
+NOTE: Themes are associated with Projects, not individual Apps.
+
+`fhc themes app set <project-id> <theme-id>`
+
+For example:
+
+[source,bash]
+----
+fhc themes app set HQgUjokQi7jizH8T-7TD4SQQ 534578160663a687117a4bd1
+----
+
+At this stage you have a functioning Forms Project that contains a Client Forms App, and an Cloud App. The Client App has a form and a theme associated with it. Once again, you can preview using `fhc preview <app-id>`. You will notice that the form is a lot more visually appealing now that a theme has been associated with the project.
+
+[[add-another-appforms-app]]
+== Add another Forms App
+
+If you wanted to add a forms based app to a project, you would do as follows:
+
+`fhc apps create <project-id> <app-title> [<app-template-id>]`
+
+For the template-id you specify the 'appforms_client' template. This creates a Hybrid Forms App.
+
+NOTE: To view all available App Templates, use the 'fhc templates apps' command.
+
+So to add the Forms App to the project, enter the following into the terminal:
+
+[source,bash]
+----
+fhc apps create HQgUjokQi7jizH8T-7TD4SQQ Second_Form_App appforms_client
+----
+
+This has now successfully created another Form based App within your project. You can associate a form and theme with your app exactly as you did before.

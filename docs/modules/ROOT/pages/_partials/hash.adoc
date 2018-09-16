@@ -1,0 +1,29 @@
+// include::shared/attributes.adoc[]
+
+[[fh-hash]]
+= $fh.hash
+
+[source,javascript]
+----
+$fh.hash(options, callback)
+----
+
+Generate the hash value of a given input.
+
+[[fh-hash-example]]
+== Example
+
+[source,javascript]
+----
+var options = {
+  "algorithm": 'SHA256', // Possible values: MD5 | SHA1 | SHA256 | SHA512
+  "text": 'Need more widgets'
+};
+$fh.hash(options, function (err, result) {
+  if (err) {
+    return console.error("Failed to generate hash value: " + err);
+  } else {
+    return console.log("Hash value is :" + result.hashvalue);
+  }
+});
+----

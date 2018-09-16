@@ -1,0 +1,161 @@
+// include::shared/attributes.adoc[]
+
+[[fh-push]]
+= $fh.push
+
+[source,javascript]
+----
+$fh.push(message, options, callback(err, res))
+----
+
+Send a push message from the cloud to registered clients.
+
+[[fh-push-example]]
+== Example
+
+.Push a message to all devices in all Client Apps of the associated project
+[source,javascript]
+----
+var message = {
+  alert: "hello from FH"
+}, options = {
+    broadcast: true
+};
+
+$fh.push(message, options,
+  function (err, res) {
+    if (err) {
+      console.log(err.toString());
+    } else {
+      console.log("status : " + res.status);
+    }
+  });
+----
+
+.Push a message for specific deviceType in a specific Client App
+[source,javascript]
+----
+var message = {
+  alert: "hello from FH"
+},
+  options = {
+    apps: ["3uzl1ebi6utciy56majgqlj8"], // list of App IDs
+    criteria: {
+      deviceType: "android"
+    }
+  };
+$fh.push(message, options,
+  function (err, res) {
+    if (err) {
+      console.log(err.toString());
+    } else {
+      console.log("status : " + res.status);
+    }
+  });
+----
+
+[[fh-push-silent-notification]]
+== Example Silent Push (iOS only)
+
+.Cloud App Example:
+[source,javascript]
+----
+var message = {
+  'apns' : {
+    'contentAvailable' :1
+  }
+};
+
+var options = {
+  broadcast: true,
+};
+
+$fh.push(message, options, function (err, res) {
+  if (err) {
+    console.log('Push error:' + err.toString());
+  } else {
+    console.log("status from Unified Push : " + util.inspect(res));
+  }
+});
+----
+
+.Client App (Cordova) Example:
+[source,javascript]
+----
+onNotification: function (event) {
+  // content-available: 1 means Silent Notification
+  if (event['content-available'] === 1) {
+    //get the content and inform about the result
+    var push = window.push;
+    // call the fetchCompletionHandler not to terminate this app.
+    push.setContentAvailable(push.FetchResult.NewData);
+  }
+}
+----
+
+.Example of Log Output:
+
+[source,bash]
+----
+Sep 21 11:00:19 device_name SimpleCordovaPushApp[2192] <Warning>: Background Fetch
+Sep 21 11:00:19 device_name SimpleCordovaPushApp[2192] <Warning>: didReceiveNotification
+Sep 21 11:00:19 device_name SimpleCordovaPushApp[2192] <Warning>: Notification received
+----
+
+[[fh-push-parameters]]
+== Parameters
+
+[[fh-push-notification]]
+=== Notification
+
+* `message` Object
+** `alert` String -- The main message
+** `sound` String -- The name of a sound file in the app bundle, or `default`
+** `badge` String -- The number to display as the badge of the app icon
+** `userData` Object -- Any extra user data to be passed
+
+NOTE: For iOS, the `sound` triggers when the push notification is delivered to the client device. For Android, it triggers when the push notification is opened on the client device.
+
+[[fh-push-ios-specific]]
+=== iOS-specific
+
+* `message.apns` Object -- Options specific to the https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/APNSOverview.html#//apple_ref/doc/uid/TP40008194-CH8-SW1[Apple Push Notification Service]
+** `title` String -- A short string describing the purpose of the notification
+** `action` String -- The label of the action button
+** `urlArgs` Array -- (Safari only) Values that are paired with the placeholders inside the urlFormatString value of your website.json file
+** `titleLocKey` String --  (iOS only) The key to a title string in the Localizable.strings file for the current localization
+** `titleLocArgs` Array -- (iOS only) Variable string values to appear in place of the format specifiers in title-loc-key
+** `actionCategory` String -- The identifier of the action category for the interactive notification
+** `contentAvailable` Number -- (iOS only) Informs the application that new content is available by delivering a xref:fh-push-silent-notification[silent notification]. The only possible value is `1`.
+
+[[fh-push-other-configuration]]
+=== Other configuration
+
+* `options` Object
+* `options.config` Object
+** `ttl` Number -- (APNS and GCM only) The time to live in seconds.
+
+
+[[fh-push-selection-of-client-apps-in-project]]
+=== Selection of Client Apps in project
+
+WARNING: One of the options -- `broadcast` or `apps` -- must be set manually, there is no default value.
+
+* `options.broadcast` Boolean -- when set to `true`, notification will be sent to all Client Apps in the project which contains the sending Cloud App
+* `options.apps` Array -- list of Client App IDs to send the notification to
+
+[[fh-push-filtering-recipients]]
+=== Filtering recipients
+
+* `options.criteria` Object -- Criteria for selection of notification recipients. +
+See link:{ProductFeatures}#sending-notifications[Sending Notifications] for details about these
+criteria.
+** `alias` Array -- list of user-specific identifiers
+** `categories` Array -- list of categories
+** `deviceType` Array -- list of device types
+** `variants` Array -- list of variant IDs
+
+[[fh-push-response-handling]]
+=== Response handling
+
+* `callback(err, res)` Function -- callback invoked after the message is pushed to the integrated push server. If `err` is set, it contains any possible error response. Parameter `res` contains the normal server response.

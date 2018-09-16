@@ -1,0 +1,41 @@
+// include::shared/attributes.adoc[]
+[[fh-sync-handlecollision-dep]]
+== $fh.sync.handleCollision {oldsync}
+
+[source,javascript]
+----
+$fh.sync.handleCollision(dataset_id, callback)
+----
+
+Defines a handler function for dealing with data collisions (that is, stale updates). Should be called after the dataset is initialised.
+
+[[fh-sync-example-14]]
+=== Example
+
+[source,javascript]
+----
+// Typically a collision handler will write the data record to a collisions table
+// which is reviewed by a user who can manually reconcile the collisions.
+$fh.sync.handleCollision(dataset_id, function(dataset_id, hash, timestamp, uid, pre, post, meta_data) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // Unique hash value identifying the collision
+  console.log(hash);
+
+  // Date / time that update was created on client device
+  console.log(timestamp);
+
+  // Unique Identifier for row
+  console.log(uid);
+
+  // The data row the client started with
+  console.log(pre);
+
+  //The data row the client tried to write
+  console.log(post);
+
+  // sample back-end storage call
+  saveCollisionData(dataset_id, hash, timestamp, uid, pre, post);
+});
+----

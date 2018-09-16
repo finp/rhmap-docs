@@ -1,0 +1,14 @@
+include::{partialsdir}/attributes.adoc[]
+
+= Platform API
+
+include::{partialsdir}/apikeys_api.adoc[leveloffset=+1]
+include::{partialsdir}/appstore_api.adoc[leveloffset=+1]
+include::{partialsdir}/authpolicies_api.adoc[leveloffset=+1]
+include::{partialsdir}/cloudalerts_api.adoc[leveloffset=+1]
+include::{partialsdir}/cloudevents_api.adoc[leveloffset=+1]
+include::{partialsdir}/devices_api.adoc[leveloffset=+1]
+include::{partialsdir}/endpointsecurity_api.adoc[leveloffset=+1]
+include::{partialsdir}/roles_api.adoc[leveloffset=+1]
+include::{partialsdir}/teams_api.adoc[leveloffset=+1]
+include::{partialsdir}/users_api.adoc[leveloffset=+1]

@@ -1,0 +1,59 @@
+// include::shared/attributes.adoc[]
+
+[[fh-sync-invoke]]
+== $fh.sync.invoke
+{syncnote} xref:fh-sync-invoke-dep[section for the old version]
+
+Invoke internal sync functions of the sync server.
+Typical development does not require you to invoke these functions.
+Note that the _params_ object is the same as the request body from Sync clients, because this API is called by Sync clients.
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.invoke(dataset_id, params, callback)
+----
+
+=== Parameters
+
+==== dataset_id
+* Description: the id of the dataset
+* Type: String
+
+==== *params*
+* Description: Specify the target function name, also passed to the target function.
+* Type: Object
+* Supported Keys:
+** *fn*
+*** Description: specify the name of the target function to invoke. Supported functions including:
+**** _sync_
+**** _syncRecords_
+**** _listCollisions_
+**** _removeCollision_
+*** Type: String
+** Other fields vary depending on the target function. Please check the source code for the required fields.
+
+=== Example
+
+[source,javascript]
+----
+var datasetId = "todo";
+var syncRecordsParams = {
+  fn: 'syncRecords',
+  dataset_id: datasetId,
+  query_params: {},
+  clientRecs: {},
+  __fh: {
+    cuid: 'testdeviceid'
+  }
+};
+
+$fh.sync.invoke(datasetId, syncRecordsParams, function(err, syncData) {
+  if (err) {
+    console.error('Failed to call syncRecords due to error', err);
+  } else {
+    console.log('Got sync data', syncData);
+  }
+});
+----

@@ -1,0 +1,151 @@
+// include::shared/attributes.adoc[]
+
+[[teams-and-collaboration]]
+= Teams and Collaboration
+
+[[teams-and-collaboration-overview]]
+== Overview
+
+The Teams and Collaboration section allows you to restrict access to specific features and entities within the {ProductName} ({ProductShortName}).
+
+The functionality in this section includes
+
+* Creating new Teams.
+* Adding Users to one or more Teams. When a User is added to a Team, they become a `Member` of that team. All of the Permissions assiged to the team will apply to the user.
+* Assigning Permissions to teams to restrict access to specific features of the Platform.
+
+Teams are split into two categories
+
+1.  *Default Teams* are Teams created by the Platform. The permissions and details (for example, name and description) of a `Default Team` are not editable. Only Users can be added/removed as `Members` of a `Default Team`.
+2.  *User Created Teams* are teams created by a User. The details and Permissions of a User Created Team are fully editable.
+
+[[team-list]]
+=== Team List
+
+This screen presents a list of currently available teams. In this screen, it is possible to
+
+* Display a list of Teams in grid or tabular format.
+* Search for a Team by name.
+* Filter the list of Teams by `Customer` and `Domain`.
+* Create a new Team by selecting the `Create Team` button.
+
+[[create]]
+== Create
+
+A Team can be created by entering a `name` and `description` and selecting the `Create Team` button.
+
+[[dashboard]]
+== Dashboard
+
+The Dashboard screen displays the details of the Team. In this screen, it is possible to
+
+* View a list of Users currently assigned to the Team. These are refereed to as `Members` of a Team.
+* Edit the `Members` list by clicking on the `Edit Members` link or the `Members` tab located on the left of the screen.
+* View the current `Permissions` assigned to the Team.
+* Edit the `Permissions` assigned to this team by selecting the `Edit Permissions` link or the `Permissions` tab located on the left of the screen.
+* Edit the name and description of a Team.
+* Delete the currently selected team by selecting the `Delete this Team` button
+
+NOTE: The `name` or `description` of a `Default Team` cannot be edited.
+
+NOTE: A `Default Team` cannot be deleted.
+
+[[members]]
+== Members
+
+The Members section allows you manage the Members of a Team. In this screen it is possible to
+
+* View a list of current Members of the current Team.
+* Add a User to the team by clicking into the text area and selecting a User. The selected User is atuomatically added as a Member of the Team.
+* Remove a Member by selecting the "Remove" button beside each Member of a Team.
+* Edit the name and description of a Team by selecting the `Edit` button.
+
+NOTE: A User can be a `Member` of multiple teams.
+
+[[permissions]]
+== Permissions
+
+The Permissions section allows you to set the Permissions associated with the currently selected Team. All `Members` of the team will be restricted to the Permissions associated with this team.
+
+[[key-terms]]
+=== Key Terms
+
+Here are key terms used when interacting with Permissions.
+
+* *Business Object*: A label describing an Entity in the Platform. (For example, Project).
+* *Entity*: An instance of a Business Object. (For example, A project called *My First Project* is an instance of the Project Business Object.)
+*Permission*: An Access Level applied to a business object for example (read,write).
+* *Team*: A collection of permissions that are applied to chosen business objects.
+* *Hierarchy*: Describes where business objects sit in relation to each other and also describes functional areas of the ui
+
+[[business-objects]]
+=== Business Objects
+
+All Permissions are set on Business Object.
+
+Business Objects relate to functional areas of the Platform organised into a hierarchy that describe its structure.
+
+As an example, setting Permissions on the `Administrator` element under `Reseller` means Setting Permissions for Administrator features for this `Reseller`.
+
+[[access-levels]]
+=== Access Levels
+
+There are three Access Levels that apply to Business Objects.
+
+* *No Access:* The `Team` cannot access this Business Object.
+* *View:* The `Team` can view the Business Object, but cannot perform any action that would modify the Business Object.
+* *View & Edit:* The `Team` can view the Business Object and perform actions that would modify the Business Object.
+
+[[inheritance]]
+=== Inheritance
+
+Business Objects are organised into a hierarchy. Business Objects can refer to a large functonal area of the Platform (for example, An Entire `Domain`). Sub-Business Objects refer to a more specific functional area of the Platform (for example, a `Project` in a `Domain`).
+
+Using this structure, the `Permissions` of sub-Business Objects can be inherited from its parent. This is determined by the `Inherit Permissions` selector. If the `Inherit Permissions` selector is set to `ON`, the sub-Business Object will inherit the permissions of its parent. If `Inherit Permissions` is set to `OFF`, a specific `Access Level` must be set for the sub-Business Object.
+
+NOTE: Business Objects can inherit `Permissions` from more than one level above as long as the parent level has `Inherit Permissions` set to `ON`.
+
+The order of precedence of a `Permission` is determined by the `Access Level` set on the Business Object.
+
+The following order is followed when determining what `Access Level` is set on the Business Object:
+
+. Read & Write.
+. View.
+. No Access.
+. Inherit Permissions.
+
+[[multiple-teams]]
+=== Multiple Teams
+
+A User can be a `Member` of multiple `Teams`. In this case, the order of precedence above is followed when determining what `Access Level` applies to the Business Object.
+
+To illustrate this concept, consider the following scenario:
+
+* *Team A* sets an `Access Level` of `Inherit Permissions` on *Business Object A*.
+* *Team B* sets an `Acesss Level` of `View` on *Business Object A*.
+* *User A* is a member of *Team A* and *Team B*.
+
+In this scenario, *Business Object A* will have an `Access Level` of `View`.
+
+[[filterable-business-objects]]
+=== Filterable Business Objects
+
+Some Business Objects have multiple instances. For example, the `Project` Business Object relates to any `Project` available on a domain. As multiple projects can exist in a Domain it is necessary to be able to apply permissions to specific Projects.
+
+A Filterable Business Object can be filtered in two ways
+
+. Setting `Access All` to `ON` will allow the Team to access all of the instances of the Business Object. For example, setting `Access All` to `ON` for the `Project` Business Object will allow the team to access all Projects in a Domain.
+
+. Setting `Access All` to `OFF` allows you to select which instances of the Busiess Object the Team has access to.
+
+Any instance of a Business Object created by a User is visible to that user. However the permissions assigned to the Business Object will still apply.
+
+As an example, consider the following scenario:
+
+* *User A* is a `Member` of *Team A*.
+* The `Project` Business Object `Access Level` is set to `Read & Write`.
+* *User A* creates a new `Project` called *Project A*.
+* For *Team A* the `Project` Business Object `Access All` is set to `OFF`.
+* No instances of the `Project` Business Objects are selected.
+
+In this scenario, *User A* will be able to see *Project A* only in the Projects section of the Studio.

@@ -1,0 +1,103 @@
+[[fh-sync-globalhandlelist]]
+== $fh.sync.globalHandleList
+{syncnote} xref:fh-sync-globalhandlelist-dep[section for the old version]
+
+Defines a global handler function for listing data from the Dataset Backend.
+
+It can be used by multiple datasets, but typically, is only used if there is no handler assigned to the dataset using the xref:fh-sync-handlelist[handleList API].
+
+NOTE: Make sure the returned data is valid http://www.json.org/[JSON objects]. For example, a Date object is not valid in a JSON Object.
+
+NOTE: Make sure there is no `_id` field in the returned data (or any of the nested objects). 
+MongoDB does not save data that contains the `_id` field.
+
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.globalHandleList(function listHandler(dataset_id, query_params, meta_data, cb){});
+----
+
+=== Parameters
+
+==== listHandler
+* Description: The function that is invoked when listing records
+* Type: Function
+* Invoked Parameters:
+** *dataset_id*
+*** Description: the id of the dataset
+*** Type: String
+** *query_params*
+*** Description: the query parameter to use as part of the list, can be null.
+*** Type: Object
+** *meta_data*
+*** Description: the meta data associated with the data, can be null.
+*** Type: Object
+** *cb*
+*** Description: the callback function
+*** Type: Function
+
+=== Example
+
+[source,javascript]
+----
+$fh.sync.globalHandleList(function(dataset_id, params, meta_data, cb) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // JSON object representing query parameters passed from the client.
+  // These can be used to restrict the data set returned.
+  console.log(params);
+
+  // The callback into the sync service to store the dataset
+  // cb(err, data)
+  cb(null, { // A JSON Object - representing the data
+    uid_1 : {/* data */},
+    uid_2 : {/* data */},
+    uid_3 : {/* data */}
+  });
+});
+
+// It is recommended that the handleList function converts data from the back end
+// format into a full JSON Object.
+// This is a sensible approach when reading data from relational and nonrelational
+// databases, and works well for SOAP and XML data.
+// However, it may not always be feasible - for example, when reading non structured data.
+// In these cases, the recomened approach is to create a JSON object with a single
+// key called “data” and set the value for this key to be the actual data.
+// for example, xml data
+/*
+<dataset>
+  <row>
+    <userid>123456</userid>
+    <firstname>Joe</firstname>
+    <surname>Bloggs</surname>
+    <dob>1970-01-01</dob>
+    <gender>male</gender>
+  </row>
+</dataset>
+*/
+/* json data
+{
+  "123456" : {
+    "userid" : "123456",
+    "firstname" : "Joe",
+    "surname" : "Bloggs",
+    "dob" : "1970-01-01",
+    "gender" : "male"
+  }
+}
+*/
+
+// And for non structured data:
+/*
+123456|Joe|Bloggs|1970-01-01|male
+
+{
+  "123456" : {
+    "data" : "123456|Joe|Bloggs|1970-01-01|male"
+  }
+}
+*/
+----

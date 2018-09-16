@@ -1,0 +1,92 @@
+// include::shared/attributes.adoc[]
+
+[[create-a-forms-project]]
+= Create a Forms Project
+
+.Overview
+This tutorial will cover how to:
+
+* Create a Forms Project
+* Associate a Form with an existing Project
+
+.Requirements
+* App Studio Account
+
+[[create-a-forms-project-1]]
+== Create a Forms Project
+
+There are two ways in which a Forms Project can be created using Drag & Drop Apps:
+
+[[create-a-forms-project-via-the-projects-section]]
+=== 1. Create a Forms Project via the Projects Section
+
+. Click the `Projects` section to be brought to the Project creation area.
+
+. Choose the `New Project` option. +
+  You will now be presented with a screen that allows you to both name your project, and select a template to base the project on. One of the selectable options is `Forms Project`.
+
+. Select the `Forms Project` template.
+
+. Click `Create`. +
+  Once the project has been created, you will be prompted to associate a theme and form(s) with it.
+
+. Select a theme and a form to be associated with the Project.
+
+. Click `Save`.
+
+You have now successfully created a Forms Project via the `Projects` tab.
+
+[[create-a-forms-project-via-the-forms-section]]
+=== 2. Create a Forms Project via the Drag & Drop Apps Section
+
+. Select `Drag & Drop Apps` from the menu bar.
+. Select `Forms Projects` from the sub-navigation menu bar.
+. Select the `New Forms Project` option. +
+  From here you have the option to either `Create New Project` or `Use Existing Project`.
+
+. Select `Create New Project`. +
+  You will be prompted to enter a name for the project you are about to create.
+
+. After you have entered a name, click the `Next` button. +
+  You will then be asked to associate a theme and form(s) with the Project.
+
+. Select a theme and form(s) to be associated with the Project.
+. Click `Finish`.
+
+You have now successfully created a Forms project via the `Drag & Drop Apps` tab.
+
+[[associate-a-form-with-an-existing-project]]
+== Associate a form with an Existing Project
+
+There are two ways in which forms can be added to an existing project.
+
+[[associate-forms-with-a-project-via-the-project-section]]
+=== 1. Associate Forms with a Project via the Forms Projects Section
+
+. Select a project from the `Forms Projects` section. +
+  After a project has been selected, the project subnav will be displayed. A `Project Forms & Themes` tab can be seen in this subnav.
+
+. Select the `Project Forms & Themes` option from the subnav. +
+  The Forms section allows users associate themes and forms with a project. To add a theme, simply select a theme from the dropdown menu. To add a form, click in the forms field, and a list of available forms will appear.
+
+. Select the form(s) you wish to associate with the project.
+
+. Click `Save`.
+
+The form has now been successfully associated with a project.
+
+[[associate-forms-with-a-project-via-the-forms-section]]
+=== Associate Forms with a Project via the Forms Builder Section
+
+. Select the `Forms Builder` section from the Menu bar.
+
+. Select the `New Forms Project` option. +
+  You will now be given the option to either `Create New Project` or `Use Existing Project`.
+
+. Select the option to `Use Existing Project`. +
+  You will now be prompted to associate a theme and form(s) with the Project.
+
+. Select a theme and form(s) to be associated with the Project.
+. Click `Finish`.
+
+You have now successfully associated a form with a Project via the `Forms Builder` Section.

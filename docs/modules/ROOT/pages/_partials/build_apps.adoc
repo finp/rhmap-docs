@@ -1,0 +1,55 @@
+// include::shared/attributes.adoc[]
+
+[[building-an-app-binary]]
+= Building an App Binary
+
+.Overview
+This tutorial will cover how to build a mobile app binary using FHC. Building App Binaries with the {ProductName} ({ProductShortName}) makes use of the cloud hosted "Build Farm" which is used to turn source code into mobile apps. If you have local developer tools installed (such as Xcode or ADT), you are free to build app binaries locally yourself. However, using the {ProductShortName} Build Farm allows you to automate the build process, maintain a history of previous builds and build apps for platforms which you may not have developer tools for (for example, building iOS binaries from a Linux OS).
+
+.Requirements
+Before starting this tutorial, you should have completed the following tutorials:
+
+* xref:installing-fhc[Installing FHC]
+* xref:working-with-projects-apps[Working with Projects & Apps]
+
+[[fhc-build-command]]
+== fhc build command
+
+There are a number of parameters that need to be specified to perform a build using fhc. This will vary depending on the type of build, and the platform for which you are building. During the xref:working-with-projects-apps[Working with Projects and Apps] tutorial, we created a cordova hybrid app as part of the project. We will now use that app to perform a build for Android.
+
+The fhc build command takes the following parameters:
+
+* `project=<project-id>` -- the guid of the project.
+* `app=<app-id>` -- the guid of the Client App to build app.
+* `cloud_app=<cloud-app-id>` -- the guid of the Cloud App which the Client App should connect to.
+* `tag=<tag>` -- the http://semver.org[Semver^] tag to use for this build. See link:{ProductFeatures}#projects-connections[Connections] for more details.
+* `destination=<destination>` -- the type of build -- e.g android, iOS, windowsphone.
+* `version=<version>` -- the specific OS version to target for the destination.
+* `config=<config>` -- the type of build to perform -- 'debug' (default), 'distribution' or 'release'.
+* `keypass=<private-key-password>` -- the password for the private key used for building (only needed for release builds).
+* `certpass=<certificate-password>` -- the password for the certificate used for building (only needed for release builds).
+* `download=<true|false>` -- whether or not to download the generated binary.
+* `provisioning=<path-to-provisioning-profile>` -- the path to the provisioning profile to be used for the build.
+* `cordova_version=<cordova-version>` -- the version of cordova to use.
+* `environment=<environment>` -- the id of a target environment -- e.g dev.
+
+Not all of these parameters are required for all build types. For more information use the `fhc build --help` command.
+
+When building an app, we must tell fhc the project the app is in as well as the app id. You must then enter the id of the Cloud App that the Client App speaks to. Client Apps are pointed towards Cloud apps via a connection. Clients can communicate with various Cloud apps via a number of different connections, and so when performing a build you must also specify the connection tag you wish to use.
+
+[source,bash]
+----
+fhc build project=XME5iUr2VoBV3DbXrVF7qApG app=XME5iNsoeRA2xvbmaDYMCdsi cloud_app=XME5iHzfwW9hcGw6_F7Eiwvf tag=0.0.3 destination=android config=debug keypass= certpass= download=true
+----
+
+When the build has been completed, you will get confirmation output similar to what is displayed below.
+
+----
+Download URL: Download URL: https://ngui-demo.sandbox.feedhenry.com/digman/android-v3/dist/3e0837f2-76b6-4512-881c-bd3bf427929d/android~4.0~7~HelloWorldClient.apk?digger=diggers.digger206u
+----
+
+
+[[building-an-app-binary-next-steps]]
+== Next Steps
+
+* https://www.npmjs.com/package/fh-fhc[FHC CLI^]

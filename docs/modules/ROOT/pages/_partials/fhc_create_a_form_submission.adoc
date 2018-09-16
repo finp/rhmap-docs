@@ -1,0 +1,89 @@
+// include::shared/attributes.adoc[]
+
+[[create-a-form-submission-using-fhc]]
+= Create a Form submission using FHC
+
+.Overview
+This tutorial will inform you of how to list, retrieve, and generate form submissions.
+
+.Requirements
+The user must be a member of one or more teams with the following permissions:
+
+* Domain -- Drag & Drop Apps
+* Form (View & Edit) -- Submission (View & Edit)
+
+For more information on Permissions, see link:{ProductFeatures}#teams-and-collaboration[Teams & Collaborations].
+
+In order to complete this tutorial, you will have to already have created a form. See xref:create-a-form-using-fhc[Form Creatation] for a guide to creating a new form.
+
+[[listing-submissions]]
+== Listing submissions
+
+In order to list submissions for a form, you can use either the `fhc submissions` or the `fhc submissions list` command.
+
+[source,bash]
+----
+fhc submissions list
+----
+
+This will return a list of all submissions for all forms you have access to.
+
+[[return-a-specific-submission]]
+== Return a specific submission
+
+The `fhc submissions get` command can be used to return a specific submission based on its id.
+
+`fhc submissions get <submission-id>`
+
+This will return that specific submission. You can also save the submission in .pdf form simply by appending a filename with the `.pdf` suffix.
+
+`fhc submissions get <submission-id> <filename>.pdf`
+
+For example:
+
+[source,bash]
+----
+fhc submissions get 534cf14de078a2c47291e5b3 savedSubmission.pdf
+----
+
+[[submission-status]]
+== Submission status
+
+You can check the status of a submission by using the `fhc submissions status` command in conjunction with a specific submission id.
+
+[source,bash]
+----
+fhc submissions status 5335bc00d4598fdb5cae04f7
+----
+
+[[submitting-a-submission]]
+== Submitting a Submission
+
+You can submit data for a submission by passing a submission.json file into the `fhc submissions submitdata` command.
+
+`fhc submissons submitdata <submission.json>`
+
+For example:
+
+[source,bash]
+----
+fhc submissions submitdata ~/Desktop/templateForSubmission.json
+----
+
+You can complete a submission by using the `fhc submissions complete <submission-id>` command to push mark the submission as finished.
+
+[source,bash]
+----
+fhc complete submissions complete 5335bc00d4598fdb5cae04f7
+----
+
+Just as you can save submissions as PDF's, you can also save submissions as zip files. This can be useful if a particular project has a number of submissions.
+
+`fhc submissions export file=<zip-file> app=<project-id> || form=<form-id>`
+
+NOTE: The project parameter is passed into the app field `app=<project-id>`.
+
+[source,bash]
+----
+fhc submissions export file=submissions.zip app=H_DNbFNJWS9uZIt7LJOkut20
+----

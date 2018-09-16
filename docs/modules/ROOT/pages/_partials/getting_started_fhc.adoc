@@ -1,0 +1,199 @@
+// include::shared/attributes.adoc[]
+
+[[getting-started-fhc]]
+= Getting Started with FHC
+
+The following information describes how to create a new Project based on a sample template.
+
+`fhc` is used to clone a Project to a local machine.
+`npm` is used to install dependencies for local development.
+`Grunt` is used to start a new Hybrid Client and Node.js Cloud App locally for development within a browser.
+
+.Video Tutorial
+
+* http://vimeo.com/97337585[{ProductShortName} - Create an App^]
+
+.Prerequisites
+
+* xref:installing-fhc[]
+* Node.js and Git installed locally
+
+[[targeting-an-rhmap-domain-with-fhc]]
+== Targeting an RHMAP domain with FHC
+
+First you need to target(connect) your {ProductShortName} domain using `fhc`.
+
+Open a command line application, for example, the Terminal on Linux or MacOS, or a command prompt on Windows.
+
+Target your domain by replacing `<domain-url>` with the URL of your domain:
+
+[source,bash]
+----
+fhc target <domain-url>
+----
+
+Next you will be required to enter in your {ProductShortName} credentials. Enter the following command and replace `<email or alias>` with your username or email address.
+
+[source,bash]
+----
+fhc login
+Username : <email or alias>
+----
+
+Enter your password:
+
+....
+Password : <enter password>
+....
+
+You are now logged into the {ProductShortName} domain you have targeted.
+
+
+[[creating-first-project]]
+== Creating Your First Project
+
+
+The following information describes how to create a new Project based on the `hello_world_project` template.
+
+See the list of available project templates:
+
+[source,bash]
+----
+fhc templates projects
+----
+
+Replace the `project name` with the chosen project name and execute:
+
+NOTE: Make sure to pass the name of the template `hello_world_project` as a parameter too.
+
+[source,bash]
+----
+fhc projects create <project name> hello_world_project
+----
+
+If successful, a JSON response with all Project information is displayed, for example:
+
+[source,javascript]
+----
+{
+  "type": "PROJECT",
+  "template": null,
+  "sysCreated": 1397636395777,
+  "guid": "jJHtgZXQPJxXDFJO2pQzMP-d",
+  // ...
+  "apps": [
+    {
+      "type": "client_hybrid",
+      "description": "",
+      "domain": "testing",
+      "template": null,
+      "email": "joebloggs@feedhenry.com",
+      //...
+    }
+  ],
+  "templateId": "default",
+  "jsonTemplateId": "hello_world_project"
+}
+----
+
+IMPORTANT: Note down the `guid`, it is required for the following steps.
+
+
+To review the project information, enter the following command, replacing `project guid` with the `guid` from the previous step.
+
+[source,bash]
+----
+fhc projects read <project guid>
+----
+This command returns a JSON object shown in the previous step, containing all project information.
+
+Clone the Project to a local machine. Replace the `project name` with the chosen Project name, and also `project guid` with the `guid` from the JSON object:
+
+[source,bash]
+----
+mkdir <project name> ; cd <project name> ; fhc projects clone <project guid>
+----
+
+Replace the `project name` with your project name to see the MBaaS example or Cloud App:
+[source,bash]
+----
+cd <project name>-Hello-World-MBaaS-Instance ; ls -l
+----
+
+Install Cloud App dependencies:
+[source,bash]
+----
+npm install
+----
+
+Install the *grunt CLI* using the `-g` flag to install the grunt globally:
+[source,bash]
+----
+[sudo] npm install -g grunt-cli
+----
+
+The Cloud App instance is now ready to be deployed to a local machine.
+
+
+[[deploying-a-cloud-app]]
+== Deploying a Cloud App
+
+To start the cloud server locally:
+[source,bash]
+----
+grunt serve
+----
+
+The console should output information to indicate that the Cloud App is running on `port 8001` on local machine. 
+
+Enter the following curl request on the local machine to test that the Cloud instance is running:
+
+[source,bash]
+----
+curl http://localhost:8001/cloud/hello?hello=world
+----
+
+A similar response should be displayed:
+
+[source,json]
+----
+{
+  "msg":"Hello world"
+}
+----
+
+If you received the above response from this curl attempt, your Cloud App is running locally.
+
+[[deploying-a-client-app]]
+== Deploying a Client App
+
+Notice the following command is a chained command. The first part navigates up a level in the directory tree. The second part navigates down a level to the client directory.
+
+Enter the following command, replacing  `project name` with the name of your project.
+
+[source,bash]
+----
+cd .. ;  cd <project name>-Hello-World-Client ; ls -l
+----
+
+Install all dependencies for the Client App:
+[source,bash]
+----
+npm install .
+----
+
+Run the Client App locally:
+[source,bash]
+----
+grunt serve:local
+----
+
+If successful, a window opens in your default browser.
+
+[[getting-started-fhc-summary]]
+== Summary
+
+The Platform hosts all Git repositories. Every app within a project will have its own Git repo.
+Normal Git procedures and processes are performed by changing directory into either the Client App or Cloud App examples.
+
+You are now setup to develop your {ProductShortName} project locally.

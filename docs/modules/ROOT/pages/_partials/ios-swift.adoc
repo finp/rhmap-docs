@@ -1,0 +1,136 @@
+// include::shared/attributes.adoc[]
+
+[[native-ios-swift]]
+= Native iOS (Swift)
+
+[[native-ios-swift-download]]
+== Download
+
+* https://github.com/feedhenry/fh-ios-swift-sdk/releases[SDK^]
+* https://github.com/feedhenry-templates/blank-ios-swift.git[Sample App^]
+
+[WARNING]
+--
+If you use an enterprise distribution certificate to sign a Swift-based iOS app built using the Build Farm, the resulting app may crash upon startup.
+
+If you encounter this problem, refer to the Red Hat Knowledge Base article https://access.redhat.com/solutions/2292651[Swift-based iOS application crashes upon startup when signed using an enterprise distribution certificate without Organisational Unit field^] for detailed instructions on how to resolve the problem.
+--
+
+
+:suffix: _1
+
+include::cocoapods.adoc[leveloffset=+1]
+
+[[native-ios-swift-get-started]]
+== Get Started
+
+This SDK lets you use {ProductShortName} APIs in Swift apps for iOS version 8 or higher.
+
+The {ProductShortName} iOS Swift SDK is an open-source project hosted in the https://github.com/feedhenry/fh-ios-swift-sdk[FeedHenry iOS SDK repository^] on Github. Feel free to fork it and make a contribution to this project.
+
+Before using this SDK:
+
+* Install the Xcode IDE. You can download Xcode from the https://developer.apple.com/xcode/[Apple Developer Portal^].
+* Install the CocoaPods dependency management system as described in xref:install-cocoapods_1[].
+
+[[native-ios-swift-new-app]]
+=== New App
+
+Clone the https://github.com/feedhenry-templates/blank-ios-swift.git[sample app^] to get started with a new iOS application which has the {ProductShortName} iOS Swift SDK included as a CocoaPods dependency.
+
+[source,bash]
+----
+git clone https://github.com/feedhenry-templates/blank-ios-swift.git
+cd blank-ios-app
+----
+
+Fetch the dependencies defined in the https://github.com/feedhenry-templates/blank-ios-swift/blob/master/Podfile[Podfile^]:
+
+[source,bash]
+----
+pod install
+----
+
+Open the `blank-ios-app.xcworkspace` workspace in Xcode. The required dependencies are located in the Pods group.
+
+[[native-ios-swift-existing-app]]
+=== Existing App
+
+If your app does not have a Podfile already, create a new file named `Podfile` at the root of your project with the following contents:
+
+----
+source 'https://github.com/CocoaPods/Specs.git'
+
+project 'ProjectName.xcodeproj'
+platform :ios, '8.0'
+use_frameworks!
+
+target 'TargetName' do
+    pod 'FeedHenry', '4.1.1'
+
+end
+----
+
+Replace '4.1.1' with the version of {ProductShortName} iOS Swift SDK you are targeting, ProjectName.xcodeproj with the name of your project and TargetName with the name of your target. If you do not specify a version number, the latest version in the CocoaPods central repository will be used.
+
+Fetch the dependencies defined in the Podfile:
+
+[source,bash]
+----
+pod install
+----
+
+You can now open `ProjectName.xcworkspace` in Xcode.
+
+[[native-ios-swift-setup]]
+=== Setup
+
+You must define the properties which allow your app to communicate with {ProductShortName} servers. Add the following values to the `fhconfig.plist` configuration file:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>host</key>
+  <string>__RHMAP_Core_host__</string>
+  <key>appid</key>
+  <string>__Client_App_ID__</string>
+  <key>projectid</key>
+  <string>__Project_ID__</string>
+  <key>appkey</key>
+  <string>__Client_App_ API_key___</string>
+  <key>connectiontag</key>
+  <string>__Connection_tag__</string>
+</dict>
+</plist>
+----
+
+See link:{ProductFeatures}#projects-connections[Projects - Connections] for more information on connections between Client Apps and Cloud Apps.
+
+[[native-ios-swift-initialization]]
+=== Initialization
+
+Before invoking any cloud requests from the {ProductShortName} iOS Swift SDK, you must first initialize it. Copy the following code snippet to your App Delegate's `application(_, didFinishLaunchingWithOptions:)` method, or any other location which ensures the code is called before any cloud requests:
+
+[source,swift]
+----
+import FeedHenry
+
+func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+  FH.init { (resp:Response, error: NSError?) -> Void in
+    if let error = error {
+      print("Error: \(error)")
+      return
+    }
+    print("Response: \(resp.parsedResponse)")
+  }
+  return true
+}
+----
+
+[[native-ios-swift-api-documentation]]
+== API Documentation
+
+See the  link:{ClientAPI}[API Docs] - documentation for all Client APIs

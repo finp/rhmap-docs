@@ -1,0 +1,63 @@
+// include::shared/attributes.adoc[]
+
+[[create-a-service-using-fhc]]
+= Create a service using FHC
+
+.Overview
+This tutorial shows you how to create a service and associate it with a project. For more information regarding services, and their functionality, see the link:{ProductFeatures}#mbaas-services[Cloud Services] documentation.
+
+.Requirements
+The user must be a member of one or more teams with the following permissions:
+
+* Project (View & Edit)
+* Service (View & Edit)
+
+For more information on Permissions, see link:{ProductFeatures}#teams-and-collaboration[Teams & Collaborations].
+
+[[create-a-service-using-fhc-log-in-to-the-platform]]
+== Log in to the platform
+
+[source,bash]
+----
+fhc login myUsername myPassword
+----
+
+[[create-a-project]]
+== Create a Project
+
+Now that you have successfully logged in to the platform, we will create a project that we will then associate a service with. In order to create the project, enter the following command:
+
+[source,bash]
+----
+fhc projects create serviceProject
+----
+
+To verify that the project has successfully been created, enter the following command to search for projects on the domain:
+
+[source,bash]
+----
+fhc projects | grep 'serviceProject'
+----
+
+This should return the newly created project. Notice that there are currently two apps in this project. A Client App, and a Cloud App.
+
+[[create-a-service]]
+== Create a Service
+
+Services can be added to a project to allow the Client to access back-end functionality they would otherwise not have access to. Before we create a service, we will view a list of available templates. To view the service templates, enter the following command:
+
+[source,bash]
+----
+fhc templates services
+----
+
+This will output a list of all available service templates. We will add the PayPal service to the project. To do this, copy the service id of the PayPal service.
+
+When creating a service, we must also specify a name. Enter the following command:
+
+[source,bash]
+----
+fhc services create paypalService paypal
+----
+
+This has successfully created a new service that can be associated with Projects.

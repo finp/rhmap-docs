@@ -1,0 +1,49 @@
+include::{partialsdir}/attributes.adoc[]
+
+= Server-side Developer Guide
+
+[[server-side-developer-guide-developing-cloud-apps]]
+== Developing Cloud Apps
+
+include::{partialsdir}/cloud_development.adoc[leveloffset=+2]
+include::{partialsdir}/environments.adoc[leveloffset=+2]
+include::{partialsdir}/using_nodejs_modules.adoc[leveloffset=+2]
+include::{partialsdir}/npm.adoc[leveloffset=+2]
+include::{partialsdir}/node_version.adoc[leveloffset=+2]
+
+[[server-side-developer-guide-using-rhmap-features-in-cloud-apps]]
+== Using RHMAP Features in Cloud Apps
+
+include::{partialsdir}/api_mapper.adoc[leveloffset=+2]
+include::{partialsdir}/using_push_notifications.adoc[leveloffset=+2]
+include::{partialsdir}/create_forms_data_source.adoc[leveloffset=+2]
+include::{partialsdir}/stats.adoc[leveloffset=+2]
+
+[[server-side-developer-guide-using-rhmap-data-sync-framework]]
+
+== Using RHMAP Data Sync Framework
+
+include::{partialsdir}/sync_overview.adoc[leveloffset=+2]
+include::{partialsdir}/sync_terminology.adoc[leveloffset=+2]
+include::{partialsdir}/sync_server_architecture.adoc[leveloffset=+2]
+include::{partialsdir}/sync_configuration_guide.adoc[leveloffset=+2]
+include::{partialsdir}/sync_upgrade_guide.adoc[leveloffset=+2]
+include::{partialsdir}/sync_performance_scaling_guide.adoc[leveloffset=+2]
+include::{partialsdir}/sync_collections.adoc[leveloffset=+2]
+include::{partialsdir}/sync_debugging_guide.adoc[leveloffset=+2]
+
+[[server-side-developer-guide-integrating-rhmap-with-other-services]]
+== Integrating RHMAP With Other Services
+
+include::{partialsdir}/mbaas-services.adoc[leveloffset=+2]
+include::{partialsdir}/using_saml_for_authentication.adoc[leveloffset=+2]
+include::{partialsdir}/auth_policy_oauth_google.adoc[leveloffset=+2]
+
+[[server-side-developer-guide-storing-data]]
+== Storing Data
+include::{partialsdir}/databrowser.adoc[leveloffset=+2]
+include::{partialsdir}/db_upgrade.adoc[leveloffset=+2]
+include::{partialsdir}/appdata_export.adoc[leveloffset=+2]
+include::{partialsdir}/appdata_import.adoc[leveloffset=+2]
+
+include::{partialsdir}/app_import.adoc[leveloffset=+1]

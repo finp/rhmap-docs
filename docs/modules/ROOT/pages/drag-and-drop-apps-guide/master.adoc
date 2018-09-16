@@ -1,0 +1,9 @@
+include::{partialsdir}/attributes.adoc[]
+
+= Drag and Drop Apps Guide
+
+include::{partialsdir}/create_a_forms_project_single_theme.adoc[leveloffset=+1]
+include::{partialsdir}/create_a_form.adoc[leveloffset=+1]
+include::{partialsdir}/create_a_forms_project.adoc[leveloffset=+1]
+include::{partialsdir}/create_a_theme.adoc[leveloffset=+1]
+include::{partialsdir}/app_forms_lifecycle.adoc[leveloffset=+1]

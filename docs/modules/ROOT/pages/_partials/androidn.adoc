@@ -1,0 +1,48 @@
+// include::shared/attributes.adoc[]
+
+
+[[androidn]]
+== Android N
+
+Android N allows you to use certain Java 8 language features, such as lambda expressions. A lambda expression enhances the readability of code and also allows you to express instances of single-method classes more compactly. This contrasts with Anonymous classes which can be cumbersome.  For more info, please refer to the lambda expression tutorial : https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html.
+
+Within the context of {ProductShortName}, lambda expressions have an impact on apps that use Jack and Java 8, specifically around the consumption of a lambda expression by the {ProductShortName} APIs.  With Java 8, a lambda expression can be passed into a method that consumes an Anonymous Inner class and it is likely that Lambda Expressions will impact DefaultCallbacks as shown in the following code:
+
+[[lambda-expressions]]
+[source,java]
+----
+@FunctionalInterface
+public interface DefaultCallback extends FHActCallback {
+
+    default void fail(FHResponse pResponse) {
+        Log.e("DefaultCallback", pResponse.getErrorMessage());
+    };
+
+    @Override
+    void success(FHResponse pResponse);
+}
+----
+
+The following code snippet illustrates the use of a Lambda Expression within an {ProductShortName} context:
+
+[source,java]
+----
+@Override
+protected void onStart() {
+    super.onStart();
+    FH.init(this, (DefaultCallback)(ignore) - > {
+            findViewById(R.id.check_online).setVisibility(View.VISIBLE);findViewById(R.id.check_online).setOnClickListener(view - > Toast.makeText(getBaseContext(), FH.isOnline() ? "Is online" : "Is not online", Toast.LENGTH_LONG).show());
+        }
+    );
+}
+----
+
+[[migrating-to-androidn]]
+=== Migrating Apps to Android N
+
+To migrate your app to Android N:
+
+. Make sure your code is working before migrating.
+. Update the fh-android-sdk dependency from `3.1.0` to `3.3.0` in your package management software.
+. Update the build tools and target APIs in the `AndroidManifest` and `build.gradle` files to API level 24.
+. Build your app locally and validate that everything is working.

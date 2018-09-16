@@ -1,0 +1,67 @@
+// include::shared/attributes.adoc[]
+
+[[swift23]]
+== Swift 2.3 and Swift 3
+
+This release of {ProductShortName} includes Swift 2.3 and Swift 3.0 functionality. Using Swift 2.3 or Swift 3.0 allows you to use Xcode 8.x and iOS 10 specific features, such as iMessage app extensions. The following templates are available:
+
+* https://github.com/feedhenry-templates/helloworld-ios-swift/tree/swift2.3
+* https://github.com/feedhenry-templates/helloworld-ios-swift/tree/swift3
+
+
+[[migrating-to-swift23]]
+=== Migrating Apps to Swift 2.3
+
+To migrate your app to Swift 2.3:
+
+. Review the Swift link:https://swift.org/migration-guide/[migration guide].
+. Make sure your code is working before migrating.
+. Change the Podfile contents to the following:
++
+----
+    pod 'FeedHenry', '4.2.1'
+----
+. Install the pod:
++
+----
+    pod install
+----
+. Open the Xcode 8.x workspace by double clicking on the ProjectName.xcworkspace.
+. When prompted to migrate the code, choose Swift 2.3.
+. Build your app locally and validate that everything is working.
+
+[[migrating-to-swift3]]
+=== Migrating Apps to Swift 3.0
+
+To migrate your app to Swift 3.0:
+
+. Review the Swift link:https://swift.org/migration-guide/[migration guide]. Note the following Swift 3 coding style changes:
+* Name functions and methods according to their side-effects.
+** Those without side-effects should read as noun phrases, for example, `x.distance(to: y)`, `i.successor()`.
+** Those with side-effects should read as imperative verb phrases, for example, `print(x)`, `x.sort()`, `x.append(y)`.
+* Names of types and protocols are `UpperCamelCase`.
+* Everything else is `lowerCamelCase`.
++
+. Make sure your code is working before migrating.
+. Change the Podfile contents to the following:
++
+----
+    pod 'FeedHenry', '5.0.3'
+----
+. Install the pod:
++
+----
+    pod install
+----
+. Open the Xcode 8.x workspace by double clicking on the ProjectName.xcworkspace.
+. When prompted to migrate the code, choose Swift 3. Note the following:
++
+* It is unlikely that the app code will compile first time. Fix your code until it passes all unit tests.
+* Be aware of the following:
+** `sort()` on Array is now a mutable function
+** the difference between `Any` and `AnyObject`
+** the difference between `Data` and `NSData`
+* Consider your API label names using the Swift link:https://swift.org/documentation/api-design-guidelines/[Api Design Guidelines].
+. Build your app locally and validate that everything is working.
+
+[[native-ios-swift-api-documentation]]

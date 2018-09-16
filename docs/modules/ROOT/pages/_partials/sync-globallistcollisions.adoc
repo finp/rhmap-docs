@@ -1,0 +1,70 @@
+[[fh-sync-globallistcollisions]]
+== $fh.sync.globalListCollisions
+{syncnote} xref:fh-sync-globallistcollisions-dep[section for the old version]
+
+Defines a global handler function to return the current list of collisions.
+
+It can be used by multiple datasets, but is only used if there is no handler assigned to the dataset using the xref:fh-sync-listcollisions[listCollisions API].
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.globalListCollisions(function listCollisionsHandler(dataset_id, meta_data, cb){});
+----
+
+=== Parameters
+
+==== listCollisionsHandler
+* Description: The function that is invoked when listing collisions.
+* Type: Function
+* Invoked Parameters:
+** *dataset_id*
+*** Description: the id of the dataset
+*** Type: String
+** *meta_data*
+*** Description: the meta data associated with the data, can be null.
+*** Type: Object
+** *cb*
+*** Description: the callback function
+*** Type: Function
+
+=== Example
+
+[source,javascript]
+----
+// This would usually be used by an administration console where a user is
+// manually reviewing & resolving collisions.
+$fh.sync.globalListCollisions(function(dataset_id, meta_data, cb) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // sample back-end storage call
+  var collisions = getCollisions(dataset_id);
+  /* sample response:
+  {
+    "collision_hash_1" : {
+      "uid": "<uid_of_data_row>",
+      "timestamp": "<timestamp_value_passed_to_handleCollision_fn>",
+      "pre": "<pre_data_record_passed_to_handleCollision_fn>",
+      "post": "<post_data_record_passed_to_handleCollision_fn>"
+    },
+    "collision_hash_2" : {
+      "uid": "<uid_of_data_row>",
+      "timestamp": "<timestamp_value_passed_to_handleCollision_fn>",
+      "pre": "<pre_data_record_passed_to_handleCollision_fn>",
+      "post": "<post_data_record_passed_to_handleCollision_fn>"
+    },
+    "collision_hash_2" : {
+      "uid": "<uid_of_data_row>",
+      "timestamp": "<timestamp_value_passed_to_handleCollision_fn>",
+      "pre": "<pre_data_record_passed_to_handleCollision_fn>",
+      "post": "<post_data_record_passed_to_handleCollision_fn>"
+    }
+  }
+  */
+
+  // The callback into the sync service to return the list of known collisions
+  return cb(null, collisions);
+});
+----

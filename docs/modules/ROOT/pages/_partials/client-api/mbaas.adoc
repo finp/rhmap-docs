@@ -1,0 +1,36 @@
+// include::shared/attributes.adoc[]
+
+[[fh-mbaas]]
+= $fh.mbaas
+
+[source,javascript]
+----
+$fh.mbaas(options, success, failure);
+----
+
+Call MBaaS service endpoints.
+
+[[mbaas-supported-platforms]]
+.Supported Platforms
+
+* JavaScript SDK
+** Web Apps
+
+For detailed version information, see link:https://access.redhat.com/node/2357761[Supported Configurations^].
+
+[[mbaas-example]]
+== Example
+[source,javascript]
+----
+$fh.mbaas({
+  "service": "db", //the MBaaS service name.
+  "params": {}, //json object to send to the MBaaS service
+  "timeout": 25000 // timeout value specified in milliseconds. Default: 60000 (60s)
+}, function(res) {
+  // Cloud call was successful. Alert the response
+  alert('Got response from cloud:' + JSON.stringify(res));
+}, function(msg,err) {
+  // An error occured during the cloud call. Alert some debugging information
+  alert('Cloud call failed with error message:' + msg + '. Error properties:' + JSON.stringify(err));
+});
+----

@@ -1,0 +1,103 @@
+// include::shared/attributes.adoc[]
+
+[[fh-act]]
+= $fh.act
+
+CAUTION: This API is now deprecated. Use xref:fh-cloud[$fh.cloud] instead.
+
+[source,javascript]
+----
+$fh.act(options, success, failure);
+----
+
+Call cloud-side JavaScript functions which receive a JSON object as input and return a JSON
+object as output.
+
+[[act-supported-platforms]]
+.Supported Platforms
+
+* JavaScript SDK
+** Cordova
+** Web Apps
+* Android SDK
+* iOS Objective-C SDK
+* iOS Swift SDK
+* .NET SDK
+** Xamarin
+
+For detailed version information, see link:https://access.redhat.com/node/2357761[Supported Configurations^].
+
+[[act-example]]
+== Example
+
+// javaScript
+.JavaScript
+[source,javascript]
+----
+$fh.act({
+  "act": "getTweets", // Name of the Cloud function to call
+  "req": {
+    "qs": "feedhenry" // Set of key/value pairs that are passed as paramaters to the Cloud function
+  },
+  "secure": true, // Whether or not to use https for the Cloud call. Default: true
+  "timeout": 25000 // timeout value specified in milliseconds. Default: 60000 (60s)
+}, function(res) {
+  // Cloud call was successful. Alert the response
+  alert('Got response from cloud:' + JSON.stringify(res));
+}, function(msg,err) {
+  // An error occured during the cloud call. Alert some debugging information
+  alert('Cloud call failed with error message:' + msg + '. Error properties:' + JSON.stringify(err));
+});
+----
+
+// java
+.Android (Java)
+[source,java]
+----
+//build the request object. The first parameter is the name of the cloud side function to be called,
+//the second parameter is the data parameter for the function
+FHActRequest request = FH.buildActRequest("getTweets", new JSONObject().put("qs", "feedhenry"));
+//the request will be executed asynchronously
+request.executeAsync(new FHActCallback() {
+  @Override
+  public void success(FHResponse res) {
+    //the function to execute if the request is successful
+    try {
+      JSONArray resObj = res.getJson().getJSONArray("tweets");
+      Log.d(TAG, resObj.toString(2));
+      for(int i=0;i<resObj.length();i++){
+        JSONObject event = resObj.getJSONObject(i);
+        ...
+      }
+    } catch(Exception e){
+      Log.e(TAG, e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void fail(FHResponse res) {
+    //the function to execute if the request is failed
+    Log.e(TAG, res.getErrorMessage(), res.getError());
+  }
+});
+----
+
+// Objective-C
+.iOS (Objective-C)
+[source,objectivec]
+----
+FHActRequest * action = (FHActRequest *) [FH buildActRequest:@"getTweets" WithArgs:[NSDictionary dictionaryWithObject:@"feedhenry" forKey:@"qs"]];
+  [action execAsyncWithSuccess:^(FHResponse * actRes){
+    //the actRes will contain 10 tweets about "feedhenry"
+    //the JSON response from the cloud will be parsed to NSDictionary automatically
+    NSDictionary* resData = actRes.parsedResponse;
+    NSArray * tweets = (NSArray *) [resData objectForKey:@"tweets"];
+    //display tweets in the UI
+...
+} AndFailure:^(FHResponse * actFailRes){
+  //if there is any error, you can check the rawResponse string
+  NSLog(@"Failed to read tweets. Response = %@", actFailRes.rawResponse);
+  }
+];
+//You can also use the delegate pattern with the FHActRequet object. If you use that pattern, you need to implement the FHResponseDelegate protocol and assign an instance to the FHActRequest instance. When the request is executed, replace the blocks with __nil__.
+----

@@ -1,0 +1,150 @@
+// include::shared/attributes.adoc[]
+
+[[drag-drop-apps-lifecycle-management]]
+= Drag & Drop Apps Lifecycle Management
+
+[[overview-of-lifecycle-management-and-drag-drop-apps]]
+== Overview of Lifecycle Management and Drag & Drop Apps
+
+The basics of Lifecycle Management and Drag & Drop Apps are covered in the link:{ProductFeatures}#product-features-drag-and-drop-apps[product features page]. Essentially, Lifecycle Management allows users to clearly understand what versions of their applications are deployed to which environment. It also enables them to easily deploy and promote applications between those environments. Drag & Drop Apps allow users to easily define forms for collecting data via a Drag & Drop interface. These forms can then be used and integrated within Client Apps.
+
+image:app-forms-lifecycle-relationship.png[App Forms Relationship]
+
+[[how-does-lifecycle-management-work-with-drag-drop-apps]]
+=== How Does Lifecycle Management Work with Drag & Drop Apps
+
+Drag & Drop Apps Lifecycle Management allows users to deploy and promote new and updated Drag & Drop Apps to individual environments as opposed to all at once. Drag & Drop Apps Lifecycle Management also enables users to clearly see which Drag & Drop Apps are available across each of their environments.
+
+[[lifecycle-management-interface]]
+== Lifecycle Management Interface
+
+The {ProductName} ({ProductShortName}) includes a simple interface that allows users to manage the full lifecycle of all Drag & Drop Apps as a whole as well as at the individual level.
+
+To access the Lifecycle Management page for all Drag & Drop Apps:
+
+1.  Navigate to the Platform and click on _Drag & Drop Apps_ at the top of the screen.
+2.  Click on _Lifecycle_ in top navigation. This screen shows the status of every Drag & Drop App across every environment.
+image:app-forms-lifecycle-all-lifecycle.png[All Lifecycle]
+3.  Click on the _+_ button for any Drag & Drop App to reveal the details.
+image:app-forms-lifecycle-details.png[Lifecycle Details]
+
+To access the Lifecycle Management page for a single Drag & Drop App:
+
+1.  Navigate to the Platform and click on _Drag & Drop Apps_ at the top of the screen.
+2.  Click on _Forms Builder_ in top navigation.
+image:app-forms-lifecycle-forms-builder-menu.png[Forms Builder]
+3.  Click on the desired Drag & Drop App from the list.
+4.  Click on _Lifecycle_ in left navigation. This screen shows the status of the chosen Drag & Drop App across every environment.
+image:app-forms-lifecycle-left-nav.png[Lifecycle Left Nav]
+
+Both pages offer the following functionality in the Drag & Drop App details:
+
+* Deploy Now
+* Preview
+* Live Edit
+* Promote
+* Submissions
+* Copy
+* Deploy
+
+image:app-forms-lifecycle-operations.png[Operations]
+
+The typical flow of operations might be as follows: the user creates a form, saves it in the Core Platform and may perform subsequent edits safely before the form gets deployed to an environment. When the form is ready, it can be deployed to a Development environment, or even straight to Production. In case of any urgent issues found after deployment, _live edits_ can be made to the form deployed in any of the environments. Live edits don't automatically propagate to the Core Platform, the user needs to do that manually using the _Copy_ function, which overwrites the master copy in the Core Platform.
+
+image:app-forms-lifecycle-sequence.png[Operation sequence]
+
+[[deploy-now]]
+=== Deploy Now
+
+_Deploy Now_ appears in the Drag & Drop App details on the _Lifecycle_ page and allows you to deploy a Drag & Drop App directly to a specific environment from the Core instance of the Drag & Drop App on the Platform.
+
+IMPORTANT: When associating projects with a Drag & Drop App, the project will only see and will only use the Drag & Drop Apps in the *same environment*. For instance, if a project is associated with a Drag & Drop App that is only deployed to _Development_, when that project is deployed to _Production_, it will be unable to see or use that Drag & Drop App. The same applies to updates made to a Drag & Drop App. If an update is deployed to a Drag & Drop App in _Development_ but not to _Production_, associated projects will see the updated Drag & Drop App when they are in _Development_ but will not see the update when they are in _Production_.
+
+[[preview]]
+=== Preview
+
+_Preview_ brings up a live preview of the Drag & Drop App currently in that environment.
+image:app-forms-lifecycle-preview.png[Lifecycle Preview]
+
+[[live-edit]]
+=== Live Edit
+
+The lifecycle for publishing a Drag & Drop App usually resembles:
+
+1.  Create or make changes to the Core Drag & Drop App in the Platform.
+2.  Deploy changes to a testing or staging environment.
+3.  Once changes are approved, promote them to production.
+
+In addition to this type of lifecycle, the Platform also enables users to do a __Live Edit__. _Live Editing_ allows user with sufficient privileges to make changes to a form and save those changes directly in an environment without having to follow any promotion process.
+
+For example, a user could make a change to a Drag & Drop App and deploy it only to a development or testing environment, leaving all other environments with the original version. Alternatively, a user could see a critical issue in _Production_ and use the _Live Edit_ functionality to make the change directly in _Production_ to resolve the issue immediately. The user could then copy those edits back to the Core project and propagate that change to the rest of the environments.
+
+To _Live Edit_ a form:
+
+1.  From the _Lifecycle_ page, show the details of the desired Drag & Drop App by click on __+__.
+2.  Click on _Live Edit_ in the desired environment.
+image:app-forms-lifecycle-live-edit.png[Lifecycle Live Edit]
+3.  Make the desired edits and click _Save and Deploy_ to save the changes to the environment.
+
+IMPORTANT: Clicking on _Save and Deploy_ will save and deploy your changes to the *current environment only* and will do so *immediately*. To save these changes to the Core instance of the Drag & Drop App, _Copy_ must also be used after you click _Save and Deploy_.
+
+[[promote]]
+=== Promote
+
+_Promote_ allows you to replicate the deployed version of a Drag & Drop App from one environment to another. The main difference between doing a _Promote_ versus doing a _Deploy_ is that _Promote_ does not involve the Core instance of a Drag & Drop App on the Platform. Meaning, _Live Edits_ made to an environment can be _Promoted_ to another environment without doing a _Copy_ back to the Core instance of a Drag & Drop App on the Platform.
+
+To _Promote_ a form:
+
+1.  From the _Lifecycle_ page, show the details of the desired Drag & Drop App by click on __+__.
+2.  Click on _Promote_ in the desired environment and choose the destination environment.
+image:app-forms-lifecycle-promote.png[Lifecycle Promote]
+
+[[submissions]]
+=== Submissions
+
+_Submissions_ allows you to see all submissions made to a Drag & Drop App for that specific environment.
+
+[[copy]]
+=== Copy
+
+_Copy_ will copy any _Live Edits_ made to an environment back to the Core instance of the Drag & Drop App on the Platform. This is useful for preserving changes made while doing _Live Edits_ as well as deploying those changes out to other environments.
+
+IMPORTANT: _Copy_ performs a rudimentary copy, *not a merge*, of the chosen environment back to the Core instance of the Drag & Drop App on the Platform. Meaning this has the potential to *destroy* changes that are not deployed to the environment that was live edited. Carefully review both the live edited environment as well as the Core instance of the Drag & Drop App prior to using _Copy_, to avoid losing changes made on the Core instance.
+
+IMPORTANT: Make sure you have used _Copy_ to save any _Live Edits_ you wish to save prior to using _Undeploy_ or _Redeploy_.
+
+[[deploy]]
+=== Deploy
+
+The _Deploy_ menu provides two options: _Redeploy_ and __Undeploy__.
+
+image:app-forms-lifecycle-deploy.png[Deploy Details]
+
+_Redeploy_ allows you to deploy the Drag & Drop App from the Core instance to the chosen environment. This will overwrite any live edits made to that environment. _Undeploy_ allows you to remove a Drag & Drop App from the chosen environment. Neither of these operations affect the other environments that Drag & Drop App is deployed to.
+
+[[permissions]]
+== Permissions
+
+All operations related to Drag & Drop Apps Lifecycle Management adhere to the existing permissions system of the Platform.
+
+To _Deploy_ and/or _Live Edit_ a Drag & Drop App, the user must have:
+
+* *Write* access on the *Deploy* permission under forms
+* *Write* access on the form being deployed
+* *Write* access to the environment they are deploying the form to
+
+To view a Drag & Drop App in the Lifecycle Management interface, a user must have:
+
+* *Read* access on the environment
+* *Read* access on the form being viewed
+
+For example, a user with *Read* access on a form and *Read* access to all environments will be able to view all deployed forms, but not _Live Edit_ those Drag & Drop Apps.
+
+For more details on permissions in general, see the link:{ProductFeatures}#user-roles[User Roles section] of the link:{ProductFeatures}#administration[Administration Guide].
+
+[[drag-drop-apps-lifecycle-management-and-fh-forms]]
+== Drag & Drop Apps Lifecycle Management and `$fh.forms`
+
+The `$fh.forms` API allows you to call the Drag & Drop Apps API from javascript Client Apps. When making calls using `$fh.forms`, results will be filtered automatically depending on the current environment the application is running in. For example, an application may be associated with three Drag & Drop Apps, but if only one of them is deployed to the current environment, `$fh.forms.getForms` will only return that one.
+
+For more details on using the `$fh.forms` API, consult the link:{ClientAPI}#fh-forms[API documentation].

@@ -1,0 +1,121 @@
+// include::shared/attributes.adoc[]
+
+[[fh-init]]
+= $fh.init
+
+In order for the Client Apps to communicate with the corresponding Cloud Apps, the client SDKs need to be initialized before making any cloud calls.
+
+The initializations process involves a call to the server to verify that it is a valid app on the platform and get some properties of the app. No other API methods can be executed before this process finishes. The initialization process runs asynchronously so that the main app thread won’t be blocked.
+
+[[init-support-platforms]]
+.Supported Platforms
+
+* JavaScript SDK
+** Cordova
+** Web Apps
+* Android SDK
+* iOS Objective-C SDK
+* iOS Swift SDK
+* .NET SDK
+** Xamarin
+
+For detailed version information, see link:https://access.redhat.com/node/2357761[Supported Configurations^].
+
+[[init-example]]
+== Example
+.JavaScript
+
+The Javascript SDK is initialized automatically once the app is loaded and as a result, it is not necessary to call the init API therefore, $fh.cloud, for example, can be used as soon as the app has loaded. To learn when the app has completed initialization, register a callback with "fhinit".
+
+[source,javascript]
+----
+$fh.on("fhinit", function(err, host){
+  if(err){
+    //Init has failed due to some error. Normally this is due to no network connection.
+  } else {
+    //The js sdk has initialized. The host value will be the URL of the cloud app the client app will communicate with.
+  }
+});
+----
+
+.Android (Java)
+[source,java]
+----
+FH.init(this, new FHActCallback() {
+  public void success(FHResponse pRes) {
+    // Init okay, free to use FHActRequest
+    // Note: pRes will be null. To get the cloud host url, use FH.getCloudHost.
+    String cloudAppUrl = FH.getCloudHost();
+  }
+
+  public void fail(FHResponse pRes) {
+    // Init failed
+    Log.e("FHInit", pRes.getErrorMessage(), pRes.getError());
+  }
+});
+----
+
+.iOS (Objective-C)
+[source,objectivec]
+----
+#import <FH/FH.h>
+#import <FH/FHResponse.h>
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  // Override point for customization after application launch.
+
+  // Call a cloud side function when init finishes
+  void (^success)(FHResponse *)=^(FHResponse * res) {
+    // Initialisation is now complete, you can now make FHCloud requests
+    // Note: res will be nil. To get the cloud host url, use [FH getCloudHost].
+    NSString * cloudAppUrl = [FH getCloudHost];
+    NSLog(@"SDK initialised OK");
+  };
+
+  void (^failure)(id)=^(FHResponse * res){
+    NSLog(@"Initialisation failed. Response = %@, res.rawResponse);
+  };
+
+  //View loaded, init the library
+  [FH initWithSuccess:success AndFailure:failure];
+
+  return YES;
+}
+----
+
+.iOS (Swift)
+[source,swift]
+----
+import FeedHenry
+
+func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+  // Override point for customization after application launch.
+  FH.init { (resp:Response, error: NSError?) -> Void in
+    if let error = error {
+      print("Initialisation failed. Response = \(error)")
+      return
+    }
+    // Initialisation is now complete, you can now make FH.cloud calls.
+    print("SDK initialised OK: \(resp.parsedResponse)")
+  }
+  return true
+}
+----
+
+.{nbsp}.NET (C#)
+[source,csharp]
+----
+try
+{
+  bool inited = await FHClient.Init();
+  if(inited) {
+    //Initialisation is successful
+    //To get the cloud host url, use FH.GetCloudHost().
+    string cloudAppUrl = FH.GetCloudHost();
+  }
+}
+catch(FHException e)
+{
+  //Initialisation failed, handle exception
+}
+----

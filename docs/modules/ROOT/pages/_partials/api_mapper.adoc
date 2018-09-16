@@ -1,0 +1,165 @@
+// include::shared/attributes.adoc[]
+
+[[transforming-json-api-responses-with-api-mapper]]
+= Transforming JSON API responses with API Mapper
+
+[[api-mapper-overview]]
+== Overview
+
+When accessing data from third-party APIs, it is often necessary to adapt the structure or format of the received data for your application. For example, by converting values to different formats, preprocessing the data and deriving new values, or by renaming or removing fields to fit the model of your application.
+
+{ProductShortName} contains a visual tool called *API Mapper* which lets you encapsulate the data transformation logic and abstract it away from your main application logic. API Mapper helps you with the task of transforming the responses of JSON APIs by letting you:
+
+* Rename fields.
+* Exclude fields that are not needed.
+* Transform field values using built-in or custom transformations.
+
+[[setup]]
+== Setup
+
+API Mapper is provided as a Cloud Service template. A single instance of API Mapper can be used by multiple Cloud Apps and Cloud Services, and for transformation of multiple different APIs. However, you can deploy any number of API Mapper instances if necessary.
+
+Follow these steps to start using API Mapper:
+
+. Deploy _API Mapper_ service.
++
+.. In the _Services & APIs_ section, click __Provision MBaaS Service/API__.
+.. Find _API Mapper_ in the list, and click __Choose__.
+.. Enter any name, such as __API Mapper__, and click __Next__.
+.. Choose an environment where API Mapper will be deployed after it is created, and click __Next__.
+..  Click __Finish__, and wait until the deployment finishes.
+
+. Make the service public.
++
+In the _Service Details_ page of the newly created API Mapper service, in the _Access Control_ section, check __Make this Service Public to all Projects and Services__. Click __Save Service__.
+image:api-mapper-make-public.png[Make a service public]
+
+[[usage-example]]
+== Usage Example
+
+This example shows how to create requests, mappings, and custom transformations. For demonstration, this procedure uses the public Github API as an example of the source API to be transformed.
+
+[[creating-a-request]]
+=== Creating a Request
+
+Create a request for a Github API endpoint to get information about the `feedhenry-templates/fh-api-mapper` repository.
+
+. From the home page of the API Mapper, click __New Request__.
+
+. In the URL field, paste the full URL of the API request:
++
+....
+https://api.github.com/repos/feedhenry-templates/fh-api-mapper
+....
+
+. Github API requires that the `User-Agent` header is sent with every request. Enter these values:
+* __Header Key__: `User-Agent`
+* __Header Value__: `FHApiMapper`
+
+. Next, choose an internal mount path for this request. Select the _Mount Path_ tab, and enter a path. This example uses `/thisrepo` as the mount path. The mapped request will be available at this path, which in this case results in the following URL:
++
+....
+http://<serviceURL>/thisrepo
+....
+. Click _Create Request_ to store the request in the database.
+. Click _Send Request_ to send the request and get a response.
+. In the _Response_ section, verify the _Response Headers_ and _Response Body_ sections appear as expected. You can now see the original response body before any transformation.
+
+[[adding-a-mapping]]
+=== Adding a Mapping
+
+After saving the request and mapping it to an internal path, choose transformations to apply to individual fields of the response. This step shows how to discard and rename fields, and transform field values.
+
+. In the _Response Mapping_ section, click __Add a Mapping__.
++
+Once the mapping is created, you can see a list of fields returned in the response on the left.
+
+. Discard the `owner` field.
++
+Click the `owner` field to select it for editing in the _Field Mapping_ panel, where you can define transformations on the field. Discard the `owner` field and all of its children by unchecking __Use this field__.
+
+. Rename the `id` field to `_id`.
++
+Select the `id` field on the left. In the _Rename Field_ box, type `_id`.
+
+. Rename the `private` field to `public` and invert its value.
++
+As in the previous step, rename the field `private` to `public`. Then, select a transformation called `invert` in the _Transform_ drop-down list.
+
+NOTE: All changes made in the _Field Mapping_ section are automatically saved.
+
+After setting up the transformations, you can compare the original and the mapped response body in the _Response Body_ tab of the _Response_ section. The original response is on the left, the mapped response is on the right.
+
+The mapped response now contains a `public` field with the value `true`, an `_id` field instead of `id`, and it does not contain an `owner` field.
+
+[[using-the-mapped-api]]
+=== Using the Mapped API
+
+The _Response_ section contains a _Sample Code_ tab, which contains code snippets for invoking the mapped request from various clients, including:
+
+* link:{CloudAPI}#fh-service[`$fh.service` API]
+* Node.js `request` module
+* cURL
+
+For example, to invoke the request from the command line, copy the _cURL Request_ snippet, paste it into a command line and execute the command. The mapped response is displayed in the console.
+
+[[custom-transformations]]
+== Custom Transformations
+
+In addition to the built-in field transformations, you can also write custom transformation functions.
+
+[[writing-custom-transformations]]
+=== Writing Custom Transformations
+
+To register a custom transformation function, you must declare it in the `application.js` file of API Mapper, in a configuration object passed to the function for the `/` route, as demonstrated in the following snippet:
+
+[source,javascript]
+----
+app.use('/', require('./lib/api')({
+  transformations : {
+    <transformation name> : {
+      type: <'array' | 'number' | 'string' | 'boolean'>,
+      transform: <unary function>
+    }
+  }
+}));
+----
+
+Custom transformations are defined as properties of the `transformations` object. The name of a property corresponds to the name of the transformation. The value of a property is a _transformation definition_ object.
+
+Each _transformation definition_ object has two properties:
+
+* `type`: a string representing the JavaScript type of the input value. Possible values: `array`, `number`, `string`, `boolean`.
+* `transform`: the transformation function. The function takes the original field value as the only argument and returns the transformed value.
+
+[[custom-transformations-example]]
+=== Example
+
+This example shows how to create a transformation called `even`, which changes even numbers to `0` and odd numbers to `1`.
+
+. Navigate to the _Editor_ of the API Mapper service and open the `application.js` file.
+
+. Look for the declaration of the `transformations` object, which contains one existing custom transformation called `mixedArrayTransform`.
+
+. Replace the value of the `transformations` property with the following object:
++
+[source,javascript]
+----
+{
+  even: require('./transformations/even.js')
+}
+----
+
+. Create a new `transformations/even.js` file with the following contents:
++
+[source,javascript]
+----
+// First, tell the mapper it operates on numbers
+exports.type = 'number';
+// then, implement the function.
+exports.transform = function(n) {
+  return n%2;
+};
+----
+
+The new transformation called `even` is now available in the API Mapper UI for numeric types.

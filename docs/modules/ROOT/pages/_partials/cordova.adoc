@@ -1,0 +1,88 @@
+// include::shared/attributes.adoc[]
+
+[[cordova]]
+= Cordova
+
+
+:suffix: _1
+include::npm.adoc[]
+
+[[cordova-get-started]]
+== Get Started
+
+The {ProductShortName} JavaScript SDK lets you use {ProductShortName} APIs in Cordova apps, which are developed primarily using web technology -- HTML, JS, CSS -- while still allowing access to many device capabilities.
+
+The underlying native project and Cordova libraries are exposed to the developer. This allows for full customisation of the application, including Cordova Plugins and third-party libraries. Typically, the amount of time spent writing or modifying native code for Cordova apps is relatively small & requires only a small subset of a development team to have experience with native code. This small subset can handle the native code and expose any additional plugins or SDKs through a JavaScript API using the Cordova plugin architecture.
+
+See the http://cordova.apache.org[official Cordova website^] for more information on Cordova.
+
+[[cordova-new-app]]
+=== New App
+
+Download the https://github.com/feedhenry/fh-advanced-hybrid-blank-app.git[sample app^] to get started with a new Cordova App which has the {ProductShortName} JavaScript SDK already included.
+
+[[cordova-existing-app]]
+=== Existing App
+
+[NOTE]
+--
+`fh-js-sdk` is distributed using link:https://www.npmjs.com/[npm^]. To be able to complete the steps below, you must link:{ClientSDK}#install-npm[install npm].
+--
+
+. In the root folder of your app, open the `package.json` file and add the link:https://github.com/feedhenry/fh-js-sdk/releases/latest[latest version] of `fh-js-sdk` onto the list of dependencies:
++
+[source,json]
+--
+  "dependencies": {
+    "fh-js-sdk": "^2.17.5",
+  }
+--
++
+. In the root folder of your app, execute the following command to install the SDK using npm:
++
+[source,bash]
+--
+sudo npm install fh-js-sdk
+--
++
+This installs the SDK version specified in the dependencies in the `package.json` file
++
+. Add the following code to your `index.html` file:
++
+[source,html]
+----
+<head>
+  <script src="feedhenry.js" type="text/javascript"></script>
+</head>
+----
+
+[[cordova-setup]]
+=== Setup
+
+Finally, you need to define properties which allow your app to communicate with {ProductShortName} servers. Create a new file in the same directory as the SDK file, called `fhconfig.json`, with the following contents, replacing the references in brackets with values from your project:
+
+[source,javascript]
+----
+{
+  "host": "<RHMAP Core host>",
+  "projectid": "<Project ID>",
+  "connectiontag": "<Connection tag>",
+  "appid": "<Client App ID>",
+  "appkey": "<Client App API key>"
+}
+----
+
+See link:{ProductFeatures}#projects-connections[Projects - Connections] for more information on connections between Client Apps and Cloud Apps.
+
+[[cordova-compatibility]]
+== Compatibility
+
+To ensure a working setup for developing Cordova apps, we advise that your local Cordova CLI version matches the version of Cordova installed in the {ProductShortName} Build Farm and that your Cordova platform versions are within the supported range. The link:https://access.redhat.com/node/2357761[Supported Configurations^] page lists the Cordova CLI and platform versions supported by the Build Farm.
+
+If you don't specify Cordova platform versions in your app, the default pinned versions for the Cordova CLI used in Build Farm will be used. We advise you to always specify platform versions in your Cordova apps to ensure build reproducibility and stability.
+
+[[cordova-api-documentation]]
+== API Documentation
+
+* link:{ClientAPI}[API Docs] - documentation for all Client APIs
+* link:http://feedhenry.org/fh-js-sdk/modules/\_fh_js_sdk_d_.html[JS SDK] - JavaScript SDK

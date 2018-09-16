@@ -1,0 +1,1040 @@
+// include::shared/attributes.adoc[]
+
+[[fh-forms]]
+= $fh.forms
+
+[[fh-forms-getforms]]
+== $fh.forms.getForms
+
+[source,javascript]
+----
+$fh.forms.getForms(options, callback);
+----
+
+Return an array of JSON objects with form summary information.
+
+NOTE: These form summary JSON objects do not contain the full form definition. Use the $fh.forms.getForm function to get a full form definition.
+
+[[fh-forms-example]]
+=== Example
+
+[source,javascript]
+----
+//Get a list of forms associated with the project.
+var options = {
+
+};
+
+$fh.forms.getForms(options,
+
+/*
+* Function executed with forms.
+*/
+function (err, response) {
+  if (err) return handleError(err);
+
+  //An Array Of Forms Associated With The Project
+  var formsArray = response.forms;
+
+   /*
+     exampleForm: {
+      _id: <<Form Id>>,
+      name: <<Form Name>>,
+      description: <<Form Description>>
+      lastUpdatedTimestamp: <<Timestamp of when the form was last updated>>
+    }
+  */
+  var exampleForm = formsArray[0];
+
+  return callback(undefined, formsArray);
+});
+----
+
+[[fh-forms-getform]]
+== $fh.forms.getForm
+
+[source,javascript]
+----
+  $fh.forms.getForm(options, callback)
+----
+
+[[details-1]]
+=== Details
+
+Retrieve specific form model based on form ID. Form IDs can be obtained using the $fh.forms.getForms function.
+
+[[fh-forms-example-1]]
+=== Example
+
+[source,javascript]
+----
+$fh.forms.getForm({
+  "_id": formId
+}, function (err, form) {
+  if (err) return handleError(err);
+
+
+  /*
+    A JSON object describing a full form object.
+  */
+  return callback(undefined, form);
+});
+----
+
+[[fh-forms-getpopulatedformlist]]
+== $fh.forms.getPopulatedFormList
+
+[source,javascript]
+----
+  $fh.forms.getPopulatedFormList(options, callback)
+----
+
+[[details-2]]
+=== Details
+
+Retrieve form models based on a list of form IDs.
+
+[[fh-forms-example-2]]
+=== Example
+
+[source,javascript]
+----
+$fh.forms.getPopulatedFormList({
+  "formids": [formId1, formId2 ... ]
+}, function (err, arrayOfForms) {
+  if (err) return handleError(err);
+
+
+  /*
+    A JSON object describing a full form object.
+  */
+  return callback(undefined, arrayOfForms);
+});
+----
+
+[[fh-forms-getsubmissions]]
+== $fh.forms.getSubmissions
+
+[source,javascript]
+----
+  $fh.forms.getSubmissions(options, callback)
+----
+
+[[details-3]]
+=== Details
+
+List all Submissions based on filtering criteria
+
+[[submissionsobject]]
+=== submissionsObject
+
+[source,javascript]
+----
+{
+  submissions: [<SubmissionJSON>, <SubmissionJSON>]
+}
+----
+
+[[fh-forms-example-3]]
+=== Example
+
+[source,javascript]
+----
+$fh.forms.getSubmissions({
+  "formId": [formId1, formId2 ... ],
+  "subid": [subId1, subId2 ...]
+}, function (err, submissionsObject) {
+  if (err) return handleError(err);
+
+
+  /*
+    An Object Containing An Array of JSON objects describing a full Submission object.
+  */
+  return callback(undefined, submissionsObject);
+});
+----
+
+[[fh-forms-getsubmission]]
+== $fh.forms.getSubmission
+
+[source,javascript]
+----
+  $fh.forms.getSubmission(options, callback)
+----
+
+[[details-4]]
+=== Details
+
+Get A Single Form Submission
+
+[[fh-forms-example-4]]
+=== Example
+
+[source,javascript]
+----
+$fh.forms.getSubmissions({
+  "submissionId": subId1
+}, function (err, submission) {
+  if (err) return handleError(err);
+
+
+  /*
+    A JSON object describing a full Submission object.
+  */
+  return callback(undefined, submission);
+});
+----
+
+[[fh-forms-getsubmissionfile]]
+== $fh.forms.getSubmissionFile
+
+[source,javascript]
+----
+  $fh.forms.getSubmissionFile(options, callback)
+----
+
+[[details-5]]
+=== Details
+
+Stream a single file contained in a submission. Files are accessed using the fileGroupId field in a submission file field.
+
+[[filestreamobject]]
+=== fileStreamObject
+
+[source,javascript]
+----
+{
+  stream: <Readable File Stream>
+}
+----
+
+[[fh-forms-example-5]]
+=== Example
+
+[source,javascript]
+----
+$fh.forms.getSubmissionFile({
+  "_id": fileGroupId
+}, function (err, fileStreamObject) {
+  if (err) return handleError(err);
+
+
+  /**
+  * Pipe the file stream to a writable stream (for example, a FileWriter)
+  */
+  fileStreamObject.stream.pipe(writable_stream);
+  fileStreamObject.stream.resume();
+});
+----
+
+[[form-json-definition]]
+== Form JSON Definition
+
+A form JSON object contains all of the information needed to process a form.
+
+[source,javascript]
+----
+{
+   "_id":"<<24 Character Form ID>>",
+   "description":"This is an example form definition",
+   "name":"Example Form",
+   "updatedBy":"<<User ID of the person that last updated the form>>",
+   "lastUpdatedTimestamp":1410876316105, //Time the form was last updated.
+   "subscribers":[
+   //Email addresses to be notified when a submission has been made against this form.
+    "notifiedUser1@example.com",
+    "notifiedUser2@example.com"
+   ],
+   "pageRules":[
+      <<Page Rule JSON Object>>
+   ],
+   "fieldRules":[
+      <<Field Rule JSON Object>>
+   ],
+   "pages":[
+      <<Page JSON Object>>,
+   ],
+   //Convenient reference for the index of a page with <<Page Id>> in the "pages" array.
+   "pageRef":{
+      "<<Page Id>>":0,
+      "<<Page Id>>":1
+   },
+   //Convenient reference for the index of a field. Both the page index and field index are given.
+   "fieldRef":{
+      "<<Field Id>>":{
+         "page":0,
+         "field":0
+      },
+      "<<Field Id>>":{
+         "page":0,
+         "field":1
+      }
+   }
+}
+----
+
+[[page]]
+=== Page
+
+[source,javascript]
+----
+{
+   "_id":"<<Page ID>>",
+   "name":"Page 1",
+   "fields":[
+      <<Field JSON Object>>
+   ]
+}
+----
+
+[[field]]
+=== Field
+
+[source,javascript]
+----
+{
+  "_id":"<<Field ID>>",
+   "required":true,
+   "type":"text",//Field Type
+   "name":"A Sample Text Field",
+   "repeating":false/true //Boolean that describes if a field is repeating or not.
+   "fieldOptions":{
+      "validation":{ // Optional validation parameters for the form.
+         "validateImmediately":true //Flag for whether field inputs should be immediately validated (for example, On-Blur on a Client App.)
+      },
+      "definition": {// Optional definition options.
+          "minRepeat": 2, //Minimum number of entries for this field.
+          "maxRepeat": 5 //Maximum number of entries for this field.
+      }
+   }
+}
+----
+
+[[page-rule]]
+=== Page Rule
+
+This JSON object describes a Page Rule created in the Studio.
+
+[source,javascript]
+----
+{
+   "type":"skip",//A "skip" or "show" page rule
+   "_id":"<<ID of the Page Rule>>",
+   "targetPage":[
+      "<<ID of the Page targeted by the Page Rule>>"
+   ],
+   "ruleConditionalStatements":[
+      {
+         "sourceField":"<<ID of the Field this condition is sourcing data from>>",
+         "restriction":"is",// Comparator operator for the conditional statement.
+         "sourceValue":"skippage" //Value To Compare.
+      }
+   ],
+   //Combinator for "ruleConditionalStatements".  Can be "and" or "or".
+   "ruleConditionalOperator":"and",
+}
+----
+
+[[field-rule]]
+=== Field Rule
+
+This JSON object describes a Field Rule created in the Studio.
+
+[source,javascript]
+----
+{
+   "type":"hide/show", //A "hide" or "show" field rule
+   "_id":"<<ID of the Field Rule>>",
+   "targetField":[
+      "<<ID of the Field targeted by the Field Rule>>"
+   ],
+   "ruleConditionalStatements":[
+      {
+         "sourceField":"<<ID of the Field this condition is sourcing data from>",
+         "restriction":"is",// Comparator operator for the conditional statement.
+         "sourceValue":"hideMe" //Value To Compare.
+      }
+   ],
+   //Combinator for "ruleConditionalStatements".  Can be "and" or "or".
+   "ruleConditionalOperator":"and"
+}
+----
+
+[[fh-forms-gettheme]]
+== $fh.forms.getTheme
+
+[source,javascript]
+----
+  $fh.forms.getTheme(options, callback)
+----
+
+[[details-6]]
+=== Details
+
+Loads a JSON object representing the Theme that is assigned to the Project.
+
+[[fh-forms-example-6]]
+=== Example
+
+[source,javascript]
+----
+//Currently no parameters for loading a theme.
+var options = {
+
+};
+
+$fh.forms.getTheme({}, function (err, theme) {
+  if (err) return handleError(err);
+
+  return callback(undefined, theme);
+});
+----
+
+### $fh.forms.getAppClientConfig
+
+[source,javascript]
+----
+  $fh.forms.getAppClientConfig(options, callback)
+----
+
+[[details-7]]
+=== Details
+
+Returns a JSON object containing Client Config settings associated with the Project. These are configured in the Studio.
+
+[[fh-forms-example-7]]
+=== Example
+
+[source,javascript]
+----
+//Currently no options for loading app config.
+var options = {
+
+};
+
+$fh.forms.getAppClientConfig(options, function (err, clientConfig) {
+  if (err) return handleError(err);
+
+
+  return callback(undefined, clientConfig);
+});
+----
+
+[[client-config-json-object]]
+=== Client Config JSON Object
+
+[source,javascript]
+----
+{
+  "sent_items_to_keep_list": [5, 10, 20, 30, 40, 50, 100], //Array representing options available to
+  "targetWidth": 480, //Camera Photo Width
+  "targetHeight": 640, //Camera Photo Height
+  "quality": 75, //Camera Photo Quality
+  "debug_mode": false, //Set the Client To Debug Mode
+  "logger" : false, //Client Logging
+  "max_retries" : 0, //Maximum number of failed uplod attempts before returning an error to the user
+  "timeout" : 30,// Number of seconds before a form upload times out.
+  "log_line_limit": 300,//Maximum number of log entries before rotating logs
+  "log_email": "test@example.com" //The email address that logs are sent to.
+}
+----
+
+[[fh-forms-submitformdata]]
+== $fh.forms.submitFormData
+
+[source,javascript]
+----
+   $fh.forms.submitFormData(options, callback)
+----
+
+[[details-8]]
+=== Details
+
+Submits a JSON object representing a Form Submission.
+
+[[fh-forms-example-8]]
+==== Example
+
+[source,javascript]
+----
+var options = {
+  "submission": <<Submission JSON Object>>,
+  "appClientId": <<ID Of The Client Making The Submission.>>
+};
+
+$fh.forms.submitFormData(options, function(err,data){
+  if(err) return callback(err);
+
+  return callback(null,data);
+});
+----
+
+[[submission-json-object]]
+=== Submission JSON Object
+
+[source,javascript]
+----
+{
+  "formId": "<<ID Of Form Submitting Agains>>",
+  "deviceId": "<<ID of the device submitting the form>>",
+  "deviceIPAddress": "<<IP Address of the device submitting the form>>",
+  "formFields": [<<Field Entry JSON Object>>],
+  "deviceFormTimestamp": "<<lastUpdatedTimestamp of the Form that the submission was submitted against.>>",
+  "comments": [{ //Optional comments related to the submission
+    "madeBy": "user",
+    "madeOn": "12/11/10",
+    "value": "This is a comment"
+  }]
+}
+----
+
+[[field-entry-json-object]]
+=== Field Entry JSON Object
+
+[source,javascript]
+----
+{
+  fieldId: <<ID Of The Field "fieldValues" Are Submitted Against>>,
+  fieldValues: [<<Field Value Entry>>]
+}
+----
+
+[[field-value-entries]]
+=== Field Value Entries
+
+This presents the data format required for each type of field submission.
+
+* Text: String
+* TextArea: String
+* Number: Number
+* Radio: String (Must represent one of the Radio Field options defined in the Form)
+* Dropdown: String (Must represent one of the Dropdown options represented in the Form)
+* Webstite: String
+* Email: String (Must be a valid email format)
+* DateStamp - Date Only: String (Format: `DD/MM/YYYY`)
+* DateStamp - Time Only: String (Format: `HH:SS`)
+* DateStamp - Date & Time: String (Format: `YYYY-MM-DD HH:SS`)
+
+Check boxes
+
+[source,javascript]
+----
+{
+  selections: ["Check box Option 1", .... , "Check box Option 4"]
+}
+----
+
+Location (And Map Field) - Latitude & Longitude
+
+[source,javascript]
+----
+{
+  lat: <<Valid Latitude Value>,
+  long: <<Valid Longitude Value>>
+}
+----
+
+Location - Northings & Eastings
+
+[source,javascript]
+----
+{
+  zone: "11U",
+  eastings: 594934,
+  northings: 5636174
+}
+----
+
+File Based Fields - File, Photo, Signature
+
+[source,javascript]
+----
+{
+  fileName: <<Name of the file to be uploaded>>,
+  fileType: <<Valid mime type of the file>>,
+  fileSize: <<Size of the file in Bytes>>,
+  fileUpdateTime: <<Timestamp of the time the file was saved to device>>,
+  hashName: "filePlaceHolder12345" //A unique identifer for the fole. NOTE: Must begin with "filePlaceHolder"
+}
+----
+
+NOTE: All *hashName* parameters must begin with `filePlaceHolder` or the submission will be rejected.
+
+[[fh-forms-getsubmissionstatus]]
+== $fh.forms.getSubmissionStatus
+
+[source,javascript]
+----
+  $fh.forms.getSubmissionStatus(options, callback)
+----
+
+[[details-9]]
+=== Details
+
+Returns the current status of the submission.
+
+[[fh-forms-example-9]]
+=== Example
+
+[source,javascript]
+----
+var options = {
+  submission: {
+    //This is the submission ID returned when the $fh.forms.submitFormData function returns.
+    submissionId: "<<Remote Submission ID>>"
+  }
+};
+
+$fh.forms.getSubmissionStatus(options, function(err, submissionStatus){
+   if(err) return handleError(err);
+
+  return callback(undefined, submissionStatus);
+});
+----
+
+[[submission-status-json-object]]
+=== Submission Status JSON Object
+
+NOTE: A submission is only marked as complete after the $fh.forms.completeSubmission function has been called. Therefore it is possible that the `pendingFiles` array can be empty and the `status` set as pending.
+
+[source,javascript]
+----
+{
+  "status": "pending/complete", //Status can either be pending or complete
+  "pendingFiles": [
+    "<<hashName of file not uploaded yet. (for example, filePlaceHolder1234)>>"
+  ]
+}
+----
+
+[[fh-forms-submitformfile]]
+== $fh.forms.submitFormFile
+
+[source,javascript]
+----
+  $fh.forms.submitFormFile(options, callback)
+----
+
+[[details-10]]
+=== Details
+
+Uploads a file to the submission.
+
+NOTE: The file must already be added to the Submission JSON Object and submitted using the $fh.forms.submitFormData function.
+
+NOTE: The file must already exist on the local file system to upload it to the submission.
+
+WARNING: If the `keepFile` parameter is not set to `true`, the file uploaded to the submission will be deleted from the file system when upload is complete.
+
+[[fh-forms-example-10]]
+=== Example
+
+[source,javascript]
+----
+
+var options = {
+  "submission": {
+    "fileId": "<<The File hashName>>",
+    "submissionId": "<<The Submission ID Containing The File Input>>",
+    "fieldId": "<<Field Id The File Is Being Submitted Against>>",
+    "fileStream": "<</path/to/the/file/stored/locally>>" //path to the file
+    "keepFile": true/false //Keep the file storated at "fileStream" when it has been uploaded.
+  }
+ }
+
+$fh.forms.submitFormFile(options, function(err, submitFileResult){
+  if(err) return handleError(err);
+
+  //File upload has completed successfully
+  return callback(undefined, submitFileResult);
+});
+----
+
+[[submitfileresult-json-object]]
+=== submitFileResult JSON Object
+
+[source,javascript]
+----
+{
+  status: 200 //Indicating that the file has uploaded successfully
+  savedFileGroupId: <<Server ID of the file held in the submission>>
+}
+----
+
+[[fh-forms-completesubmission]]
+== $fh.forms.completeSubmission
+
+[source,javascript]
+----
+  $fh.forms.completeSubmission(options, callback)
+----
+
+[[details-11]]
+=== Details
+
+Mark the submission as complete. This will check that all of the files submitted as part of the Submission JSON have been uploaded.
+
+If the submission has completed successfully, the `completeResult` JSON object will contain
+
+[source,javascript]
+----
+{
+  "status": "complete"
+}
+----
+
+If submitted files have not been uploaded the `completeResult` JSON object will contain
+
+[source,javascript]
+----
+{
+  "status": "pending",
+  "pendingFiles": [
+    "<<hashName of file not uploaded yet. (for example, filePlaceHolder1234)>>"
+  ]
+}
+----
+
+[[fh-forms-example-11]]
+=== Example
+
+[source,javascript]
+----
+var options = {
+  "submission": {
+      "submissionId": "<<The ID of the Submission to Complete>>"
+    }
+}
+
+$fh.forms.completeSubmission(options, function (err, completeResult) {
+  if (err) return handleError(err);
+
+  return callback(undefined, completeResult);
+});
+----
+
+[[fh-forms-createsubmissionmodel]]
+== $fh.forms.createSubmissionModel
+
+[[details-12]]
+=== Details
+
+The $fh.forms.createSubmissionModel function is an alternative method of creating and submitting a form.
+
+The Submission Model provides some convenience functions to make the process of creating a submission easier.
+
+[[fh-forms-example-12]]
+=== Example
+
+[source,javascript]
+----
+var options = {
+  "form": <<A Form JSON Object Obtained using $fh.forms.getForm>>
+};
+
+$fh.forms.createSubmissionModel(options, function(err, submissionModel){
+  if (err) return handleError(err);
+
+  //Now use the Submisison Model Functions To Add data to the Submission
+  var fieldInputOptions = {
+    "fieldId": "<<The ID of the field To Add Data To>>",
+    "fieldCode": "<<The fieldCode of the field To Add Data To>>"
+    "index": "<<The index to add the value to>>" //(This is used for repeating fields with mutiple values)
+    "value": "<<A valid input value to add to the submission>>"
+  };
+
+  //Note: the addFieldInput function is not asynchronous
+  var error = submissionModel.addFieldInput(fieldInputOptions);
+
+  if(error){
+    return handleError(error);
+  }
+
+  /*
+  Submitting the data as part of a submission.
+  This function will upload all files passed to the submission using the addFieldInput function
+  */
+  submissionModel.submit(function(err, submissionId){
+    if(err) return handleError(err);
+
+    return callback(undefined, submissionId);
+  });
+});
+----
+
+[[fh-forms-registerlistener]]
+== $fh.forms.registerListener
+
+NOTE: The version of `fh-mbaas-api` in your `package.json` file must be at least `4.8.0`.
+
+[[details-13]]
+=== Details
+
+The `$fh.forms.registerListener` function allows you to register an http://nodejs.org/api/events.html#events_class_events_eventemitter[EventEmitter^] object to listen for submission events that occur.
+
+NOTE: The `$fh.forms.registerListener` and `$fh.forms.deregisterListener` functions only accept EventEmitter objects as parameters.
+
+[source,javascript]
+----
+//NodeJS Events Module. Note, this is required to register event emitter objects to forms.
+var events = require('events');
+var submissionEventListener = new events.EventEmitter();
+
+$fh.forms.registerListener(submissionEventListener, function(err){
+  if (err) return handleError(err);
+
+  //submissionEventListener has now been registered with the $fh.forms Cloud API. Any valid Forms Events will now emit.
+});
+----
+
+[[event-submissionstarted]]
+=== *Event: submissionStarted*
+
+This event is emitted whenever a submission has been submitted, validated and saved to the database. This occurs `before` any files are uploaded as part of the submission.
+
+The object passed to the `submissionStarted` event contains the following parameters:
+
+[source,javascript]
+----
+{
+    "submissionId": "<<24-character submission ID>>",
+    "submissionStartedTimestamp": "<<2015-02-04T19:18:58.746Z>>"
+}
+----
+
+[source,javascript]
+----
+//NodeJS Events Module. Note, this is required to register event emitter objects to forms.
+var events = require('events');
+var submissionEventListener = new events.EventEmitter();
+
+submissionEventListener.on('submissionStarted', function(params){
+  var submissionId = params.submissionId;
+  var submissionStartedTimestamp = params.submissionStartedTimestamp;
+  console.log("Submission with ID " + submissionId + " has started at " + submissionStartedTimestamp);
+});
+
+$fh.forms.registerListener(submissionEventListener, function(err){
+  if (err) return handleError(err);
+
+  //submissionEventListener has now been registered with the $fh.forms Cloud API. Any valid Forms Events will now emit.
+});
+----
+
+[[event-submissioncomplete]]
+=== *Event: submissionComplete*
+
+This event is emitted whenever a submission has been submitted, has been validated and saved to the database, all files have been saved to the database and the submission has been verified. The submission is now ready for processing using the $fh.forms.getSubmission Cloud API.
+
+[source,javascript]
+----
+//NodeJS Events Module. Note, this is required to register event emitter objects to forms.
+var events = require('events');
+var submissionEventListener = new events.EventEmitter();
+
+submissionEventListener.on('submissionComplete', function(params){
+  var submissionId = params.submissionId;
+  var submissionCompletedTimestamp = params.submissionCompletedTimestamp;
+  console.log("Submission with ID " + submissionId + " has completed at " + submissionCompletedTimestamp);
+});
+
+$fh.forms.registerListener(submissionEventListener, function(err){
+  if (err) return handleError(err);
+
+  //submissionEventListener has now been registered with the $fh.forms Cloud API. Any valid Forms Events will now emit.
+});
+----
+
+The `params` object passed to the event contains:
+
+[source,javascript]
+----
+{
+    "submissionId": "<<24-character submission ID>>",
+    "submissionCompletedTimestamp": "<<2015-02-04T19:18:58.746Z>>",
+    "submission": "<<JSON definition of the Completed Submission.>>"
+}
+----
+
+[[event-submissionerror]]
+=== *Event: submissionError*
+
+This event is emitted whenever an error has occurred when making a submission.
+
+[source,javascript]
+----
+//NodeJS Events Module. Note, this is required to register event emitter objects to forms.
+var events = require('events');
+var submissionEventListener = new events.EventEmitter();
+
+submissionEventListener.on('submissionError', function(error){
+  console.log("Error Submitting Form");
+  console.log("Error Type: ", error.type);
+});
+
+$fh.forms.registerListener(submissionEventListener, function(err){
+ if (err) return handleError(err);
+
+ //submissionEventListener has now been registered with the $fh.forms Cloud API. Any valid Forms Events will now emit.
+});
+----
+
+[[submission-error-types]]
+==== *Submission Error Types*
+
+Submission errors fall into different types depending on the reason for the error.
+
+[[validation-error]]
+===== *Validation Error*
+
+The submitted data is not valid. The response will be in the following format:
+
+NOTE: For repeating fields, the error messages will be in the same order as the values entered for the field.
+
+[source,javascript]
+----
+{
+  type: 'validationError',
+  error: {
+       valid: < true / false >,
+       < fieldId1 >: {
+           valid: < true / false >,
+           errorMessages: [
+               "Validation Error Message 1",
+               "Validation Error Message 2"
+           ]
+       },
+       ....,
+       < fieldIdN >: {
+           valid: < true / false >,
+           errorMessages: [
+               "Validation Error Message 1",
+               "Validation Error Message 2"
+           ]
+       }
+   }
+}
+----
+
+[[other-errors-saving-the-json-definition-of-the-submission]]
+===== *Other Errors Saving The JSON Definition Of The Submission*
+
+There was an unexpected error saving the JSON definition of the submission. This event covers all errors other than validation that can occur when attempting to save the submission (For example, an error occurred when saving the submission to the database).
+
+[source,javascript]
+----
+{
+  type: 'jsonError',
+  error: < Error message >
+}
+----
+
+[[file-upload-error]]
+===== *File Upload Error*
+
+There was an error uploading a file for a submission.
+
+[source,javascript]
+----
+{
+  type: 'fileUploadError',
+  submissionId: < ID of the submission related to the file upload >,
+  fileName: < The name of the file uploaded>,
+  error: < Error message >
+}
+----
+
+[[fh-forms-deregisterlistener]]
+== $fh.forms.deregisterListener
+
+NOTE: The version of `fh-mbaas-api` in your `package.json` file must be at least `4.8.0`.
+
+[[details-14]]
+=== Details
+
+Removes a listener from the $fh.forms Cloud API.
+
+[source,javascript]
+----
+//NodeJS Events Module. Note, this is required to register event emitter objects to forms.
+var events = require('events');
+var submissionEventListener = new events.EventEmitter();
+
+$fh.forms.registerListener(submissionEventListener, function(err){
+  if (err) return handleError(err);
+
+  //submissionEventListener has now been registered with the $fh.forms Cloud API. Any valid Forms Events will now emit.
+  submissionEventListener.on('submissionStarted', function(params){
+    var submissionId = params.submissionId;
+    console.log("Submission with ID " + submissionId + " has started");
+  });
+
+  //Removing the listener from the $fh.forms Cloud API.
+  $fh.forms.deregisterListener(submissionEventListener);
+});
+----
+
+[[fh-forms-exportcsv]]
+== $fh.forms.exportCSV
+
+NOTE: The version of `fh-mbaas-api` in your `package.json` file must be at least `5.10.0`.
+
+[[details-15]]
+=== Details
+
+Export CSV files from the $fh.forms Cloud API. The export returns a zip file of several CSV files. To filter then use the input value, you can filter by:
+
+* _projectId:_ The GUID of a project to filter by.
+* _submissionId:_ A single Submission ID or an array of submission IDs to filter by.
+* _formId:_ A single Form ID or and array of form IDs to filter by.
+* _fieldHeader:_ Header text to use in the exported CSV files. The options are _name_ for the name of the field or _fieldCode_ to use the field code defined in the Form Builder.
+
+[source,javascript]
+----
+// This is the input parameter to filter the list of CSV files.
+var queryParams = {
+  projectId: "projectId",
+  submissionId: "submissionId",
+  formId: ["formId1", "formId2"],
+  fieldHeader: "name"
+};
+
+$fh.forms.exportCSV(queryParams, function(err, fileStreamObject) {
+  // fileStreamObject is a zip file containing CSV files associated
+  // to the form it was submitted against.
+  if (err) return handleError(err);
+  /**
+  * Pipe the file stream to a writable stream (for example, a FileWriter)
+  */
+  fileStreamObject.pipe(writable_stream);
+  fileStreamObject.resume();
+});
+----
+
+[[fh-forms-exportsinglepdf]]
+== $fh.forms.exportSinglePDF
+
+NOTE: The version of `fh-mbaas-api` in your `package.json` file must be at least `5.12.0`.
+
+NOTE: This API is compatible with MBaaS version >=4.1.0 .
+
+[[details-16]]
+=== Details
+
+Export one PDF file for a given submission from the $fh.forms Cloud API. The export returns a stream file.
+
+[source,javascript]
+----
+var params = {
+  submissionId: "submissionId"
+};
+
+$fh.forms.exportSinglePDF(params, function(err, fileStreamObject){
+  if (err) return handleError(err);
+  /**
+  * Pipe the file stream to a writable stream (for example, a FileWriter)
+  */
+  fileStreamObject.pipe(writable_stream);
+  fileStreamObject.resume();
+});
+----

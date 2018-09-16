@@ -1,0 +1,193 @@
+// include::shared/attributes.adoc[]
+
+[[native-ios-objective-c]]
+= Native iOS (Objective-C)
+
+.Download
+* https://github.com/feedhenry/fh-ios-sdk/releases[SDK^]
+* https://github.com/feedhenry-templates/blank-ios-app.git[Sample App^]
+
+.API Documentation
+* link:{ClientAPI}[{ProductShortName} Client API] - documentation for all {ProductShortName} Client APIs
+* http://feedhenry.github.io/fh-ios-sdk/FH/docset/Contents/Resources/Documents/index.html[{ProductShortName} iOS SDK Reference^] - generated documentation of classes and methods of the {ProductShortName} iOS SDK
+
+:suffix: _2
+include::cocoapods.adoc[]
+
+[[native-ios-objective-c-get-started]]
+== Get Started
+
+This SDK lets you use {ProductShortName} APIs in Objective-C apps for all iOS versions supported by {ProductShortName}.
+
+The {ProductShortName} iOS Objective-C SDK is an open-source project hosted in the https://github.com/feedhenry/fh-ios-sdk[FeedHenry iOS SDK repository^] on Github. Feel free to fork it and make a contribution to this project.
+
+Before using this SDK, make sure you have the Xcode IDE installed. You can download Xcode from the https://developer.apple.com/xcode/[Apple Developer Portal^].
+
+If you plan to use https://guides.cocoapods.org/using/getting-started.html[CocoaPods^] to manage dependencies in your project, you must install it first:
+
+[source,bash]
+----
+sudo gem install cocoapods
+----
+
+[[native-ios-objective-c-new-app]]
+=== New App
+
+When starting with a new template app, you have two options:
+
+* either use CocoaPods (the recommended approach and the default in Studio)
+* or use FH framework.
+
+[[native-ios-objective-c-new-app-using-cocoapods]]
+==== Using CocoaPods
+
+Clone the https://github.com/feedhenry-templates/blank-ios-app/tree/cocoapods[sample app^] to get started with a new iOS application which has the {ProductShortName} SDK included as CocoaPods dependency.
+
+[source,bash]
+----
+git clone https://github.com/feedhenry-templates/blank-ios-app.git
+cd blank-ios-app
+----
+
+Fetch the dependencies defined in the https://github.com/feedhenry-templates/blank-ios-app/blob/cocoapods/Podfile[Podfile^]:
+
+[source,bash]
+----
+pod install
+----
+
+Open the `blank-ios-app.xcworkspace` workspace in Xcode. The required dependencies are located in the Pods group.
+
+[[native-ios-objective-c-new-app-using-fh-framework]]
+==== Using FH Framework
+
+Clone the https://github.com/feedhenry-templates/blank-ios-app/tree/cocoapods[sample app^] to get started with a new iOS application which has the {ProductShortName} SDK already included.
+
+[source,bash]
+----
+git clone https://github.com/feedhenry-templates/blank-ios-app.git
+----
+
+Open the `blank-ios-app.xcworkspace` workspace in Xcode.
+
+[[native-ios-objective-c-existing-app]]
+=== Existing App
+
+When you are integrating an existing app with {ProductShortName}, you have two options:
+
+* if your app uses CocoaPods, add the FH SDK as a new pod,
+* otherwise add the FH framework to your Xcode project.
+
+[[native-ios-objective-c-existing-app-using-cocoapods]]
+==== Using CocoaPods
+
+Open the Podfile and add the following dependency:
+
+----
+pod FH, '3.1.1'
+----
+
+Replace `3.1.1` with the version of {ProductShortName} iOS Objective-C SDK you are targeting. If you do not specify a version number, the latest version in the CocoaPods central repository will be used.
+
+[[native-ios-objective-c-existing-app-using-fh-framework]]
+==== Using FH Framework
+
+Download the SDK and save it as `fh-framework-latest.zip`.
+
+To integrate the SDK, extract the `FH.framework` file from the Zip file you downloaded above.
+
+image:ios_extract.png[image]
+
+Once downloaded, drag the `FH.framework` file to your Xcode Project.
+
+image:ios_drag.png[image]
+
+In the dialog, accept the defaults and click __Finish__.
+
+image:ios_copy.png[image]
+
+[[native-ios-objective-c-integration]]
+=== Integration
+
+The {ProductShortName} iOS SDK has a number of framework and library dependencies -- you must re-configure your Build Phases to link against these frameworks and libraries at build time for the SDK to compile in your project correctly. The libraries you must link against are:
+
+* `libxml2.dylib`
+* `libz.dylib`
+* `SystemConfiguration.framework`
+* `CFNetwork.framework`
+* `MobileCoreServices.framework`
+
+To add these, go to *Build Phases > Link Binary with Libraries* and add the above dependencies as link dependencies.
+
+image:ios_frameworks.png[image]
+
+You will also need to add a Linker Flag to your app. To add this, go to the _Build Settings_ screen of your project's target. Use the search to find __Other linker flags__, and add the following:
+
+`-Objective-C`
+
+image:ios_config0.png[image]
+
+Finally, add a Property List file called `fhconfig.plist` to your Project.
+
+image:ios_config1.png[image]
+
+image:ios_config2.png[image]
+
+image:ios_config3.png[image]
+
+[[native-ios-objective-c-setup]]
+=== Setup
+
+You must define the properties which allow your app to communicate with {ProductShortName} servers. Add the following values to the `fhconfig.plist` configuration file:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>host</key>
+  <string>__RHMAP_Core_host__</string>
+  <key>appid</key>
+  <string>__Client_App_ID__</string>
+  <key>projectid</key>
+  <string>__Project_ID__</string>
+  <key>appkey</key>
+  <string>__Client_App_ API_key___</string>
+  <key>connectiontag</key>
+  <string>__Connection_tag__</string>
+</dict>
+</plist>
+----
+
+See link:{ProductFeatures}#projects-connections[Projects - Connections] for more information on connections between Client Apps and Cloud Apps.
+
+[[native-ios-objective-c-initialization]]
+=== Initialization
+
+Before invoking any cloud requests from the {ProductShortName} iOS Swift SDK, you must first initialize it. Copy the following code snippet to your App Delegate's `didFinishLaunchingWithOptions:` method, or any other location which ensures the code is called before any cloud requests:
+
+[source,objectivec]
+----
+#import <FH/FH.h>
+#import <FH/FHResponse.h>
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  // Override point for customization after application launch.
+
+  // Call a cloud side function when init finishes
+  void (^success)(FHResponse *)=^(FHResponse * res) {
+    // Initialisation is now complete, you can now make FHActRequest's
+    NSLog(@"SDK initialised OK");
+  };
+
+  void (^failure)(id)=^(FHResponse * res){
+    NSLog(@"Initialisation failed. Response = %@", res.rawResponse);
+  };
+
+  //View loaded, init the library
+  [FH initWithSuccess:success AndFailure:failure];
+
+  return YES;
+}
+----

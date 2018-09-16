@@ -1,0 +1,44 @@
+// include::shared/attributes.adoc[]
+
+[[adding-stats-to-your-app]]
+= Adding Stats to your App
+
+[[stats-overview]]
+== Overview
+
+The Platform maintains counters and timers that can be accessed by the user. Some are provided by the platform, while others can be specified by the developers of an application.
+
+Counters can be used to track the usage of particular functionality, counters can be incremented and decremented. The platform provides counters that show currently active server-side actions, that is, the number of server-side functions that have been called by a mobile application that are currently in progress.
+
+Timers can be used to track the length of time taken by specified actions. The platform provides timers to track the execution-time of the server-side actions. Periodically, at a platform-configured interval, the current counters, and timers and pushed to a history and zeroed.
+
+When requesting statistics from the platform, the number of recent intervals to return data for, and the length of the flush interval, in milliseconds, is returned with the data.
+
+Timer data is returned as the number of timing events that have occurred in the interval, with upper and lower values, there are also upper and mean values for the 90th percentile.
+
+[[creating-counters-and-timers]]
+== Creating Counters and Timers
+
+App developers can create their own counters and timers using:
+
+[source,javascript]
+----
+$fh.stats.inc('COUNTERNAME'); // Increments a counter
+$fh.stats.dec('COUNTERNAME'); // Decrements a counter
+$fh.stats.timing('TIMERNAME', timeInMillis); // Store a timer value
+----
+
+For more detailed documentation about using the Stats API in your Cloud App, see:
+
+* link:{CloudAPI}#fh-stats[$fh.stats API Reference]
+
+Developers' counters and timers can be requested from the platform, by specifying the statstype of "app”.
+
+The keynames of the counters are of the form `DOMAIN_APPID_app_COUNTERNAME` where `DOMAIN_APPID` is the name of the domain and `APPID` is the ID of the app, and `COUNTERNAME` is the developer supplied name for the counter.
+
+The keynames of the timers are of the form `DOMAIN_APPID_app_TIMERNAME` where `DOMAIN_APPID` is the name of the domain and `APPID` is the ID of the app, and `TIMERNAME` is the developer supplied name for the timer.
+
+[[viewing-stats]]
+== Viewing Stats
+
+A user can access stats data through the Studio or the raw data itself through link:{LocalDevelopmentGuide}#local-development-guide-setting-up-fhc[FHC], the command line client.

@@ -1,0 +1,34 @@
+include::{partialsdir}/attributes.adoc[]
+
+[[administrators-guide]]
+= Administrator's  Guide
+
+
+include::{partialsdir}/core_proxy_setup.adoc[leveloffset=+1]
+
+include::{partialsdir}/core_wildcard_proxy.adoc[leveloffset=+1]
+
+include::{partialsdir}/scaling_core.adoc[leveloffset=+1]
+
+include::{partialsdir}/core_smtp_setup.adoc[leveloffset=+1]
+
+
+include::{partialsdir}/core_backup_procedure.adoc[leveloffset=+1]
+
+include::{partialsdir}/core_restore_from_backup.adoc[leveloffset=+1]
+
+include::{partialsdir}/core_build_farm_setup.adoc[leveloffset=+1]
+include::{partialsdir}/core_build_farm_configuration.adoc[leveloffset=+1]
+
+
+include::{partialsdir}/mbaas_4x_intro.adoc[leveloffset=+1]
+include::{partialsdir}/mbaas_manual_provision_openshift3.adoc[leveloffset=+1]
+include::{partialsdir}/mbaas_resource_limits_and_quotas.adoc[leveloffset=+1]
+include::{partialsdir}/mbaas_smtp_notifications.adoc[leveloffset=+1]
+include::{partialsdir}/mbaas_backup_procedure.adoc[leveloffset=+1]
+include::{partialsdir}/mbaas_restore_backup_procedure.adoc[leveloffset=+1]
+include::{partialsdir}/mbaas_troubleshooting.adoc[leveloffset=+1]
+
+//build farm
+include::{partialsdir}/bf_admin.adoc[leveloffset=+1]
+include::{partialsdir}/bf_macos.adoc[leveloffset=+2]

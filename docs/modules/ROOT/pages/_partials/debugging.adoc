@@ -1,0 +1,131 @@
+// include::shared/attributes.adoc[]
+
+[[debugging-apps]]
+= Debugging Apps
+
+Debugging is an essential part of app development. With web applications this can be as simple as using the `alert()` function to show the value of a variable at a certain point in the code. For browsers that have a console, the `console.log` function can be used to log this kind of information passively. More advanced forms of debugging web applications include inspecting the state of the DOM, breakpointing JavaScript code and stepping through it, or updating the DOM and the associated styles on the fly.
+
+This page gives an explanation of the debugging tools that can be used while developing cross platform apps. These tools can be used in the Studio or on device.
+
+For more information about how to prepare an app for debugging and how to debug on iOS and Android, see this link:https://developers.redhat.com/blog/2017/05/26/how-to-setup-your-apps-to-target-locally-on-device/[blog].
+
+[[studio-console]]
+== Studio console
+
+Most browsers support the console logger. Various log levels can be called with a message for example,
+
+[source,javascript]
+----
+console.log(message);
+console.error(message);
+----
+
+To debug this console output, you will need to open the relevant web debugging tools in your browser.
+
+For debugging cloud code, simply use `console.log()` and `console.error()`. The corresponding log files can be viewed in the Studio under the 'Logs' section, or using FHC.
+
+[source,javascript]
+----
+console.log('this goes to stdout.log');
+console.error('this goes to stderr.log');
+----
+
+[[firebug]]
+== Firebug
+
+If your browser of choice for development is Firefox, the http://getfirebug.com/[Firebug^] tool makes debugging very easy. Firebug is an add-on for Firefox that is quite active and has many updates to it. Here are some of the things that can be done using Firebug:
+
+* view console output
+* view resource requests
+* debug script execution
+* dynamically run code, even when breakpoint debugging
+* view/update the DOM
+* view/update styles
+* view/update local storage (DB)
+
+Using these features, debugging an app is made very easy. Getting an app working without Firebug showing any errors or problems gives the app a good chance of working cross platform.
+
+[[web-inspector-with-chrome]]
+== Web Inspector with Chrome
+
+Web Inspector is very similar to Firebug. It offers more or less the same features as Firebug, but has the advantage of being included with WebKit browsers out of the box. This means the Web Inspector can be used with Google Chrome and Safari. The tool is enabled by default with Chrome and can be started by context clicking any object on a web page, and selecting **Inspect Element**.
+
+[[safari-ios-6]]
+== Safari / iOS 6+
+
+NOTE: Remote debugging on iOS with Safari can only be enabled for applications built with a Development provisioning profile. Ad Hoc and Distribution apps cannot be debugged this way.
+
+. Go to the *Settings app* on your iOS device.
+. Navigate to *Safari* -> **Advanced**, and then toggle on the *Web Inspector* switch.
++
+image:debugging_image_1.jpg[Studio Screenshot]
+
+. In desktop Safari, go to *Safari* -> **Preferences**, select **Advanced**, then check the *Show Develop menu in menu bar* check box.
++
+image:debugging_image_2.jpg[Studio Screenshot]
+
+. Connect your iOS device to your development machine via USB.
+. Open the app you want to debug, it will be available in Safari’s *Develop* menu.
++
+image:debugging_image_3.jpg[Studio Screenshot]
+
+. The *Develop* menu has additional tools such as the *User Agent* switcher. This allows the browser to pretend to be a different browser for example, Mobile Safari. This feature can be useful if developing a mobile Internet version of an app.
+
+[[chrome-android-4-0]]
+== Chrome / Android 4.0+
+
+NOTE: Remote debugging on Android with Chrome can only be enabled for applications that flagged debuggable. If you are using Cordova 3.3 or newer, add `android:debuggable="true"` inside the `<application>` element in the `AndroidManifest.xml` file. If you are using Cordova 3.2 or older version, you have to enable WebView debugging.
+
+. Enable USB debugging on your Android device
+On Android 4.2 and newer versions, the developer option is hidden. To make it available, navigate to *Settings* -> **About phone**, and tap the *Build number* seven times.
++
+image:debugging_image_4.jpg[Studio Screenshot]
+
+. Go back to the previous screen to find **Developer options**, then check the *USB debugging* check box. Choosing the *Stay awake* option is also recommended.
++
+image:debugging_image_5.jpg[Studio Screenshot]
+
+. In the desktop Chrome browser, in the menu on the upper-right corner select *Tools* -> *Inspect Devices*
+. Check **Discover USB devices**, if it is not selected.
+. Connect your Android device via USB
+. If it is the first time you attached this device for developing, you may see an alert on device requesting permission for USB debugging from your development machine. To avoid appearing this alert every time you debug, check **Always allow from this computer**, then tap OK.
+. To debug your app, you need to run it on device.
+. In Chrome, click the *Inspect* link to open the DevTools.
++
+image:debugging_image_6.jpg[Studio Screenshot]
+
+[[on-device]]
+== On-Device
+
+Debugging on device is still in an early stage compared to debugging in a desktop browser. Some platforms, such as iOS, make the console available and show any javascript errors when Developer mode is enabled, but it is nowhere near as fully featured as Firebug or Web Inspector.
+
+[[weinre]]
+=== Weinre
+
+https://www.npmjs.com/package/weinre/[Weinre^] is probably the best on-device debugging tool available at the moment. It officially only supports webkit browsers. This means it will work for Android and iOS. The full list and version numbers are available on its site.
+
+Weinre works by setting up a remote debugging session from the app on the device to the Weinre server. Weinre runs a web server which can be used to access the Web Inspector, and remotely debug the app. At the time of writing, the features of this Web Inspector session allow debugging the DOM and updating it. The remote console is also shown, and the developer can dynamically run code in the app from the console.
+
+To enable Weinre debugging in an application, there are a few steps.
+
+. Get the Weinre jar up and running on a machine that the device can connect to. There are 2 ways of doing this:
++
+--
+* Run the jar file on a machine accessible over the Internet
+* Run the jar on a machine on the same network as the device, that is, device connected via WiFi to the same router/access point as the developers machine.
+--
++
+Note that when running the jar from the command line, it is advised to use the value **-all-** for the `boundHost` so that it is listening on all interfaces.
+
+. Add a script to the HTML of the app before building and deploying it to the device. According to the documentation, the script include will look something like this.
++
+[source,html]
+----
+<script src="http://some.server.xyz/target/target-script-min.js#anonymous"></script>
+----
++
+The address used, **some.server.xyz**, must match the address (ip address should work too) of the machine that is running the Weinre server.
+
+. Deploy the app to the device and launch it. Opening the web page of the Weinre server (on the developer machine) should present a link to the debug user interface. This link opens up the Web Inspector and allows remote debugging of the app.
++
+As these instructions are for a third party tool, it is best to check with the official site for any updates around this setup process.

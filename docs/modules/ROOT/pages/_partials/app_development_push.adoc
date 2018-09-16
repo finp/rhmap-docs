@@ -1,0 +1,355 @@
+// include::shared/attributes.adoc[]
+
+[[developing-a-push-notification-application-using-aerogear-unifiedpush-server]]
+= Developing a Push Notification Application using AeroGear UnifiedPush Server
+
+.Overview
+This tutorial illustrates how to connect the community version of AeroGear UnifiedPush Server (UPS) deployed in your
+OpenShift instance to the {ProductName} ({ProductShortName}).
+
+You will build a set of sample applications for receiving sports news:
+
+* *Mobile application* (__Push Notifications Mobile Client__): lets users subscribe to categories and receive a push
+notification whenever a new story is posted in any of the chosen categories.
+* *Web application* (__Push Console App__): lets administrators create and update the category list, as well as create
+news stories and push them to clients.
+* *Server application* (__Push Cloud App__): This Cloud App is the back end, containing the server-side logic. It
+exposes API methods to manage categories (that is, different sports) and news stories associated with one or more
+categories. The API of this app is called by the web and mobile application. This app communicates with the UnifiedPush
+Server.
+
+WARNING: The community version of UPS is not supported. For the officially supported way to use push notifications in your apps, see
+link:{ServerSideDeveloperGuide}#developing-an-application-using-push-notifications[Developing An Application Using Push Notifications]
+
+.Requirements
+* {ProductShortName} account
+* OpenShift Online account
+* Mobile platform developer accounts (Google, Apple)
+
+[[create-a-project-using-the-aerogear-community-push-template]]
+== Create a Project using the _AeroGear Community Push_ Template
+
+To create a project using the push template in the Studio:
+
+. Log into the Studio.
+. Select the _Projects_ tab located at top-left of the screen.
+. Select the _New Project_ button located at top-left of the screen.
+. Find the _AeroGear Community Push_ template and click the corresponding _Choose_ button on the right side of the
+screen.
++
+image:create-project.png[Create Project]
+. Enter a name for the project in the _Name your Project_ box and click the _Create_ button on the right side of the
+screen.
+. Once the project creation has completed, click the _Finish_ button at the bottom of the screen.
++
+image:create-project-complete.png[Create Project Complete]
+
+At this point, your project contains three apps:
+
+* Push Cloud App: a simple CRUD application for storing categories and news,
+* Push Console App: a _management interface_ where administrators can create and delete categories,
+* Push Notifications Mobile Client: a Client App where users _subscribe_ to categories and receive push notifications
+when new stories are created.
+
+[[create-an-instance-of-ups]]
+== Create an instance of UPS
+
+In order for the application to send and receive push notifications, an instance of the _UnifiedPush Server_ (__UPS__)
+must be set up.
+
+To create an instance of UPS running on __Openshift Online__:
+
+. Log into your https://www.openshift.com[Openshift Online^] account
+
+. Create a new _AeroGear Push 1.x Quickstart_ application. For more details on creating, see the https://aerogear.org/docs/unifiedpush/ups_userguide/index/#openshift[AeroGear Documentation^]
++
+image:aerogear-dashboard.png[AeroGear Dashboard]
+
+. Log into your _AeroGear Push 1.x Quickstart_ application and click on _Applications_ on the left side of the screen.
++
+image:aerogear-applications.png[AeroGear Applications]
++
+NOTE: The default username and password can be found in the link:https://aerogear.org/docs/unifiedpush/ups_userguide/index/#_login_and_landing_page[AeroGear documentation^].
+
+. Click on _Create Application_ on the right side of the screen.
+. Enter a name and description for the application and click _Create_
++
+image:aerogear-new-application.png[AeroGear New Application]
+. Once the application has been created, reveal its details by clicking on its name in the list of applications in the
+middle of the screen.
++
+image:aerogear-new-application-details.png[AeroGear New Application Details]
+. Note the following fields since this information will be used later:
+* Server URL
+* Application ID
+* Master Secret
+. You will also need to set up a _Variant_ for each targeted platform (for example, iOS or Android).
+For more details on creating a __Variant__, see the AeroGear
+https://aerogear.org/docs/unifiedpush/aerogear-push-ios/[documentation for iOS^] and
+https://aerogear.org/docs/unifiedpush/aerogear-push-android/[documentation for Android^]. After setting up variants,
+you will need to note down the following information for each specific variant since it will be used later:
++
+--
+* Server URL
+* Variant ID
+* Secret
+* Project Number (Android only, used for __senderID__)
+--
++
+image:aerogear-variant-details.png[Send Message]
+
+[[create-a-push-connector-instance]]
+== Create a Push Connector instance
+
+In order to connect the Push Cloud App to UPS, a _Cloud Service_ must be instantiated in {ProductShortName} and configured to connect
+to the UPS instance created in the previous step.
+
+. Click on _Services and APIs_ at the top of the screen.
++
+image:tool-bar-services-and-apis.png[Services and APIs]
+. Click on the _Provision MBaaS Service/API_ button at the top left of the screen.
++
+image:provision-mbaas.png[Provision MBaaS Service]
+. Locate _AeroGear Community Push Connector_ from the list and click the _Choose_ button on the right of the screen.
++
+image:create-push-service.png[Create Push Service]
+. Enter a name and click _Next_ on the right side of the screen.
+. Enter the __Server URL__, _Application ID_ and _Master Secret_ from step 2.7 and click the _Next_ button.
++
+image:create-push-service-config.png[Create Push Service Config]
+. Once the creation process is complete, click on the _Finish_ button.
+
+[[associate-the-push-connector-with-your-project]]
+== Associate the Push Connector with your project
+
+After the Push Connector has been created and configured, your project must be configured to use it.
+
+. Select the _Projects_ tab located at top-left of the screen.
+. Click on your project to open it.
+. Click on the _+_ symbol in the _MBaaS Services_ column on the right side of the screen.
++
+image:add-service-connector.png[Add Service Connector]
+
+. Click on the Push Connector instantiated in the previous step and then click on the _Associate Services_ button at the bottom of the screen.
++
+image:associate-service-connector.png[Associate Services]
+
+. You will be returned to the _Apps, Cloud Apps & Services_ page of your project and the Push Connector should appear
+in the _MBaaS Services_ column.
+
+[[configure-the-push-cloud-app-to-use-the-push-connector]]
+== Configure the Push Cloud App to use the Push Connector
+
+. If you are not already on the _Apps, Cloud Apps & Services_ page of your project, navigate to it.
+. Click on the _Push Connector_ in the _MBaaS Services_ column to reveal its details.
+. Note the _Service ID_ (GUID) of the _Push Connector_ since it will be used later. Also, ensure that your project name
+appears under the _Access Control_ section in the middle of the screen.
++
+image:service-connector-guid.png[Service Connector Details]
++
+NOTE: Verify that your project has been added in the _Access
+Control_ area. Failure to do so will result in the _Push Cloud App_ being unable to send push notifications.
+
+. If any changes were made, click _Save Service_ at the bottom of the screen.
+. Click on _Environment Variables_ on the left side of the screen.
+. Click on _Push Environment Variables_ on the right side of the screen and click _Confirm_ when prompted.
+. Return to the _Apps, Cloud Apps & Services_ page of your project.
+. Click on the _Push Cloud App_ application under the _Cloud Code Apps_ column in the middle of the screen.
+. Click on _Environment Variables_ on the left side of the screen.
++
+image:push-cloud-env-var-add.png[Environment Variables]
+. Click on _Add Variable_ on the top right side of the _App Environment Variables_ box.
+. Enter _AEROGEAR_SERVICE_GUID_ for _Name_ and paste the _Service ID_ of the Push Connector (noted in step 3) for
+_Development_
+. Click the _Push Environment Variables_ button on the top right side of the _App Environment Variables_ box to
+publish the variables. Upon completion, _AEROGEAR_SERVICE_GUID_ should appear in *both* the _App Environment
+Variables_ section as well as the _Deployed Environment Variables_ section.
++
+image:push-cloud-env-var-pushed.png[Push Environment Variables]
++
+[NOTE]
+Ensure that both the _Service Connector_ and
+_Push Cloud App_ are running. The status for each of these may be found under the _Cloud App Status_
+field on the _Details_ page of each. Both of these items must be deployed, running, and the environment variable
+pushed for push notifications to be properly sent.
+
+[[configure-the-mobile-client]]
+== Configure the mobile client
+
+The _Push Notifications Mobile Client_ app must be updated with the previously noted credentials for access to the UPS.
+These credentials authorize the client to register with the push server.
+
+. If you are not already on the _Apps, Cloud Apps & Services_ page of your project, navigate to it.
+. Click on the _Push Notifications Mobile Client_ under the _Apps_ column on the left side of the screen.
+. Click on _Editor_ on the left side of the screen.
+. Expand the `www` directory and click on the `push-config.json` file.
++
+image:client-push-config-json.png[push-config.json]
+. For each client platform (for example, __Android__, __iOS__), update the following fields using the appropriate variant from
+step 2.8:
+* for _pushServerURL_ enter the _Server URL_
+* for _variantID_ enter the _Variant ID_
+* for _variantSecret_ enter the _Secret_
+* for _senderID_ (Android only) enter the _Project Number_
+. In the _Editor_ menu, click _File_ then _Save_ to save the changes.
+
+[[set-up-build-credentials]]
+== Set up build credentials
+
+This step is only required if you're building for iOS. If your target platform is Android, skip to xref:build-the-app[Step 8].
+
+[[create-a-credential-bundle]]
+=== Create a credential bundle
+
+After you have obtained all necessary keys, certificates, and provisioning profiles from the mobile platform's developer
+portals, a _Credential Bundle_ must be created to use them.
+
+[NOTE]
+These are the _Developer_ private keys and certificates for
+the mobile platform (that is, iOS, Android, etc) which are *not* the same as the push certificate and private keys for
+the platform. For iOS, you will also need the _Provisioning Profile_ for the application. If you did not already
+create one in step 2, see
+link:https://aerogear.org/docs/unifiedpush/aerogear-push-ios/guides/#provisioning-profiles[these instructions^].
+For more details on obtaining the _Developer_ private keys and certificates see each platform's documentation.
+
+To create a credential bundle:
+
+. If you are not already on the _Apps, Cloud Apps & Services_ page of your project, navigate to it.
+. Click on the _Push Notifications Mobile Client_ under the _Apps_ column on the left side of the screen.
+. Click on _Credentials_ in the menu on the left side of the screen.
++
+image:credentials-bundle.png[Credentials Bundle]
+. Click on the _Create New Bundle_ button on the right side of the screen.
+. Choose the desired platform, enter the relevant information, and upload any profiles, keys, or certificates.
++
+image:credentials-bundle-create.png[Create Credentials Bundle]
+. Click the _Create Bundle_ button at the bottom of the screen.
+
+[NOTE]
+Ensure that you upload the correct profiles, keys, and
+certificates intended for the mobile client. In addition, if any of those items are secured with passwords, you will
+need to enter that information when building the client using any credential bundle with that secured item. If
+_any_ of this information (profiles, keys, certificates, passwords, etc) is incorrect or not properly configured,
+your mobile client may not build or install on your device.
+
+[[set-up-the-bundle-identifier-or-package-name]]
+=== Set up the Bundle Identifier or Package Name
+
+Before building, depending on the desired platform, the _Bundle Identifier_ or _Package Name_ information must be set.
+
+To set the _Bundle Identifier_ or __Package Name__:
+
+. If you are not already on the _Apps, Cloud Apps & Services_ page of your project, navigate to it.
+. Click on the _Push Notifications Mobile Client_ under the _Apps_ column on the left side of the screen.
+. Click on _Config_ in the menu on the left side of the screen.
+. Choose the desired platform (for example, iOS, Android, etc) from the menu on the left side of the screen.
++
+image:client-bundle-id.png[Client Bundle ID]
+. Enter the _Bundle Identifier_ or _Package Name_ in the appropriate text area and click the _Update Config_ button at
+the bottom of the screen.
+
+[NOTE]
+Depending on the platform, you may need to set the same Bundle
+Identifier or Package Name in multiple locations. For example, depending on how an iOS app is built, the Bundle
+Identifier may need to be set in a combination of the iPhone, iPad, and/or iOS sections. When setting the Bundle
+Identifier or Package Name in multiple locations, you will need to click the _Update Config_ button on
+*each* screen before moving to the next location. If you change locations _before_ clicking
+_Update Config_, your updates will be lost.
+
+[[build-the-app]]
+== Build the app
+
+Once all the certificates and credentials have been configured, the _Push Notifications Mobile Client_ may be built for
+a platform.
+
+To build the _Push Notifications Mobile Client_ for a platform:
+
+. If you are not already on the _Apps, Cloud Apps & Services_ page of your project, navigate to it.
+. Click on the _Push Notifications Mobile Client_ under the _Apps_ column on the left side of the screen.
+. Click on _Build_ in the menu on the left side of the screen.
+. Choose the desired platform.
+. Ensure that the proper _Build Type_ is configured.
+. On certain platforms, other fields (for example, __Credential Bundle__, __Private Key Password__, etc.) may also need to be
+entered.
++
+image:client-build.png[Client Build]
+
+. Click the _Build_ button at the bottom of the screen.
++
+NOTE: If any item in the credential bundle being used is secured with a password, it must be entered when performing the build.
+
+. Wait until the app is built. You can monitor progress at the bottom of the screen in the _Artifact History_ section.
+. Once the build is finished, click _Download_ in the first line of the table.
+. With your mobile device, scan the presented QR code and install the app.
+
+[[test-the-app]]
+== Test the app
+
+At this point, the _Push Notifications Mobile Client_ is built for the desired platforms and is ready to receive push
+notifications sent from the __Push Console App__, which uses the _Push Cloud App_ connected through the _Push Connector_
+to the UPS deployed on OpenShift.
+
+To test if this is working:
+
+. Navigate to the _Apps, Cloud Apps & Services_ page of your project.
+. Click on the _Push Console App_ application under the _Apps_ column.
+. Use the _App Preview_ box on the right side of the screen to test the application.
+You could also navigate to the URL listed next to __Current Host__.
++
+image:push-test-add-category.png[Add Category]
+. Create a couple of categories (for example, Football, Rugby and Basketball).
+. Open the application on the device and select the categories you want to receive.
+. In the studio, navigate to the _Apps, Cloud Apps & Services_ page of your project.
+. Return to the _Push Console App_ and use the _App Preview_ box (or visit the _Current Host_ URL) to create a news
+story and associate it with a category you subscribed to on your mobile device.
++
+image:push-test-message.png[Create Message]
+. Click _Send Push Notification_ and your mobile device should receive a push notification shortly.
++
+image:push-device-notification.png[Send Message]
+
+NOTE: In addition to building this example exercise, this template may
+also be used as a starting point to create your own application that integrates with UPS.
+
+[[common-issues]]
+== Common Issues
+
+[[checking-the-logs]]
+=== Checking the Logs
+
+If you are seeing issues during testing, review the {ProductShortName} and UnifiedPush Server (in OpenShift Online) logs for more
+details. The _Push Cloud App_ and _Push Console App_ logs can be found by navigating to each app in the project and
+clicking on _Logs_ on the left side of the screen. To access the logs in OpenShift Online, consult the https://access.redhat.com/documentation/en-US/OpenShift_Online/2.0/html/User_Guide/index.html[Openshift Online documentation^]. For more
+information on debugging UPS, see
+https://aerogear.org/docs/unifiedpush/ups_userguide/index/#debugging[Debugging the UnifiedPush Server^].
+
+[[errors-being-logged-in-push-cloud-app-and-push-messages-not-reaching-client]]
+=== Errors being logged in _Push Cloud App_ and push messages not reaching client
+
+If push messages are being sent from the __Push Console App__, but not reaching the Client Apps, check the logs in the
+_Push Cloud App_ for the following:
+
+....
+AeroGear Community Push Connector - err =  null  :: data =  code=401, message=You do not have permission to access this service.
+....
+
+This is most likely the result of the project not being added to the _Access Control_ area of the __Service Connector__.
+Make sure you have completed Step 5, all environment variables have been pushed, and that *both* the _Service
+Connector_ and _Push Cloud App_ are deployed and running. In the __Service Connector__, try updating the _Access Control_
+area, saving the changes, re-pushing the environment variables, and restarting the service. Additionally, you could try
+re-pushing the environment variables for the _Push Cloud App_ as well as restarting it.
+
+[[mobile-client-build-failing-due-to-no-matching-provisioning-profiles-found]]
+=== Mobile client build failing due to _No matching provisioning profiles found_
+
+If your Client App is failing to build with the following error message:
+
+....
+[BUILD] 'Code Sign error: No matching provisioning profiles found: No provisioning profiles matching the bundle identifier "com.feedhenry.fhPushNotificationsMobileClient" were found.'
+....
+
+you may not have your Bundle IDs properly configured. Revisit section xref:set-up-the-bundle-identifier-or-package-name[Set up the Bundle Identifier or Package Name] and ensure:
+
+* your bundle ID is correct and matches what you set up in the platform's (for example, Apple, Google, etc.) developer portal,
+* your bundle ID is specified for *every* platform that you're building for (for example, make sure that your bundle ID is set
+in __iOS__, __iPhone__, and _iPad_ if building for those platforms).

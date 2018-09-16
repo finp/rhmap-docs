@@ -1,0 +1,402 @@
+// include::shared/attributes.adoc[]
+
+[[teams-administration-api]]
+= Teams Administration API
+
+The Team Administration API allows Users with the required Permissions to manage teams at different levels of the Platform.
+
+[[teams-administration-api-requirements]]
+== Requirements
+
+To be able to administer teams the user must authenticate to the specific domain, either by logging in and using the returned cookie, or by using an API key located in the `API Key Management` section of the User Profile in Studio.
+
+In addition, the logged in user must be a Member of a Team(s) with the following permissions:
+
+* Reseller
+** Administrator (View & Edit)
+
+OR
+
+* Customer
+** Administrator (View & Edit)
+
+OR
+
+* Domain
+** Administrator (View & Edit)
+
+[[teams-administration-api-list-teams]]
+== List Teams
+
+[[teams-administration-api-description]]
+=== Description
+
+Lists the Teams available to the User based on the Permissions assigned to the Teams that the User is a Member of.
+
+[[teams-administration-api-json-team-definition]]
+=== JSON Team Definition
+
+The following JSON Object is the JSON definition of a Team referred to in the response bodies in the Teams Administration Platform API.
+
+[source,javascript]
+----
+{
+    //Team Identifier
+    "_id": "teamid1234",
+    //The Business Objects that the Team has access to at different levels of the
+    //Platform.
+    "business-objects": {
+        "cluster": [
+            "<Cluster Name>"
+          ],
+          "cluster/reseller": [
+            "<Reseller Id>"
+          ],
+          "cluster/reseller/customer": [
+            "<Customer Id>"
+          ]
+    },
+    //Array Of Users IDs Assigned to the Team.
+    "users": ["userid1234"],
+    //Permissiions assigned to the Team at Different Levels of the Platform
+    "perms": {
+        "cluster/reseller": "read"
+        "cluster/reseller/customer": "write"
+        "cluster/reseller/customer/domain": "read"
+    },
+    //Is this Team a Default Team or a User Created Team.
+    "defaultTeam": true/false,
+    //A User-defined description of a Team.
+    "desc": "This is a Team.",
+    //The Name of a Team.
+    "name": "Team 1",
+    //Timestamp of the last time the team was updated.
+    "updated": "<1413466521479>",
+    //A User-Defined code for the team.
+    "code": "Team Code"
+}
+----
+
+[[teams-administration-api-endpoint]]
+=== Endpoint
+
+* URI: `/api/v2/admin/teams`
+* Method: `GET`
+
+[[teams-administration-api-request-body]]
+=== Request Body
+
+....
+{}
+....
+
+[[teams-administration-api-response-body]]
+=== Response Body
+
+==== Success
+
+[source,javascript]
+----
+// Array of JSON Objects Representing A Team
+[
+    "<JSON Team Definition>",
+    "<JSON Team Definition>"
+]
+----
+
+==== Error
+
+[source,javascript]
+----
+{
+    "error": {
+        "error": "<Error Message>"
+    }
+}
+----
+
+[[teams-administration-api-list-teams-for-user]]
+== List Teams For User
+
+[[teams-administration-api-description-1]]
+=== Description
+
+This endpoint lists the Teams that a User with ID `userId` is a Member of.
+
+[[teams-administration-api-endpoint-1]]
+=== Endpoint
+
+* URI: `/api/v2/admin/users/<userId>/teams`
+* Method: `GET`
+
+[[teams-administration-api-request-body-1]]
+=== Request Body
+
+....
+{}
+....
+
+[[teams-administration-api-response-body-1]]
+=== Response Body
+
+==== Success
+
+[source,javascript]
+----
+[
+    "<JSON Team Definition>"
+]
+----
+
+==== Error
+
+[source,javascript]
+----
+{
+    "error": {
+        "error": "<Error Message>"
+    }
+}
+----
+
+[[teams-administration-api-view-team-details]]
+== View Team Details
+
+[[teams-administration-api-description-2]]
+=== Description
+
+View the full JSON definition for a Team with ID `teamId`.
+
+[[teams-administration-api-endpoint-2]]
+=== Endpoint
+
+* URI: `/api/v2/admin/teams/<teamId>`
+* Method: `GET`
+
+[[teams-administration-api-request-body-2]]
+=== Request Body
+
+....
+{}
+....
+
+[[teams-administration-api-response-body-2]]
+=== Response Body
+
+==== Success
+
+[source,javascript]
+----
+{
+    "<JSON Team Definition>"
+}
+----
+
+==== Error
+
+[source,javascript]
+----
+{
+    "error": {
+        "error": "<Error Message>"
+    }
+}
+----
+
+[[teams-administration-api-create-team]]
+== Create Team
+
+[[teams-administration-api-description-3]]
+=== Description
+
+Create a new User-Defined Team.
+
+[[teams-administration-api-endpoint-3]]
+=== Endpoint
+
+* URI: `/api/v2/admin/teams`
+* Method: `POST`
+
+[[teams-administration-api-request-body-3]]
+=== Request Body
+
+[source,javascript]
+----
+{
+    //A User-Defined name for the Team.
+    "name":"User Team",
+    //A User-Definied code for the Team.
+    "code":"user-team",
+    //A User-Definied description of the team.
+    "desc":"A Team Created By A User",
+    //Permissions Assigned to the Team at differnent levels of the Platform
+    "perms":{
+        "cluster": [
+            "<Cluster Name>"
+        ],
+        "cluster/reseller": [
+            "<Reseller Id>"
+        ],
+        "cluster/reseller/customer": [
+            "<Customer Id>"
+        ]
+    },
+    //User IDs of Users assigned to the Team.
+    "users":[],
+    //IDs of Business Objects assigned to the Team at different levels of the Platform.
+    "business-objects":{
+        "cluster/reseller": "read"
+    }
+}
+----
+
+[[teams-administration-api-response-body-3]]
+=== Response Body
+
+==== Success
+
+[source,javascript]
+----
+{
+    "<JSON Team Definition>"
+}
+----
+
+==== Error
+
+[source,javascript]
+----
+{
+    "error": {
+        "error": "<Error Message>"
+    }
+}
+----
+
+[[teams-administration-api-remove-team]]
+== Remove Team
+
+[[teams-administration-api-description-4]]
+=== Description
+
+Remove a Team with ID `teamId`.
+
+[[teams-administration-api-endpoint-4]]
+=== Endpoint
+
+* URI: `/api/v2/admin/teams/<teamId>`
+* Method: `DELETE`
+
+[[teams-administration-api-request-body-4]]
+=== Request Body
+
+....
+{}
+....
+
+[[teams-administration-api-response-body-4]]
+=== Response Body
+
+==== Success
+
+[source,javascript]
+----
+{
+    "JSON Team Definition"
+}
+----
+
+==== Error
+
+[source,javascript]
+----
+{
+    "error": "<Error Message>"
+}
+----
+
+[[teams-administration-api-add-user-to-a-team]]
+== Add User To A Team
+
+[[teams-administration-api-description-5]]
+=== Description
+
+Adding a user with ID `userId` to a Team with ID `teamId`
+
+[[teams-administration-api-endpoint-5]]
+=== Endpoint
+
+* URI: `/api/v2/admin/teams/<teamId>/user/<userId>`
+* Method: `POST`
+
+[[teams-administration-api-request-body-5]]
+=== Request Body
+
+....
+{
+    "guid": "<userId>"
+}
+....
+
+[[teams-administration-api-response-body-5]]
+=== Response Body
+
+==== Success
+
+[source,javascript]
+----
+{
+    "<JSON Team Definition>"
+}
+----
+
+==== Error
+
+[source,javascript]
+----
+{
+    "error": "<Error Message>"
+}
+----
+
+[[teams-administration-api-remove-user-from-a-team]]
+== Remove User From A Team
+
+[[teams-administration-api-description-6]]
+=== Description
+
+Removes a User with ID `userId` from a Team with ID `teamId`.
+
+[[teams-administration-api-endpoint-6]]
+=== Endpoint
+
+* URI: `/api/v2/admin/teams/<teamId>/user/<userId>`
+* Method: `DELETE`
+
+[[teams-administration-api-request-body-6]]
+=== Request Body
+
+....
+{}
+....
+
+[[teams-administration-api-response-body-6]]
+=== Response Body
+
+==== Success
+
+[source,javascript]
+----
+{
+    "<JSON Team Definition>"
+}
+----
+
+==== Error
+
+[source,javascript]
+----
+{
+    "error": "<Error Message>"
+}
+----

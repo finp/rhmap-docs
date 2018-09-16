@@ -1,0 +1,22 @@
+// include::shared/attributes.adoc[]
+[[fh-sync-globalhandlecreate-dep]]
+== $fh.sync.globalHandleCreate {oldsync}
+
+[source,javascript]
+----
+$fh.sync.globalHandleCreate(callback)
+----
+
+Similar to $fh.sync.handleCreate, but set the handler globally which means the same handler function can be used by multiple datasets.
+The global handler will only be used if there is no handler assigned to the dataset via $fh.sync.handleCreate.
+
+[[fh-sync-example-7]]
+=== Example
+
+[source,javascript]
+----
+
+$fh.sync.globalHandleCreate(function(dataset_id, data, cb, meta_data){
+  //create data for the specified dataset_id
+});
+----

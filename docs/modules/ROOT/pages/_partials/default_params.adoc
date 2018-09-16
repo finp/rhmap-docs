@@ -1,0 +1,88 @@
+// include::shared/attributes.adoc[]
+
+[[fh-getFHParams]]
+= $fh.getFHParams
+
+[source,javascript]
+----
+$fh.getFHParams();
+----
+
+This method will return the meta data added by the FH SDK for each cloud request. If you choose to use another library to communicate with the Cloud App, you should add this data to the request body or as headers. To get the Cloud App url, see xref:fh-getCloudURL[$fh.getCloudURL].
+
+Normally, you don't need to modify the meta data at all. But if you are interested, the meta data includes the following keys and values:
+
+* appid: the id of the app
+* appkey: the api key of the app
+* projectid: the id of the project
+* cuid: a unique id genereated for the client
+* destination: the platform the Client App is running on. For example, iOS, Android, Web
+* sdk_version: the version of the sdk
+* connectiontag: connectiontag for the app
+
+If the meta data is sent in the request body, it should be the value of a special key called "__fh". See example below.
+
+Some SDKs can provide this meta data as request headers. In this case, the name of each header will be like "X-FH-<meta data name>", for example, "X-FH-appid".
+
+[[default-params-supported-platforms]]
+.Supported Platforms
+
+* JavaScript SDK
+** Cordova
+** Web Apps
+* Android SDK
+* iOS Objective-C SDK
+* iOS Swift SDK
+* .NET SDK
+** Xamarin
+
+For detailed version information, see link:https://access.redhat.com/node/2357761[Supported Configurations^].
+
+[[default-params-example]]
+== Example
+
+.JavaScript
+[source,javascript]
+----
+var fhparams = $fh.getFHParams();
+//then it should be added to your request body under the key "__fh"
+body.__fh = fhparams;
+----
+
+.Android (Java)
+To get the request meta data as a JSON object:
+[source,java]
+----
+JSONObject fhParams = FH.getDefaultParams();
+----
+You can get the meta data as HTTP headers as well:
+[source,java]
+----
+Header[] fhParamHeaders = FH.getDefaultParamsAsHeaders(null);
+----
+
+.iOS (Objective-C)
+
+To get the request meta data as a NSDictionary:
+[source,objectivec]
+----
+NSDictionary * fhParams = [FH getDefaultParams];
+----
+
+You can get the meta data as HTTP headers in a NSDictionary:
+[source,objectivec]
+----
+NSDictionary * fhParamHeaders = [FH getDefaultParamsAsHeaders];
+----
+
+.{nbsp}.NET (C#)
+To get the request meta data as a Dictionary:
+[source,csharp]
+----
+  IDictionary <string, object> fhParams = FH.GetDefaultParams();
+----
+You can get the meta data as HTTP headers in a Dictionary:
+[source,csharp]
+----
+IDictionary <string, string> fhParamHeaders = FH.GetDefaultParamsAsHeaders();
+----

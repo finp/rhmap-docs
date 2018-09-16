@@ -1,0 +1,73 @@
+// include::shared/attributes.adoc[]
+[[fh-sync-init]]
+== $fh.sync.init
+
+{syncnote} xref:fh-sync-init-dep[section for the old version]
+
+Set the sync options for the Dataset and start the sync process. This API can also be used to start the sync process on a Dataset.
+
+This API call is optional, but can be used to override options for a specific Dataset.
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.init(dataset_id, options, callback)
+----
+
+=== Parameters
+
+==== dataset_id
+
+* Description: The id of the dataset that needs to be synchronized.
+* Type: String
+
+==== options
+
+* Description: The sync options for the Dataset.
+* Type: Object
+* Supported Keys:
+** *syncFrequency*
+*** Description: Specify how long the sync server should wait between each synchronization, in seconds.
++
+To determine the value for this option, please check link:{CloudAPI}#configuring-sync-frequency[Configuring Sync Frequency] and link:{CloudAPI}#sync-performance-scaling[Sync Server Performance and Scaling]
+*** Type: Number
+*** Default: 30
+
+** *clientSyncTimeout*
+*** Description: Specify the period of time before the Dataset client is marked as "inactive" due to inactivity, in seconds.
++
+If a Dataset client is marked as "inactive", the sync server stops syncing the data of the Dataset client with the backend.
++
+If a user accesses an "inactive" Dataset client later, the user might need to wait until the next sync operation is complete. To avoid this scenario, set this timeout to a relatively long value.
+
+*** Type: Number
+*** Default: 3600 (1 hour)
+
+** *backendListTimeout*
+*** Description: Specify the timeout value the sync server waits for the sync operation with the Backend Database to complete, in seconds. 
+*** Type: Number
+*** Default: 300
+
+==== callback
+
+* Description: The callback function invoked when `fh.init` is complete.
+* Type: Function
+
+=== Example
+
+[source,javascript]
+----
+var datasetId = "todolist";
+var syncOptions = {
+  syncFrequency: 10,
+  clientSyncTimeout: 24*60*60
+};
+$fh.sync.init(datasetId, syncOptions, function(err){
+  if (err) {
+    console.error('sync init failed due to error', err);
+  } else {
+    console.log('sync init finished successfully');
+  }
+});
+----

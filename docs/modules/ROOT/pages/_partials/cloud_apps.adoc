@@ -1,0 +1,325 @@
+// include::shared/attributes.adoc[]
+
+[[cloud-apps]]
+= Cloud Apps
+
+[[cloud-apps-overview]]
+== Overview
+
+A _Cloud App_ is a server-side application that runs on an _MBaaS_ - our cloud execution environment.
+Client Apps communicate with Cloud Apps in order to access back-end functionality such as data storage, authentication,
+caching etc.
+
+.Requirements
+The user must be a member of one or more teams with the following permissions:
+
+* Domain -- Project (View)
+* Cloud App (View & Edit) -- Analytics (View)
+
+.Related Resources
+* link:{CloudAPI}[Cloud API Reference - List of Cloud API calls]
+* https://www.npmjs.com/package/fh-fhc[FHC CLI^]
+* link:{PlatformAPI}#cloud-alerts-api[Platform API - Cloud Alerts API]
+* link:{PlatformAPI}#cloud-events-api[Platform API - Cloud Events API]
+
+[[cloud-apps-details]]
+== Details
+
+The Details section provides access to overview information regarding the Cloud App. This section allows users to edit and manage this data.
+
+An App can be in one of two states, either Running or Stopped. The state of the App can be controlled by the __Start App__, __Stop App__, and _Restart App_ buttons. If an App is Running, on device builds of that app will function as expected. However if the app is Stopped, on-device users will not be able to use the app if it relies on Cloud functionality.
+
+There is also a list of general information such as the App ID, App API Key, name, etc. This information can be edited and updated from this section.
+
+* App Id: Unique identifier for the App.
+* Name: The name of the Cloud Instance
+* Description: Brief description of the Cloud Instance
+* App API Key: This is used in conjunction with the App Id to allow the App to communicate with the Cloud
+* Git URL: URL to clone repository
+* Git Branch: The branch to checkout from the Git repository
+
+[[cloud-apps-editor]]
+== Editor
+
+The built in Editor can be used to edit code within the Cloud App. The built in syntax highlighting feature makes it easier to distinguish between syntactical elements. Users can create new files and folders, with saved changes being automatically pushed back to the corresponding Git repository.
+
+After a change has been made, the preview automatically refreshes so you can instantly see your changes take effect. Changes can also be pulled in from a Git Repository by performing a `git pull`.
+
+The App Preview in the Editor section allows users to view how the current App appears on a number of selectable devices.
+
+[[environment-variables]]
+== Environment Variables
+
+You can define environment variables using the Studio and those variables can be accessed in the cloud code. The Studio will show a list of current defined environment variables and current deployed environment variables for each cloud environment. You can also view the list of environment variables defined by the system.
+
+[[environment-variables-list]]
+=== Environment Variables List
+
+You can find the environment variables option in the left hand menu. The initial view shows a list of all environment variables for this Cloud Instance.
+
+[[app-environment-variables]]
+==== App Environment Variables
+
+This section lists the variables defined by you. These variables may not have been pushed to the cloud yet so the values here may be different from the values that are currently active. Any inconsistency between the defined values and deployed values will be highlighted in red. You can click on the value field to update it.
+
+[[deployed-user-environment-variables]]
+==== Deployed User Environment Variables
+
+This section lists the current deployed environment variables created by you. Again, any inconsistencies will be highlighted. However, those values can not be updated directly.
+
+[[deployed-system-environment-variables]]
+==== Deployed System Environment Variables
+
+This section lists the current deployed environment variables created by the platform. Those values are for your reference only and you should not change the values of those variables.
+
+[[create-environment-variables]]
+=== Create Environment Variables
+
+You can create a new environment variable by clicking on the *Add Variable* button. The name of the environment variable should follow these rules:
+
+* Should NOT begin with `FH_` or `MONIT_`
+* Should NOT be one of
+** `PATH`
+** `HOME`
+** `PWD`
+** `USER`
+** `NODE_PATH`
+** `LD_LIBRARY_PATH`
+
+[[cloud-apps-unsetdelete-environment-variables]]
+=== Unset/Delete Environment Variables
+
+In the current environment variables list, when you check any of the variables, you will get the option to unset/delete the variable.
+
+* *Unsetting* a variable removes it from the currently selected environment.
+* *Deleting* a variable removes it from all environments.
+
+You can unset/delete multiple variables at the same time.
+
+[[push-environment-variables]]
+=== Push Environment Variables
+
+After finishing updating the values of the variables, you need to push the updated variables to the cloud by clicking on the "Push Environment Variables" button. This will also cause the app to be restarted.
+
+[[referencing-environment-variables-in-code]]
+=== Referencing Environment Variables In Code
+
+An environment variable can be referenced in cloud code directly using process.env.variable name. For example
+
+[source,javascript]
+----
+// PIN_ENABLED is the environmental variable created in the Studio.
+var pin_enabled = process.env.PIN_ENABLED  || true  // defaults to true if no value defined
+----
+
+If you wish to obtain the value of the variable from the client side, the best method is to export a function on the cloud side returning the value of the variable and calling the function from the client side. For example
+
+[source,javascript]
+----
+// On the cloud side using node.js
+exports.getEnvVariable = function(params, cb){
+  var pin_enabled = process.env.PIN_ENABLED  || true
+
+  return cb(null, {
+    enabled : pin_enabled
+  });
+};
+
+// On the client side
+$fh.act({
+  act : 'getEnvVariable',
+  req : {}
+  }, function(res){
+   // run this in the event of success.
+}, function(err){
+   // run this in the event of failure.
+});
+----
+
+[[data-browser]]
+== Data Browser
+
+The Data Browser section of the App Studio allows a developer to
+
+* Graphically and interactively view the data associated with their app,
+* View, create and delete, import and export collections,
+* Modify data in a collection.
+
+For more information, see the link:{ServerSideDeveloperGuide}#data-browser[Data Browser Guide].
+
+[[deploy]]
+== Deploy
+
+The Deploy section allows a developer to:
+
+* Deploy the cloud code of the current App and view a log of the deploy
+* Choose (if more than 1 available) which environment to deploy the cloud code to
+* Choose (if available) which git 'branch' or 'tag' to deploy
+* Choose (if available) which Runtime & Version to run the cloud code with
+* Perform a clean deploy, where the entire deploy directory (including dependencies) is removed and redeployed to from scratch
+* Choose whether the app should be deployed automatically on future Git pushes to a selected branch
+
+The Deploy process for Node.js applications typically does the following:
+
+* Retrieves the cloud code at the specified branch or tag reference
+* Gathers all environment variables values (both internal and custom), and any other config (for example, runtime) for the chosen environment
+* Pushes the cloud code, environment variables values and any other config to the chosen environment
+* Cloud code is extracted/copied to the relevant deploy folder
+* Environment variables are configured in the app startup script
+* Any other config sent along is acted upon for example, configured the correct runtime in the startup script
+* Dependencies are resolved and installed (from package.json)
+* The App is started using the startup script
+
+The steps above will differ depending on the options chosen, the type of App and the presence & content of certain files.
+
+In addition, developers may also configure the Platform to deploy cloud code to OpenShift Online. For more information, see the link:{ServerSideDeveloperGuide}#staging-cloud-apps-to-redhat-openshift-online-paas[Staging Cloud Apps to RedHat OpenShift Online PaaS guide].
+
+[[stats]]
+== Stats
+
+There are 2 types of stats available in the Studio: App Endpoint stats and Custom Stats. These are found in the 'Stats' section for any Cloud Apps.
+
+There are some common UI features in the charts that represent this stats data. The data can be downloaded in different formats (for example, csv). The date range can be altered using the scrollbar and sliders below each chart. Each line in a chart can be toggled on/off by clicking that item in the legend.
+
+[[app-endpoints]]
+=== App Endpoints
+
+App Endpoint stats are available for all Apps without any additional setup required. Any endpoints defined in `main.js` will begin to produce stats as soon as the endpoint is called. A combined chart for 'All Endpoints' will also become available when stats are produced.
+
+For each endpoint that is producing stats, the following summary information is available:
+
+* Requests per minute - Number of requests in the last minute (calculated value based on smaller intervals)
+* Average Request Time - Average time per request in the last interval
+* Average Concurrent Requests - Average number of concurrent requests being processed in the last interval (calculated based on requests per interval and average request timer per interval)
+
+The default chart view shows the following data series:
+
+* Requests per second - Number of requests processed by the App per second (based on last interval)
+* Average Concurrent Requests - Average number of concurrent requests being processed in the last interval (calculated based on requests per interval and average request timer per interval)
+* Average Request Time (90th percentile) - Average duration of the requests in the last interval, ignoring outliers
+
+The other graph items, Longest Request Time and Shortest Request Time, can be shown, by clicking on their names in the legend above the graph. The graph below show those stats included, and the Requests per second and Average Concurrent Requests, deselected.
+
+[[custom-stats]]
+=== Custom Stats
+
+Custom stats are defined by the developer using the link:{CloudAPI}#fh-stats[$fh.stats] API.
+
+[[counters]]
+==== Counters
+
+Counters can be viewed on a line graph, showing the counter value for each interval.
+
+NOTE: Counters are reset after each interval
+
+[[cloud-apps-timers]]
+==== Timers
+
+Timers can also be viewed on a line graph. Each timer value is the average value (90th percentile) of that timer for that interval. The upper and lower values in each interval are also graphed on separate lines. These value give an overview of how the timer varies around the average time.
+
+[[notifications-and-events]]
+== Notifications and Events
+
+An app will generate events when certain actions are invoked against it. Those events will be recorded by the platform and presented to the developers through the App Studio and FHC. For example, when an app is deployed by an developer, the platform will record when the deployment happened, who invoked it and what are the results.
+
+Each event has a category, a severity level and a name. The following events are generated by the platform at the moment:
+
+[cols="4*",options="header"]
+|===
+| Event Name        | Event Category  | Event Severity | Description
+| CREATE_REQUESTED  | APP_STATE       | INFO | App creation is requested
+| CREATED           | APP_STATE       | INFO | App is created
+| CREATE_FAILED     | APP_STATE       | ERROR | App creation failed
+| DEPLOY_REQUESTED  | APP_STATE       | INFO | App deploy is requested
+| DEPLOYED          | APP_STATE       | INFO | App is deployed
+| DEPLOY_FAILED     | APP_STATE       | ERROR | App deploy failed
+| START_REQUESTED   | APP_STATE       | INFO | App start is requested
+| START_SUCCESSFUL  | APP_STATE       | INFO | App started
+| START_FAILED      | APP_STATE       | ERROR | App start failed
+| SUSPEND_SUCCESSFUL| APP_STATE       | INFO | If there is no activity, that is, no HTTP calls to the Cloud App for a period, typically one week, the Cloud App is stopped. The next HTTP call to the Cloud App automatically restarts it.
+| STOP_REQUESTED    | APP_STATE       | INFO | App stop is requested
+| STOP_SUCCESSFUL   | APP_STATE       | INFO | App is stopped
+| STOP_FAILED       | APP_STATE       | ERROR | App stop failed
+| CRASHED           | APP_STATE       | ERROR | Uncaught exception is thrown from the app and causes it to stop. It will be restarted automatically by the system monitoring process.
+| KILLED_RESTARTED  | APP_STATE       | ERROR | App is stopped then started
+| TERMINATED        | APP_STATE       | FATAL | App is terminated by the system due to too many restarts within a short time (currently 10 restarts in 20 seconds). It will not be restarted by the system monitoring process.
+| DELETE_REQUESTED  | APP_STATE       | INFO | App deletion is requested
+| DELETED           | APP_STATE       | INFO | App deleted
+| DELETE_FAILED     | APP_STATE       | ERROR | App deletion failed
+| CHANGE_REQUESTED  | APP_ENVIRONMENT | INFO | Environment variables change is requested
+| CHANGE_SUCCESSFUL | APP_ENVIRONMENT | INFO | Environment variables changed
+| CHANGE_FAILED     | APP_ENVIRONMENT | ERROR | Environment variables change failed
+|===
+//https://issues.jboss.org/browse/RHMAP-14202
+
+[[cloud-apps-system-events-view]]
+=== System Events View
+
+You can view all the events generated by the platform in the "Notifications" section in the Cloud App view in the Studio. You can also use the filters to search for events. More information of an event is available when you click on an event entry.
+
+[[alerts-email-notifications]]
+=== Alerts & Email Notifications
+
+Email notifications can be sent to developers when certain cloud events occur. This is done through alerts. An alert is to define in what condition an email notification should be triggered and what email addresses should be used.
+
+[[alerts-view]]
+==== Alerts View
+
+In the alerts view, there are two tables. The first table will list all the alerts that are created for this app, and the second table will show all the cloud events that matches the selected alerts' settings. More information of an alert is available when click on the entries in the first table.
+
+[[creating-alerts]]
+==== Creating Alerts
+
+When click on the "Create An Alert" button, you will be presented with the alert creation view. In this view, you can specify the name of the alert, what events the alert should be monitoring on and the email address to receive the alert.
+
+When specify the events, you can use any of the three criteria (event categories, severities and names), or any combination of them. You don't need to select values in all these fields. Once an alert is created, if an event matching the criteria occurred, an email notification will be sent to the address specified in the alert.
+
+[[notifications-view]]
+==== Notifications View
+
+The platform will keep records of all the email notifications that have been sent and you can view them in the Studio as well. Click on the table entry will show the full details of the notification.
+
+[[logs]]
+== Logs
+
+Users can access current and archived App logs created in each App environment.
+
+[[endpoint-security]]
+== Endpoint Security
+
+The endpoint security feature allows you to decide the level of security you wish to apply to your App's endpoints.
+
+[[managing-endpoint-security]]
+=== Managing Endpoint Security
+
+You can find the endpoint security option in the left hand menu for a Cloud Instance. There are a couple of ways to configure security.
+
+[[app-security]]
+==== App Security
+
+App security defines a default level of security that will be applied across all of your endpoints. The default is HTTPS. This means all requests to your App's endpoints will be sent over HTTPS.
+The App API Key options means that HTTPS will still be used, but that in order to access an endpoint the App API Key must be sent and must match the key created with your App. You can find this key under the details menu option for your App. This key is sent by default from the {ProductShortName} SDKs. Enabling this option will mean your endpoints are only accessible when a correct App API Key is sent. If is not present, a 401 (Not Authorised) http response will be sent and your endpoint will not be called.
+
+[[individual-endpoint-security]]
+==== Individual Endpoint Security
+
+You can change the security applied to an App's endpoints at an individual level also. When you update the list, your Cloud Instance will be restart.
+
+NOTE: If you have a running App and have not staged it for sometime, that you may need to re-stage the App once in order to pick up the latest version of the software.
+
+[[cloud-apps-the-audit-log]]
+=== The Audit Log
+
+In order to allow you to transparently see what has been done to your App, whenever a change is made to your security setting, an entry is created in the audit log. You can view this log by clicking the Audit Log tab at the top of the Endpoint Security screen. The audit log shows you a clear log of what has happened with your App's security settings. The filters allow you to get a smaller selection of the audit log.
+
+[[cors-support]]
+=== CORS Support
+
+Cross-origin resource sharing (CORS) is a mechanism that allows JavaScript on a web page to make XMLHttpRequests to another domain, not the domain the JavaScript originated from. For more on CORS, see http://en.wikipedia.org/wiki/Cross-origin_resource_sharing[CORS on Wikipedia^]. {ProductShortName} automatically enables CORS for all cloud requests.
+
+You can restrict this access to a domain of your choice as follows:
+
+* Under the 'Cloud Management' section of the Studio, click on 'Environment Variables'
+* Add a new Environment Variable called `CORS_WHITELIST`
+* Set its value to be the domain you wish to restrict access to
+* Hit the 'Push Environment Variables' button to apply the change to the currently selected environment

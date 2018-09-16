@@ -1,0 +1,253 @@
+// include::shared/attributes.adoc[]
+
+[[integrating-forms-into-a-cordova-app]]
+= Integrating Forms Into A Cordova App
+
+Forms functionality can be integrated into existing apps.
+This guide demonstrates the integration on an example of a workforce management application --
+a supervisor assigns jobs, a worker receives the assignments on their mobile device, and sends back information about the job.
+
+The procedures in this guide use a https://github.com/feedhenry-templates/appforms-integration-client[Cordova app^] and a https://github.com/feedhenry-templates/appforms-integration-cloud[Cloud App^].
+These apps can be imported into a project to demonstrate the working example described in this guide.
+
+[[working-example]]
+== Working Example
+
+[[overview-1]]
+=== Overview
+
+The following requirements are set for the example application:
+
+A supervisor creates a job for a worker to remove a fallen tree after a storm.
+The supervisor asks the worker for details of the job such as photos of the tree, location, comments, and the time started and finished.
+This can be achieved using forms apps.
+
+The supervisor creates a job by:
+
+* Selecting the form for the worker to complete.
+* Selecting and filling out a form with the details for the job.
+* Giving the job a unique ID.
+
+The requirements for the application include:
+
+* Jobs are created by an admin by filling out a creation form.
+* New jobs are available to both admin and non-admin users. App users can view the completed creation form.
+* App users can complete a job by filling in a separate completion form.
+* The completion form must be visible to any app user to review.
+* The Client App user can mark the job as either "In Progress" or "Complete" by saving the completion form as a draft.
+
+[[cordova-app]]
+=== Cordova App
+
+The Client App is based on the following technologies:
+
+* http://www.backbonejs.org[Backbone^]: The Cordova app uses backbone models and views to manage the creation and update of jobs.
+* http://handlebarsjs.com/[Handlebars^]: Used for view templating.
+* http://getbootstrap.com/[Boostrap^]: Used for styling.
+* http://fortawesome.github.io/Font-Awesome/[Font-Awesome^]: Used for icons.
+
+The Cordova app is responsible for:
+
+* Managing the listing of jobs in various states.
+* Managing the rendering of any forms.
+* Managing the submission and upload of any form submissions.
+* Managing the creation of jobs containing form and submission data.
+
+[[job-model]]
+==== Job Model
+
+The job model is a simple Backbone model describing a job.
+
+The jobs collection is a collection of job models.
+
+A custom URL is included for synchronizing jobs between the client and cloud. This custom URL is used to access RESTful `/jobs` endpoints on the Cloud App.
+
+[[cloud-app]]
+=== Cloud App
+
+The https://github.com/feedhenry-templates/appforms-integration-cloud[Cloud App^] consists of RESTful endpoints (https://github.com/feedhenry-templates/appforms-integration-cloud/blob/master/lib/jobs.js[/jobs^]) for performing CRUD operations on job data using the link:{CloudAPI}#fh-db[$fh.db API].
+
+NOTE: There is no visible logic in the Cloud App to deal with forms, because all cloud-based forms logic is contained in the link:{CloudAPI}[cloud APIs].
+
+[[creating-a-working-example]]
+== Creating A Working Example
+
+. Create a new project in the App Studio.
+
+. Import an app into your project. For example, the examples in this guide use the https://github.com/feedhenry-templates/appforms-integration-client[Cordova app^] and https://github.com/feedhenry-templates/appforms-integration-cloud[Cloud App^].
+
+. Create link:{DragAndDropAppsGuide}#create-a-simple-form[forms] and link:{DragAndDropAppsGuide}#create-a-form-theme[themes] for the project. Any created forms and themes associated with the project will now be visible in the Cordova app.
+
+. Optionally, add users and field codes to the project. For example:
++
+--
+* Admin: Able to create and complete jobs.
+* User: Able to complete jobs.
+--
++
+A user has the `userId` and `userName` fields that are automatically added to a submission before rendering the related form. Add two text fields to any forms associated with this working example.
++
+When the fields have been added, add two users to the `users` collection in your Data Browser.
++
+.Admin
+[source,javascript]
+----
+{
+    "userId": "admin",
+    "userName": "<<Any Name>>"
+}
+----
++
+.User
+[source,javascript]
+----
+{
+    "userId": "user",
+    "userName": "<<Any Name>>"
+}
+----
+
+[[implementation-guide]]
+== Implementation Guide
+
+Use the following to integrate forms functionality into an app.
+
+. Add Forms Initialization by adding the `$fh.forms.init` function to the client. This initializes forms on the Client App to enable the usage of the link:{ClientAPI}#fh-forms[$fh.forms Client API] in the rest of the app.
++
+The https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/router.js#L61-81[`$fh.forms.init` function^] is part of the log in process for the app.
+
+. As an admin user, select a completion form. This specifies the form that needs to be completed in order to complete the job. List all of the forms available to the app using the https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/JobCreateView.js#L26-38[`$fh.forms.getForms`^] Client API function.
++
+NOTE: The `$fh.forms.getForms` Client API call only downloads a list of forms, it does not download the entire form definition for each form.
+
+. Download a form to the client using the `$fh.forms.getForm` Client API.
++
+As forms are used in job creation, viewing job details, and completing jobs, this function is abstracted to a set of helper functions https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/FormFunctions/FormFunctions.js[here^].
++
+The `$fh.forms.getForm` client API usage can be seen https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/FormFunctions/FormFunctions.js#L22-40[here^] as part of the `loadForm` function in `FormFunctions.js`.
+
+. Load a submission into your app. This process is illustrated using the https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/FormFunctions/FormFunctions.js#L42-83[loadSubmission^] function in the https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/FormFunctions/FormFunctions.js[FormFunctions.js^] file.
++
+Forms are related to submissions, in that any data entered into a form is populated to a submission. However, a submission is validated against a form before being upload to the cloud.
++
+There are three ways to create a submission:
++
+--
+* **From Local Memory**: Save a submission as a draft to local memory then edit later using the `saveDraft` function on the submission model. The implementation of this functionality is shown in the https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/FormFunctions/FormFunctions.js#L84-135[loadLocalSubmission^] function.
+
+* **Download From Remote**: Download a submission from the cloud. For example, when the supervisor completes a form to describe the details of the job, the ID of the submission is saved to the job model. When the app user downloads the job model, they have access to the remote submission ID of the form submitted by the admin user. This remote submission ID is used to download the full submission definition from the cloud. The implementation of this functionality is shown in the https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/FormFunctions/FormFunctions.js#L136-172[downloadSubmission^] function.
+--
++
+[NOTE]
+--
+The form definition for the submission is contained in the submission downloaded from the cloud. This is because the form definition may have been edited between submissions.
+--
++
+[NOTE]
+--
+Downloaded submissions should not be edited on the client. They are intended for read-only access. Any attempt to submit a downloaded submission to the cloud will return an error.
+--
+
+* **Create A New Submission**: If there is no submission associated with a form, a new submission can be created. In this case, the submission is https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/FormFunctions/FormFunctions.js#L69-81[created from a form model^]. This ensures that the submission is automatically related to the correct form.
+
+. Render the form into the view for editing by a user.
++
+There are two methods of rendering a form into an existing Cordova app:
+
+* Rendering the form using the `$fh.forms.backbone` API, which includes a backbone/bootstrap SDK (`$fh.forms.backbone`), by downloading the https://github.com/feedhenry-templates/fh-js-sdk/blob/master/dist/appForms-backbone.js[Appforms Backbone^] file and include it as part of your Cordova app. In addition, the Cordova app must satisfy the following JavaScript and CSS dependencies:
++
+--
+** Backbone
+** Bootstrap
+** Font-Awesome
+--
++
+The https://github.com/feedhenry-templates/appforms-integration-client/tree/master/www/css[CSS^] and https://github.com/feedhenry-templates/appforms-integration-client/tree/master/www/lib[JavaScript^] dependencies are included in the example Cordova app.
++
+The `FormViewSDK.js` file contains the Backbone SDK version of the form view. The Cordova app contains an option in the "Settings" tab to switch between the Backbone SDK and manual form rendering.
++
+[NOTE]
+--
+The Backbone SDK is intended to speed up forms apps integration for Backbone/Bootstrap based Cordova apps. However, the `$fh.forms` Client API will work with any Cordova app. The rendering of the form and managing the population of user data to a submission will be the responsibility of the developer.
+--
+
+* Rendering a form manually.
++
+[NOTE]
+--
+Rendering a form to the user is the simplest method of completing a submission. However, field input values can be added to a submission from any source. The submission is still required to be valid against any field or page rules.
+--
++
+The `$fh.forms` SDK does not depend on any framework, and can therefore be added to any Cordova app. This app is based on Backbone and Bootstrap, however it is equally possible to use the `$fh.forms` API with other javascript-based UI frameworks (for example, Angular).
++
+A basic Bootstrap form is rendered based on the form definition. This form is defined in the `FormView.js` file. All of the rendering, submission input, and validation logic of the form is defined in the app using the `$fh.forms` API and models.
++
+[NOTE]
+--
+The manually rendered form is implemented for illustration purposes only. Only the text and number fields are manually implemented. However, all available form field types can be rendered using the `$fh.forms.backbone` SDK.
+--
++
+The rendering logic for the custom form view is located in the `FormView.js` file. Here, you can see that the view handles all of the events related to https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/FormView.js#L181-234[rendering^] the form to the user.
++
+In addition, the `FormView.js` file contains logic for:
++
+--
+* Validating field data when entered.
+* Checking field and page rules.
+* Populating data to a submission.
+* Saving a submission as a draft.
+* Submitting a form to the cloud.
+--
++
+The following steps illustrate how the Cordova app addresses these requirements when manually integrating the `$fh.forms` SDK into a custom rendered form.
+
+. Define the validation parameters that restrict the data that can be entered into the field (for example, a text field can specify a minimum/maximum number of characters that can be entered into the field). Adding this functionality to the Client App reflects the restrictions of the field.
++
+To satisfy this requirement, the https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/FormView.js#L44-115[validateInput^] function is registered to the blur event of an input in the `FormView.js` file.
++
+NOTE: Validation parameters influence whether a submission is valid. Even if field validation is not performed on the Client App, all submission fields will be validated before saving to the database.
+
+. Form apps include field and page rules. In the Studio, forms editors can create field rules to show and hide fields based on field input data and page rules to show and skip pages based on field input data.
++
+This functionality is reflected in the implementation of the `$fh.forms` API. By processing a submission using a rules engine, the submission can identify fields or pages that need to be shown or hidden.
++
+This is implemented in the https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/FormView.js#L116-180[checkRules^] function in the `FormView.js` file.
++
+NOTE: Field and page rules influence whether a submission is valid. Even if field and page rules are not checked on the Client App, the submission will be checked against all rules before saving to the database.
+
+. Add data to a submission model using the `addInputValue` function. The source of this data can either be the form rendered to the user, external data available to the app, or a mixture of both.
++
+--
+* From a rendered form: In this case, a form is rendered for the user to input data using the `$fh.forms.backbone` SDK or by manually rendering a form.
++
+When manually integrating the `$fh.forms` API into a custom rendered forms, it is necessary to handle the migration of data from the view to the submission model.
++
+This is illustrated by the https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/FormView.js#L456-479[saveFieldInputsToSubmission^] function in the `FormView.js` file.
+
+* From an external source using field codes: You can add field codes to form fields to uniquely identify a field within a form. This field code can relate to an external data source (for example, a header in a CSV file). Using this functionality, it is possible to import external data into a form submission.
++
+This functionality is demonstrated in the example Cordova app by the https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/FormFunctions/FormFunctions.js#L181-230[addSubmissionData^] function.
+In this example, a user has `userId` and `userName` fields. If a form contains fields with fields codes `userId` and `userName`, these fields will be populated with the data from the User model.
++
+NOTE: Field codes must be unique within a form. However, the same field code can be present in multiple forms.
+--
+
+. Save a submission as a draft. This functionality is illustrated by the https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/FormView.js#L284-315[saveDraft^] function in the `FormView.js` file.
+
+. Having added validation and rules functionality to the form, we can now submit valid submissions to the cloud for viewing/editing on the submission editor.
++
+The form view listens for submission-related events (https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/FormView.js#L338-387[validationerror^], https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/FormView.js#L389-395[queued^], https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/FormView.js#L397-411[progress^], https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/FormView.js#L413-418[error^], https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/FormView.js#L420-431[submitted^]) emitted by the submission model as the data is being processed and uploaded.
++
+The submission process has two distinct steps:
++
+* https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/FormView.js#L438[Submit^]: Calling the submit function on a submission model validates the submission against the local form definition and changes the submission status to pending.
+* https://github.com/feedhenry-templates/appforms-integration-client/blob/master/www/js/views/FormView.js#L447[Upload^]: Calling the upload function on a submission model will queue the submission for upload to the forms database.
+
+[[related-sections]]
+== Related Sections
+
+* link:{ClientAPI}#fh-forms[$fh.forms Client API]
+* link:{CloudAPI}#fh-db[$fh.db Cloud API]
+* link:{DragAndDropAppsGuide}#create-a-simple-form[Creating A Form]
+* link:{DragAndDropAppsGuide}#create-a-form-theme[Creating A Theme]
+* link:{DragAndDropAppsGuide}#getting-started-drag-drop-apps[Creating A Forms Project]

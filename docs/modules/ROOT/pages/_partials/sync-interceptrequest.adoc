@@ -1,0 +1,64 @@
+[[fh-sync-interceptrequest]]
+== $fh.sync.interceptRequest
+{syncnote} xref:fh-sync-interceptrequest-dep[section for the old version]
+
+Intercept the sync requests for a specific Dataset before it is processed.
+Use this API to check client identities and validating authentication.
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.interceptRequest(dataset_id, function requestInterceptor(dataset_id, interceptorParams, cb){});
+----
+
+=== Parameters
+
+==== dataset_id
+* Description: the id of the Dataset
+* Type: String
+
+==== requestInterceptor
+* Description: The function that is invoked when a sync request is received from clients.
+* Type: Function
+* Invoked Parameters:
+** *dataset_id*
+*** Description: the id of the Dataset
+*** Type: String
+** *interceptorParams*
+*** Description: the parameters associated with the request
+*** Type: Object
+*** Supported Keys
+**** query_params
+***** Description: the query parameters associated with the request
+***** Type: Object
+**** meta_data
+***** Description: the meta data associated with the request
+***** Type: Object
+** *cb*
+*** Description: the callback function. 
++
+If it is invoked with a non-null response, the sync request is rejected.
+*** Type: Function
+
+=== Example
+
+[source,javascript]
+----
+$fh.sync.interceptRequest("todo", function(dataset_id, interceptorParams, cb){
+
+  var query_params = interceptorParams.query_params; //the query_params specified in the client $fh.sync.manage
+  var meta_data = interceptorParams.meta_data;  //the meta_data specified in the client $fh.sync.manage
+
+  var validUser = function(qp, meta){
+    //implement user authentication and return true or false
+  };
+
+  if(validUser(query_params, meta_data)){
+    return cb(null);
+  } else {
+     // Return a non null response to cause the sync request to fail.
+    return cb({error: 'invalid user'});
+  }
+});
+----

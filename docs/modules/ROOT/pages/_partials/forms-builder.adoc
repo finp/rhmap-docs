@@ -1,0 +1,213 @@
+// include::shared/attributes.adoc[]
+
+[[creating-forms-using-the-forms-builder]]
+= Creating Forms Using the Forms Builder
+
+.Overview
+The Forms Builder allows you to manage existing forms and create new forms from a template.
+
+[[creating-a-form]]
+== Creating a Form
+
+All forms are created from templates.
+
+When creating a form, you have the option to create an empty form using the _Blank Form_ template. There are also pre-populated form templates for different scenarios that may be more convenient to customize.
+
+You can preview a template to see all its fields. Once you select a template, you can enter a form name, and an optional description.
+
+NOTE: The form preview is for illustration purposes only. To submit forms or save drafts, you need to create a new forms project or associate forms with an existing project.
+
+When the form has been created using the _Create Form_ button, you are taken directly to the _Edit Form_ screen to customize the form.
+
+[[adding-fields-to-a-form]]
+== Adding Fields to a Form
+
+Forms are created through the inclusion of fields.
+There are a variety of different fields that can be added, each with a different purpose.
+Listed below are the fields that can be added to a form, along with a brief description.
+Fields have a variety of different configuration settings.
+Depending on the field selected, different field configuration settings will be available.
+Red Hat recommends that you use a maximum of 100 fields in a form.
+
+Fields are split into two categories:
+
+* content fields -- take user input (text, number, file, etc.)
+* structure fields -- auxiliary fields which help you create the form layout
+
+Fields can be added to a form by:
+
+* Drag & Drop -- Drag the field type anywhere on the form to place the form. When dragging the field, you will see a dotted outline of where the field will be placed when finished dragging.
+* Clicking a field type -- Single-clicking on a field will add the field after the currently selected field already in the form.
+
+After fields have been added to a form, they can be repositioned by dragging them to the desired place in the form.
+
+[[structure-fields]]
+=== Structure Fields
+
+[[section-break]]
+==== Section Break
+
+Section Breaks are used to group fields into sections.
+In the default template, sections are collapsible groups of fields.
+Sections can contain a name and description to identify the section to the form user.
+A section is made repeatable by selecting the 'Repeating' checkbox.
+Doing so allows you to repeat a group of form inputs with a min-max repeat mechanism.
+
+Not all pages have to contain section breaks. It is possible to have a form with some pages containing section breaks and some that do not.
+
+NOTE: If a page contains a section break and there are fields between a page break and section break, those fields will automatically be grouped into a section.
+
+[[page-break]]
+==== Page Break
+
+Page Breaks are used to indicated where a new page of a form begins. Any fields after a page break will be contained in the next page of the form. Like sections, pages can contain a name and description to identify the page to the form user.
+
+[[content-fields]]
+=== Content Fields
+
+Content fields are fields that users will enter data into.
+
+Each field, as described below, can contain type-specific configuration settings. However there are a number of settings that are universal to all fields.
+
+* Required -- A required field must be submitted when completing a form.
+* Validate Immediately -- This option allows the value entered into the field to be validated when the value is entered. Otherwise the field is validated when the user clicks _Submit_ on the last page of the form.
+* Admin Only -- Admin Only fields are visible only on the submission editor in the Studio. Admin Only fields will not appear in the form in the Client App. In addition, Admin Only fields cannot be the subject of any field or page rules.
+* Repeating -- Repeating fields contain a configurable number of entries between _Min_ and __Max__. Repeating fields cannot be the subject of field or page rules.
+* Field Code -- Fields can be assigned a user-defined code that identifies the field. This must be unique within the form. This is useful for adding data to a field from external sources (for example, CSV files).
+
+[[text-field]]
+==== Text Field
+
+A text field allows users to enter a single line of text. Valid input includes letters, numbers or special characters.
+
+There are two validation options for text fields:
+
+* Length Limit -- The _Min_ or _Max_ number of characters that must be present in the field. If left blank, no validation will be performed on the length of the text input.
+* Field Format -- the format of the text field, defined as a combination of letters and numbers represented by `c` and `n` characters, respectively, or a regular expression to be matched to the field.
+
+[[paragraph-field]]
+==== Paragraph Field
+
+Similar to the text field, the Paragraph field also accepts all types of input, including letters, numbers, and special characters. Additionally, the Paragraph field spans across multiple lines.
+
+There is one validation option for paragraph fields:
+
+* Length Limit -- The _Min_ or _Max_ number of characters that must be present in the field. If left blank, no validation will be performed on the length of the text input.
+
+[[number-field]]
+==== Number Field
+
+The Number field is a single line field that allows the user to enter a numeric value. Only numbers can be entered in the number field. Letters or special characters will not be accepted.
+
+There is one validation option for number fields:
+
+* Min/Max Value -- The range of numbers that can be entered into the field. If left blank, no validation will be performed on the size of the number input.
+
+[[email-field]]
+==== Email Field
+
+The Email field allows the user to input an email address. Both _@_ and a _._ characters must be found. At least one character must also be entered for the domain. For example, `test@example.com` is valid.
+
+[[website-field]]
+==== Website Field
+
+The Website field allows the user to enter the URL of a website.
+
+[[dropdown-menu]]
+==== Dropdown Menu
+
+The Dropdown Menu allows users to select a single option from a drop-down list of options.
+
+Options can be added by adding inputs into the _Options_ section of the field configuration tab. Pre-selected values can also be added by selecting the check box beside the added option.
+
+[[radio-buttons]]
+==== Radio Buttons
+
+The Radio Button field allows users to select a single option from a list of radio buttons.
+
+Options can be added by adding inputs into the _Options_ section of the field configuration tab. Pre-selected values can also be added by selecting the check box beside the added option.
+
+[[checkboxes]]
+==== Check boxes
+
+The Check box component allows the user to select any, all, or none of the options from a list.
+
+Options can be added by adding inputs into the _Options_ section of the field configuration tab. Pre-selected values can also be added by selecting the check box beside the added option.
+
+There is one validation option for the check boxes field:
+
+* Selected Options Limit -- The _Min_ and _Max_ number of options that can be submitted.
+
+[[map]]
+==== Map
+
+The Map field uses the Google Maps API to calculate and display the user's current position. The user's position on the map is indicated by a marker.
+
+[[location]]
+==== Location
+
+The Location field lists the coordinates of the user's location as displayed in the Map field. Co-ordinates can be displayed in either Latitude/Longitude or Eastings/Northings format.
+
+[[file]]
+==== File
+
+The File field allows the form user to attach a file to a submission.
+
+There is one validation option for the file field:
+
+* Max File Size -- The maximum size, in kilobytes, of the file that can be uploaded using this field. If no value is entered, then the file size will not be validated.
+
+[[photo-capture]]
+==== Photo Capture
+
+Allows the end user to upload an image. The user has an option to either take a photo and upload it, or to choose from a library.
+
+There are several options available when defining a Photo Capture field:
+
+* Max Height -- The maximum height of the photo taken, in pixels.
+* Max Width -- The maximum width of the photo taken, in pixels.
+* Quality -- The quality of the photo. Note: Modern smart phone cameras can take very high-resolution photos. This can increase the file size of the photo submitted.
+* Photo Source -- Source of the photo can be limited to camera, library or both.
+* Photo Type -- Photos can be taken as either JPEG, or PNG files.
+* Save To Photo Album -- Allows any photo taken by a camera to be saved to the photo library for future use.
+
+[[signature-capture]]
+==== Signature Capture
+
+This field is used to capture the user's signature.
+
+[[datestamp]]
+==== Datestamp
+
+Allows the user to enter a date and time.
+
+There are three options when defining a Datestamp field:
+
+* Date and Time -- Allows the user to enter the date and time. The format of the input is configurable. The default is `YYYY-MM-DD HH:mm`.
+* Date Only -- Allows the user to enter a date value only.
+* Time Only -- Allows the user to enter a time value only.
+
+[[adding-repeating-sections]]
+== Adding Repeating Sections to Apps Created Before RHMAP 3.20
+
+If you created an App before RHMAP 3.20:
+
+. If you created an App in Studio before RHMAP 3.20 and need to add a repeating section:
+.. Create a New app in your existing Project.
+.. Edit your existing forms to include new repeating sections.
+.. Build and test the new App.
+.. Distribute the new App as required.
+. If you created an App using $fh.forms before RHMAP 3.20 and need to add a repeating section:
+.. Edit the package.json file.
+.. Change the version for fh-js-sdk to 2.23 or later. For example:
++
+----
+"fh-js-sdk": "^2.23.0",
+----
++
+.. Build and test the App.
+.. Distribute the upgraded App as required.
+. To use the latest style which includes repeating sections, update the Form Theme:
+.. Click the Forms menu item.
+.. Select “Create A new Red Hat theme” from the Project Theme drop-down list.
+.. Click Save.

@@ -1,0 +1,108 @@
+// include::shared/attributes.adoc[]
+
+[[managing-forms-projects]]
+= Managing Forms Projects
+
+[[managing-forms-projects-overview]]
+== Overview
+
+The _Forms Projects_ screen allows you to view any projects that are associated with forms or themes and create a new forms project.
+
+Projects can be searched by name in addition to viewing the number of forms related to each project.
+
+You can create a Forms Project in one of two ways:
+
+* Create the project from scratch.
+* Add a form to an existing project.
+
+For more information, see the link:{DragAndDropAppsGuide}#create-a-forms-project[How to create a Forms Project] guide.
+
+.Requirements
+To manage forms projects, the user must be a member of one or more teams with the following permissions:
+
+* Domain -- Drag & Drop Apps (View & Edit)
+* Domain -- Projects (View & Edit)
+
+[[creating-a-forms-project]]
+== Creating a Forms Project
+
+You can create a new Forms project in one of two ways.
+
+[[creating-a-new-project]]
+=== Creating a New Project
+
+To create a new forms project, click _Create New Project_ button, enter a name for the new project and select the _Next_ button. The new project will contain a single forms client and Cloud App to immediately interact with the associated forms. When the new forms project is created you will be directed to configure the project with forms and a theme.
+
+[[associating-with-an-existing-project]]
+=== Associating with an Existing Project
+
+Forms can be associated with any project in the Studio. To associate forms with an existing project, click __Use Existing Project__, select the project you wish to associate forms with, and click __Next__.
+
+When the existing project is selected, you will be directed to configure the project with forms and a theme.
+
+[[adding-forms-and-themes-to-a-project]]
+== Adding Forms and Themes to a Project
+
+The _Project Forms & Themes_ screen allows you to associate forms and a theme with the project.
+
+You can associate a theme by selecting a theme from the drop-down list. To preview a theme, select the theme in the _Project Theme_ list and click one of the forms in the _Forms_ list. This will render the form into the preview area.
+
+To add forms to the project, click into the forms list. You will be presented with a list of available forms. Typing part of the form name will filter the list. When you have found the form, select it from the list. You will now see it in the forms associated with the project.
+
+When you are finished adding forms, click on the _Save_ button to update the project.
+
+[[configuring-a-forms-project]]
+== Configuring a Forms Project
+
+The _Advanced Config_ screen allows you to configure Client and Cloud Apps.
+
+NOTE: Any updates to these settings will update live Client and Cloud Apps in this project.
+
+[[client-options]]
+=== Client Options
+
+Client options are available to the forms Client App and affect the operation of forms on the client.
+
+These settings provide the default values for the Client App, however app users can be allowed to change these setting by adding the device id to the `Admin Users` section described below.
+
+NOTE: In the forms template app, the *Settings* section contains a *Show Device Id* button that will display the current device id to the app user.
+
+[[camera-settings]]
+==== Camera Settings
+
+Camera setting affect the operation of the _Photo Capture_ field. This section allows you to edit the height, width and quality of the photos taken.
+
+NOTE: These settings are overridden by any *height*, *width* or *quality* settings set on the *Photo Capture* field.
+
+[[submission-settings]]
+=== Submission Settings
+
+This section allows you to define some parameters for when apps are submitting form data:
+
+* Max Retries – The maximum number of times that a Client App will try to submit a form before alerting the user to a submission error.
+* Timeout – The number of seconds that will cause a submission upload to report an error if exceeded.
+* Min Sent Items To Save – A list of options the client user has when selecting the number of sent form items to keep on-device.
+
+[[client-logging]]
+=== Client Logging
+
+This section allows you to define some parameters of client logging. These settings are useful if there is an issue with submitting forms.
+
+* Logging Enabled – If this check box is checked, all Client Apps will store logs on-device.
+* Logging level – Allows you to set the level of verbosity of client logging. `debug` will have the most logs whereas `error` will only log errors on the client.
+* Log Limit – The maximum number of log entries that are permitted on the client before logs rotate.
+* Log Email – The email address the client can send logs to if required.
+
+[[admin-users]]
+=== Admin Users
+
+Admin users are client device IDs that are permitted to alter configuration on device.
+
+To add a device ID to the list, click into the text box and enter the device ID.
+
+NOTE: In the forms template app, the *Settings* section contains a *Show Device Id* button that will display the current device ID to the app user.
+
+[[cloud-logging]]
+=== Cloud Logging
+
+Enabling cloud logging will enable logging for any Cloud App related to this project. This is useful when there is an issue with submitting forms.

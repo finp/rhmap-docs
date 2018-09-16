@@ -1,0 +1,52 @@
+// include::shared/attributes.adoc[]
+
+[[setting-up-an-auth-policy-with-google-oauth]]
+= Setting up an Auth Policy with Google OAuth
+
+[[google-oauth-apps]]
+== Google OAuth Apps
+
+In order to perform authentication for your app's users against Google's OAuth service, there are a couple of steps you will need to go through first.
+
+* First you will first need to set up an app with Google using the https://console.developers.google.com[Google API console^].
+When creating an app choose web application. Don't worry too much about the details as they can be updated afterwards.
+Once your app has been created take note of your client id and client secret provided by Google.
+* The client id will look something like : 00000000000.apps.googleusercontent.com
+* The secret will be a hash of numbers and digits.
+
+If you look at the image below you will see in red where these items will appear in Google's console.
+
+image:googleapi_pic_oauth.png[Google Console]
+
+* Next, log in to the Studio as a user in a team with Domain Administration rights and click on the Auth Policies tab. Click the create button to make a new policy. Select the type as OAuth2 and fill in the details given to you by Google.
++
+NOTE: In order to access the *Auth Policies* tab in the Studio, the User must be a member of a Team(s) with *View & Edit* Permissions set for *Authorization Policy*
+
+* Add the callback url provided in the Auth Policy creation page to your Google app in the app console under Redirect URI.
+
+[[authorization]]
+== Authorization
+
+In the authorization panel you have two options.
+
+* check user exists on platform.
+* check if user approved for Auth.
+
+If you do not tick any of these options, it is assumed that you wish to allow any user with an authentic Google account to have access to your app.
+
+[[check-user-exists-on-platform]]
+=== Check User Exists on Platform
+
+This means that if a user has an authentic Google account and the user is registered with the Platform with the id returned by Google e.g "someuser@gmail.com" then they will be authorized to access your application.
+
+[[check-if-user-approved-for-auth]]
+=== Check if User Approved For Auth
+
+This option means that if a user has an authentic Google account and the user id returned by Google is associated with this Auth Policy then the user will be authorized to use your applications associated with this Auth Policy.
+
+[[addingremoving-a-user-from-an-auth-policy]]
+== Adding/Removing A User From An Auth Policy
+
+To add an existing user to your Auth Policy click the check if user is approved for Auth option. A swap select will appear populated with the users available. To add one of these users to the policy, select the user and press the arrow pointing at the approved column. To Remove a user, select the user in the approved column and click the arrow pointing at the available column.
+
+Once you are finished configuring your Auth Policy, click the "Update Policy" button.

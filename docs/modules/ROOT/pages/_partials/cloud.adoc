@@ -1,0 +1,138 @@
+// include::shared/attributes.adoc[]
+
+[[fh-cloud]]
+= $fh.cloud
+
+[source,javascript]
+----
+$fh.cloud(options, success, failure);
+----
+
+Call _ANY_ cloud URLs which you have defined in the Cloud App using AJAX.
+For example, if you are using Express to defined endpoints in your Cloud Apps, you should use this API instead of $fh.act.
+
+[[cloud-supported-platforms]]
+.Supported Platforms
+
+* JavaScript SDK
+** Cordova
+** Web Apps
+* Android SDK
+* iOS Objective-C SDK
+* iOS Swift SDK
+* .NET SDK
+** Xamarin
+
+For detailed version information, see link:https://access.redhat.com/node/2357761[Supported Configurations^].
+
+[[cloud-example]]
+== Example
+
+.JavaScript
+[source,javascript]
+----
+$fh.cloud({
+  "path": "/api/v1/user/create", //only the path part of the url, the host will be added automatically
+  "method": "POST", //all other HTTP methods are supported as well. For example, HEAD, DELETE, OPTIONS
+  "contentType": "application/json",
+  "data": { "username": "testuser"}, //data to send to the server
+  "timeout": 25000 // timeout value specified in milliseconds. Default: 60000 (60s)
+}, function(res) {
+  // Cloud call was successful. Alert the response
+  alert('Got response from cloud:' + JSON.stringify(res));
+}, function(msg,err) {
+  // An error occurred during the cloud call. Alert some debugging information
+  alert('Cloud call failed with error message:' + msg + '. Error properties:' + JSON.stringify(err));
+});
+----
+
+.Android (Java)
+[source,java]
+----
+//build the request object with request path, method, headers and data
+Header[] headers = new Header[1];
+headers[0] = new BasicHeader("contentType", "application/json");
+//The request should have a timeout of 25 seconds, 10 is the default
+FHHttpClient.setTimeout(25000);
+FHCloudRequest request = FH.buildCloudRequest("/api/v1/user/create", "POST", headers, new JSONObject().put("username", "testuser"));
+//the request will be executed asynchronously
+request.executeAsync(new FHActCallback() {
+  @Override
+  public void success(FHResponse res) {
+    //the function to execute if the request is successful
+    try{
+      //process response data
+    } catch(Exception e){
+      Log.e(TAG, e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void fail(FHResponse res) {
+    //the function to execute if the request is failed
+    Log.e(TAG, res.getErrorMessage(), res.getError());
+  }
+});
+----
+
+.iOS (Objective-C)
+[source,objectivec]
+----
+NSDictionary * headers = [NSDictionary dictionaryWithObject:@"application/json" forKey:@"contentType"];
+  NSDictionary * data = [NSDictionary dictionaryWithObject:@"testuser" forKey:@"username"];
+  FHCloudRequest * action = (FHCloudRequest *) [FH buildCloudRequest:@"/api/v1/user/create" WithMethod:@"POST" AndHeaders:headers AndArgs:data];
+  // change timeout (default value: 60s)
+  action.requestTimeout = 25.0;
+  [action execAsyncWithSuccess:^(FHResponse * actRes){
+    //the actRes will contain 10 tweets about "feedhenry"
+    //the JSON response from the cloud will be parsed to NSDictionary automatically
+    NSDictionary * resData = actRes.parsedResponse;
+    // ...
+  } AndFailure:^(FHResponse * actFailRes){
+    //if there is any error, you can check the rawResponse string
+    NSLog(@"Failed to read tweets. Response = %@", actFailRes.rawResponse);
+  }
+];
+----
+
+.iOS (Swift)
+[source,swift]
+----
+        let args = ["key1": "value1", "key2": "value2"] as [String : AnyObject]
+        FH.cloud(path: "/path",
+                 method: HTTPMethod.POST,
+                 args: args,
+                 completionHandler: {(resp: Response, error: NSError?) -> Void in
+                    if error != nil {
+                        print("Cloud Call Failed: " + (error?.localizedDescription)!)
+                        return
+                    }
+                    if let parsedRes = resp.parsedResponse as? [String:String] {
+                        print("Success: " + parsedRes["jsonKey"]!)
+                    }
+        })
+----
+
+.{nbsp}.NET (C#)
+[source,csharp]
+----
+var headers = new Dictionary<string, string>; {{"contentType", "application/json"}};
+var data = new Dictionary<string, object> {{"username", "testuser"}};
+
+//change the timeout to 60 seconds, default is 30 seconds
+FH.TimeOut = TimeSpan.FromSeconds(60);
+var response = await FH.Cloud("/api/v1/user/create", "POST", headers, data);
+if(null == response.Error)
+{
+    //no error occured, the request is successful
+    var rawResponseData = response.RawResponse;
+    //you can get it as JSONObject (require Json.Net library)
+    var resJson = response.GetResponseAsJObject();
+    //process response data
+}
+else
+{
+    //error occured during the request, deal with it.
+    //More infomation can be access from response.Error.InnerException
+}
+----

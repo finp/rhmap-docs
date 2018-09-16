@@ -1,0 +1,56 @@
+// include::shared/attributes.adoc[]
+
+[[environments]]
+= Environments
+
+[[what-are-environments]]
+== What are Environments
+
+Environments are a way of logically separating the development cycles of Projects, Services, Forms and Apps into discrete stages. Environments are a key part of link:{ProductFeatures}#lifecycle-management[Lifecycle Management].
+
+For example, a Project could have 3 stages of development: Dev, UAT & Production. Each stage is represented by an Environment. The number and make up of Environments is configurable through the Platform and can be tailored on a per-domain basis.
+
+[[how-environments-interact-with-business-objects]]
+== How Environments interact with Business Objects
+
+Below is a quick reference for identifying areas in the App Studio where Environments are utilised
+
+* Projects (including Apps)
+* Services
+* Forms
+* Admin > Auth Policies
+
+Should you access these areas without access to any Environments, you will see a warning similar to the one below:
+
+image:no-environments.png[Core Structure]
+
+[[no-environments-reduced-functionality]]
+== No Environments -- reduced functionality
+
+To perform most actions relating to Projects, Services, Forms and Apps in the App Studio, you will need to be able to access one or more Environments.
+
+If you are currently unable to access any Environments, this could be because:
+
+* Your current Team membership excludes you from utilising any Environments
+* Your Administrator has not setup any Environments yet
+
+[[update-team-membership]]
+=== Update Team Membership
+
+To gain access to an Environment you (or an Administrator for your Domain) will need to:
+
+* Navigate to the `Admin > Teams` area
+* Alter a team you are a member of and grant members of this team access to the `Admin > Environment` business object
+
+For more details about administering Teams, see link:{ProductFeatures}#teams-and-collaboration[here].
+
+[[administrator-environment-setup]]
+=== Administrator Environment Setup
+
+If you believe your Team setup and membership is correct, contact your local Administrator for further assistance. Environments need to be set up by an Administrator before access to them can be granted via Teams.
+
+[[other-resources]]
+== Other resources
+
+* link:{ProductFeatures}#teams-and-collaboration[Teams and Collaboration]
+* link:{ProductFeatures}#lifecycle-management[Lifecycle Management]

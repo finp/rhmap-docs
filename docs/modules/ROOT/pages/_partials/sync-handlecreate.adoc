@@ -1,0 +1,58 @@
+[[fh-sync-handlecreate]]
+== $fh.sync.handleCreate
+{syncnote} xref:fh-sync-handlecreate-dep[section for the old version]
+
+Defines a handler function to create a single row of data in the Dataset Backend for a specific Dataset.
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.handleCreate(dataset_id, function createHandler(dataset_id, data, meta_data, cb){});
+----
+
+=== Parameters
+
+==== dataset_id
+* Description: the id of the dataset
+* Type: String
+
+==== createHandler
+* Description: The function that is invoked when creating a record.
+* Type: Function
+* Invoked Parameters:
+** *dataset_id*
+*** Description: the id of the dataset
+*** Type: String
+** *data*
+*** Description: the data to create
+*** Type: Object
+** *meta_data*
+*** Description: the meta data associated with the data, can be null.
+*** Type: Object
+** *cb*
+*** Description: the callback function
+*** Type: Function
+
+=== Example
+
+[source,javascript]
+----
+$fh.sync.handleCreate("todo", function(dataset_id, data, meta_data, cb){
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // Row of data to create
+  console.log(data);
+
+  // Sample back-end storage call
+  var savedData = saveData(data);
+  var res = {
+    "uid": savedData.uid, // Unique Identifier for row
+    "data": savedData.data // The created data record - including any system or UID fields added during the create process
+  };
+
+  // Callback function for when the data has been created, or if theres an error
+  return cb(null, res);
+});
+----

@@ -1,0 +1,115 @@
+// include::shared/attributes.adoc[]
+
+[[developing-an-application-using-push-notifications]]
+= Developing An Application Using Push Notifications
+
+.Overview
+This tutorial will guide you through the process of building a sample application which receives push notifications sent
+from the Platform's built-in push notification server. The application you'll create in this example is based on Cordova
+and targets Android and the associated Firebase Cloud Messaging (formerly Google Cloud Messaging) platform. However, the steps are analogous for all
+other supported platforms.
+
+To learn more about push notification support in the {ProductName}, see
+link:{ProductFeatures}#push-notifications[Push Notifications].
+
+[[obtain-fcm-credentials]]
+== Obtain Firebase Cloud Messaging credentials and download the `google-services.json` file
+
+For the built-in UnifiedPush Server (UPS) to be able to access Google's push notification network, you first need to
+get a Server key and establish a project in the Firebase Console. See
+https://aerogear.org/docs/unifiedpush/aerogear-push-android/guides/#google-setup[Obtaining Firebase Cloud Messaging Credentials^]
+for a detailed walk-through of getting the credentials. These instructions are for a native Android app, you do not need to complete all the process. In order to successfully complete the setup you need to obtain the following three items:
+
+* Server key (formerly API key)
+* Sender ID (formerly Project Number)
+* the `google-services.json` file generated from the Firebase console
+
+For other push networks, see link:{ProductFeatures}#obtaining-credentials-for-push-networks[Obtaining Credentials for Push Networks].
+
+[[step-1-create-a-project-from-the-push-notification-hello-world-template]]
+== Create a project from the _Push Notification Hello World_ template
+
+image:push_hello_world_template.png[Push Notification Hello World template]
+
+. In {ProductShortName} Studio, go to _Projects_ and click __New Project__.
+. Look for the _Push Notification Hello World_ template, and click _Choose_ on the right-hand side.
+. Enter a name for the project in the _Name your Project_ field.
+. In the _App Templates_ section, look for __Simple Cordova Push App__. Make sure this app is selected and deselect all
+other apps that can be deselected within the project template. The check boxes are in the top right corner of each app
+template.
+. Click _Create_ at the top right of the project template. Wait until the project creation is completed. Then click
+_Finish_ at the bottom of the screen.
+
+
+//[[step-2-define-a-package-name-for-your-client-app]]
+
+[[step-3-set-up-push-support]]
+== Set up push support
+
+Push support needs to be explicitly enabled for each Client App and you also need to provide the push network
+credentials obtained in the first step xref:obtain-fcm-credentials[Obtain Firebase Cloud Messaging credentials and download the `google-services.json` file].
+
+image:push_enable_android_variant.png[Add Android variant]
+
+. In the _Apps, Cloud Apps & Services_ section of your project, click the __Simple Cordova Push App__.
+. Click _Push_ on the left side of the screen.
+. Click __Enable Push__.
+. Select the _Android_ option and enter the _Server key_ and _Sender ID_ obtained in the first step. Click __Enable Push__.
+
+[[step-4-integrate-the-google-services-json-file-into-the-client-app]]
+== Integrate the `google-services.json` file into the Client App
+
+. Click _Editor_ on the left-hand side of the screen.
+. Select the `www` folder in the Editor, click the `+` symbol in the toolbar to create a new file, and name it `google-services.json`.
+. Open the `google-services.json` file you have previously downloaded from the Firebase Console, copy the contents into the `google-services.json` in the Editor.
+. Click __File__, and then _Save_ in the Editor toolbar to save your changes.
+
+[[step-4a-configure-config]]
+== Configure config.xml file
+
+Modify the `widget id` setting in the config.xml file to correspond to the package name defined in the Firebase Console.
+
+
+[[step-5-build-the-client-app-binary]]
+== Build the Client App binary
+
+image:push_build_android.png[Build Client App binary for Android]
+
+We will build a _Debug_ type of the Android binary which is easy to build without any special setup.
+
+. Click _Build_ on the left-hand side of the screen.
+. In the _Client Binary_ section, select __Android__.
+. Click _Build_ at the bottom of the screen and wait until the app is built. You can monitor progress at the bottom of
+the screen in the _Artifact History_ section.
+. Once the build is finished, a dialog with a download link and a QR code should pop up. Alternatively, click
+_Download_ in the first line of the _Artifact History_ table.
+. With your mobile device, scan the presented QR code and install the app.
+
+[[step-6-test-the-app]]
+== Test the app
+
+image:push_send_notification.png[Send push notification]
+
+. On your mobile device, open the newly installed __Simple Cordova Push App__.
+. In {ProductShortName}, open your project, and in __Apps, Clouds & Services__, open the __Simple Cordova Push App__.
+. Click _Push_ on the left side of the screen.
+. Click _Send Notification to this app_ at the top of the screen.
+. Fill in the __Message__, keep all other fields unchanged, then click __Send Push Notification__.
+. Shortly, your mobile device should receive a push notification with the provided message.
+
+
+
+ifeval::[{ProductRelease} == 3]
+
+To check logs for the push notification, navigate to the Client App in Studio and click _Push_ in the left-hand side of the screen, then choose the _Activity Log_ tab.
+The log includes the following columns:
+
+* Message - the text of the notification
+* IP Address - the IP address of the cloud app that issued the push message request
+* Installations - the number of clients that opened the notification
+* Status - the status of the notification, 'Processed' means the notification has been received by * the Notification Service, 'Failed' means the notification has not been processed by the * Notification Service
+* Sent - the timestamp for the notification leaving RHMAP
+* First time opened - the timestamp for the first opening of the notification
+* Last time opened - the timestamp for the most recent opening of the notification
+
+endif::[]

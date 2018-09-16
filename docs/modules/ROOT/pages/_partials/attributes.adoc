@@ -1,0 +1,54 @@
+:toc:
+:toclevels: 4
+:numbered:
+:imagesdir: shared/images
+
+:ProductName: Red Hat Mobile Application Platform Hosted
+:ProductShortName: RHMAP
+:ProductRelease: 4
+:ProductVersion: 4.6.0
+
+:DocInfoProductName: red_hat_mobile_application_platform_hosted
+:DocInfoProductNumber: 4
+
+:ExampleNodeVersion: 4.8.4
+
+// ENVIRONMENT / CP SERVER - stage, qa, or production
+// default env is prod
+ifndef::cp-server[]
+:cp-server: access.redhat.com
+endif::[]
+
+// BUILD LANGUAGE
+// default language is en
+ifndef::language[]
+:language: en
+endif::[]
+
+// FORMAT AND PAGING
+// default paging is single
+:paging: single
+
+// paged only for html format, all other formats (pdf, epub, single) use single
+ifeval::["{format}" == "html"]
+:paging: paged
+endif::[]
+
+//To allow for deprecation of old sync apis
+:oldsync: for fh-mbaas-api Version Less than 7.0.0
+:syncnote: NOTE: RHMAP 3.19 includes fh-mbaas-api version 7. If the version of fh-mbaas-api in your package.json file is less than 7.0.0, see the
+
+
+// Links to guides
+:LinkProductDocHome: https://{cp-server}/documentation/{language}/{DocInfoProductName}/
+
+:ClientAPI: https://{cp-server}/documentation/{language}/{DocInfoProductName}/{DocInfoProductNumber}/{paging}/client_api/
+:ClientSDK: https://{cp-server}/documentation/{language}/{DocInfoProductName}/{DocInfoProductNumber}/{paging}/client_sdk/
+:CloudAPI: https://{cp-server}/documentation/{language}/{DocInfoProductName}/{DocInfoProductNumber}/{paging}/cloud_api/
+:DragAndDropAppsGuide: https://{cp-server}/documentation/{language}/{DocInfoProductName}/{DocInfoProductNumber}/{paging}/drag_and_drop_apps_guide/
+:GettingStarted: https://{cp-server}/documentation/{language}/{DocInfoProductName}/{DocInfoProductNumber}/{paging}/getting_started/
+:LocalDevelopmentGuide: https://{cp-server}/documentation/{language}/{DocInfoProductName}/{DocInfoProductNumber}/{paging}/local_development_guide/
+:MobileDeveloperGuide: https://{cp-server}/documentation/{language}/{DocInfoProductName}/{DocInfoProductNumber}/{paging}/mobile_developer_guide/
+:PlatformAPI: https://{cp-server}/documentation/{language}/{DocInfoProductName}/{DocInfoProductNumber}/{paging}/platform_api/
+:ProductFeatures: https://{cp-server}/documentation/{language}/{DocInfoProductName}/{DocInfoProductNumber}/{paging}/product_features/
+:ServerSideDeveloperGuide: https://{cp-server}/documentation/{language}/{DocInfoProductName}/{DocInfoProductNumber}/{paging}/server-side_developer_guide/

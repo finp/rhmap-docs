@@ -1,0 +1,131 @@
+// include::shared/attributes.adoc[]
+
+[[managing-api-keys-with-fhc]]
+= Managing API Keys with FHC
+
+When certain FHC commands are executed, it needs to communicate with the platform using the user's identity. This requires the user to login to the platform using the `fhc login` command. User API keys provides an alternative way to use FHC. You don't have to run the login command anymore if you have set the user API key in FHC. FHC can use the user's API key to authenticate when communicating with the platform.
+
+[[set-user-api-keys]]
+== Set User API Keys
+
+In FHC, the command related to API keys management is `fhc keys`. If you run this command without any additional argument, you will be shown the command help.
+
+To set a user API key for the current FHC target, you should enter the following command:
+
+[source,bash]
+----
+fhc keys user target eb8d9b9ea050b9b23fea59e50ba281c67f3715e5
+----
+
+NOTE: This requires you to have previously set the target using `fhc target`.
+
+To check which API key is currently used for FHC, you can run this command
+
+[source,bash]
+----
+fhc keys user target
+----
+
+After setting a user API key in FHC, you can run other FHC commands as usual.
+
+For example, you can list, create, update and revoke user API keys using FHC.
+
+[[list-user-api-keys]]
+== List User API Keys
+
+If you have logged in or set the user API key using FHC, you can see all the API keys associated with the current user by running this command:
+
+[source,bash]
+----
+fhc keys user list
+----
+
+If the output format is set to json in your FHC config, each key object will look like this:
+
+[source,javascript]
+----
+{
+  "key": "eb8d9b9ea050b9b23fea59e50ba281c67f3715e5",
+  "keyReference": "1j6qcwiziRkbYy6sUUHDooAY",
+  "keyType": "user",
+  "label": "test 1",
+  "revoked": "2012-04-20T15:18:17.258Z",
+  "revokedBy": "1j6qcwiziRkbYy6sUUHDooAY",
+  "revokedEmail": "dev@example.com"
+}
+----
+
+[[create-user-api-keys]]
+== Create User API Keys
+
+To create a user API key, run this command:
+
+[source,bash]
+----
+fhc keys user create test2
+----
+
+You should get a response similar to:
+
+[source,javascript]
+----
+{
+  "key": "22d0c0ac5990e8fd2c466c26db1a9eff8a171511",
+  "keyReference": "1j6qcwiziRkbYy6sUUHDooAY",
+  "keyType": "user",
+  "label": "test2",
+  "revoked": "",
+  "revokedBy": "",
+  "revokedEmail": ""
+}
+----
+
+[[update-user-api-keys]]
+== Update User API Keys
+
+To update a user API key using FHC, you can run this command:
+
+[source,bash]
+----
+fhc keys user update 22d0c0ac5990e8fd2c466c26db1a9eff8a171511 test3
+----
+
+You should get a response similar to:
+
+[source,javascript]
+----
+{
+  "key": "22d0c0ac5990e8fd2c466c26db1a9eff8a171511",
+  "keyReference": "1j6qcwiziRkbYy6sUUHDooAY",
+  "keyType": "user",
+  "label": "test3",
+  "revoked": "",
+  "revokedBy": "",
+  "revokedEmail": ""
+}
+----
+
+[[revoke-user-api-keys]]
+== Revoke User API Keys
+
+To revoke a user API key using FHC, you can run this command:
+
+[source,bash]
+----
+fhc keys user revoke 22d0c0ac5990e8fd2c466c26db1a9eff8a171511
+----
+
+You will be prompted to confirm the revoke action. After confirmation, you should see something similar to:
+
+[source,javascript]
+----
+{
+  "key": "22d0c0ac5990e8fd2c466c26db1a9eff8a171511",
+  "keyReference": "1j6qcwiziRkbYy6sUUHDooAY",
+  "keyType": "user",
+  "label": "test3",
+  "revoked": "2012-04-20T16:14:11.702Z",
+  "revokedBy": "1j6qcwiziRkbYy6sUUHDooAY",
+  "revokedEmail": "dev@example.com"
+}
+----

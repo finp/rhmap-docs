@@ -1,0 +1,76 @@
+// include::shared/attributes.adoc[]
+
+[[fh-getFHHeaders]]
+= $fh.getFHHeaders
+
+[source,javascript]
+----
+$fh.getFHHeaders();
+----
+
+This method will return the headers for each cloud request. 
+Some SDKs can provide this meta data as request headers. In this case, the name of each header will be like "X-FH-<meta data name>", for example, "X-FH-appid".
+
+[[default-params-supported-platforms]]
+.Supported Platforms
+
+* JavaScript SDK
+** Cordova
+** Web Apps
+* Android SDK
+* iOS Objective-C SDK
+* iOS Swift SDK
+* .NET SDK
+** Windows
+** Xamarin
+
+For detailed version information, see link:https://access.redhat.com/node/2357761[Supported Configurations^].
+
+[[default-params-example]]
+== Example
+
+.JavaScript
+[source,javascript]
+----
+var fhheaders = $fh.getFHHeaders();
+//then it should be added to your request body under the key "__fh"
+body.__fh = fhheaders;
+----
+
+.Android (Java)
+To get the request meta data as a JSON object:
+[source,java]
+----
+JSONObject fhParams = FH.getDefaultParams();
+----
+You can get the meta data as HTTP headers as well:
+[source,java]
+----
+Header[] fhParamHeaders = FH.getDefaultParamsAsHeaders(null);
+----
+
+.iOS (Objective-C)
+
+To get the request meta data as a NSDictionary:
+[source,objectivec]
+----
+NSDictionary * fhParams = [FH getDefaultParams];
+----
+
+You can get the meta data as HTTP headers in a NSDictionary:
+[source,objectivec]
+----
+NSDictionary * fhParamHeaders = [FH getDefaultParamsAsHeaders];
+----
+
+.{nbsp}.NET (C#)
+To get the request meta data as a Dictionary:
+[source,csharp]
+----
+  IDictionary <string, object> fhParams = FH.GetDefaultParams();
+----
+You can get the meta data as HTTP headers in a Dictionary:
+[source,csharp]
+----
+IDictionary <string, string> fhParamHeaders = FH.GetDefaultParamsAsHeaders();
+----

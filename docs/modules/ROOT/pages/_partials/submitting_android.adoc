@@ -1,0 +1,122 @@
+// include::shared/attributes.adoc[]
+
+[[submitting-an-app-to-google-play]]
+= Submitting an App to Google Play
+
+[[prerequisites]]
+== Prerequisites
+
+* A 'Release' app (APK file) is built either from the Platform or using Android Studio
+* The developer has a high resolution application icon file
+** 512x512 JPEG or 24 bit PNG (no Alpha)
+* The developer has at least one screenshot of the app 
+** 320x480 or 480x854 JPEG or 24 bit PNG (no Alpha) format
+
+NOTE: Screenshots must be full bleed, have no border and landscape thumbnails will be cropped. All measurements WxH for example, 320wx480h
+
+[[submitting-an-app-to-google-play-overview]]
+== Overview
+
+There are a number of steps for publishing an app to Google Play, all of which are done with a web browser. They are:
+
+* Upload an Application
+** Upload Assets
+** Listing Details
+** Publishing Options
+** Contact Information
+** Consent
+
+[[uploading-an-application]]
+== Uploading an Application
+
+* Log into Google Play at https://play.google.com/apps using your Developer Login
+** You will be presented with a list of apps you already have in Google Play
+** Click on the Upload Application button
+** You will now be brought to the **Upload an Application** Screen
+
+[[upload-assets]]
+== Upload Assets
+
+* Draft application APK file
+** Upload your APK file
+* Screenshots
+** Upload your screenshot(s) -- JPEG or 24-bit PNG (Alpha Transparency is unsupported)
+* High Resolution Application Icon
+** Upload your App Icon -- JPEG or 24-bit PNG (Alpha Transparency is unsupported)
+* Promotional Graphic
+** This is optional to be used in Google Play on devices with 1.6 or higher
+* Feature Graphic
+** This is optional
+* Promotional Video
+** This is optional to supply a YouTube URL to your promotional video
+* Marketing Opt-out
+** There is also the option to opt out of Google marketing/ promoting your app
+
+[[listing-details]]
+== Listing Details
+
+* Language
+** Select the Language for your app
+* Title
+** The name for your application as it will appear in Google Play
+* Description
+** Enter the description of your to appear in Google Play
+* Recent Changes
+** Enter the changes as you are uploading updates of your application
+* Promo text
+** This will be used in conjunction with the Promotional Graphic
+* Application Type
+** Select the type of application it is "Applications" / "Games"
+* Category
+** Select the category you want the app to be displayed in based on choice of application type
+** *Applications*
+*** Comics
+*** Communication
+*** Entertainment
+*** Finance
+*** Health
+*** Lifestyle
+*** Multimedia
+*** News & Weather
+*** Productivity
+*** Reference
+*** Shopping
+*** Social
+*** Sports
+*** Themes
+*** Tools
+*** Travel
+*** Demo
+*** Software libraries
+** *Games*
+*** Arcade & Action
+*** Brain & Puzzle
+*** Cards & Casino
+*** Casual
+* Price
+** Price is automatically set to **Free**. If you want to charge for apps you must set up a merchant account at Google Checkout.
+
+[[publishing-options]]
+== Publishing Options
+
+* Copy Protection
+** Protect apps being copied from the device - **Soon to be deprecated and superceded by the Licensing Service**
+* Locations
+** Select Google Play markets you want the app to appear in
+
+[[contact-information]]
+== Contact Information
+
+* Website
+** Your website URL
+* Email
+** Your Email address
+* Phone
+** Your phone number
+
+[[consent]]
+== Consent
+
+You must verify that the application meets the Android Content Guidelines and that your app may be subjected to US laws regardless of your location or nationality and that, as such, your application is authorised for export from the US under these laws.
+
+Finally, You must choose to Save what you have entered, delete what you have entered or Publish the application (This will publish the app and make it available in Google Play)

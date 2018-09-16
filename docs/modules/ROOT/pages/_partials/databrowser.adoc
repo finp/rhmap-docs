@@ -1,0 +1,251 @@
+// include::shared/attributes.adoc[]
+
+[[data-browser]]
+= Data Browser
+
+[[databrowser-overview]]
+== Overview
+
+The Data Browser section of the App Studio allows a developer to:
+
+* Graphically and interactively view the data associated with their app.
+* View, create and delete collections.
+* Modify data in a collection.
+
+[[using-the-data-browser]]
+== Using the data browser
+
+[[viewingadding-collections]]
+=== Viewing/Adding Collections
+
+The collections associated with an app can be viewed by selecting the Data Browser tab in the Cloud Management section of the Studio.
+
+image:dataBrowser_viewCollections.png[List Collections for an App]
+
+This screen has two controls located at the top of the collection list
+
+image:dataBrowser_plusOption.png[List Collection Options]
+
+These buttons
+
+* Add a collection.
+* Refresh the list of collections.
+
+Clicking on the button to add a collection prompts you to enter the collection name. Click on the Create button to create the collection.
+
+image:dataBrowser_newCollection.png[Add New Collection]
+
+[[viewing-data-in-a-collection]]
+=== Viewing Data In A Collection
+
+To view the data stored in a collection simply click on one of the collections listed in the Data Browser. This view shows the data accociated with the collection.
+
+image:dataBrowser_ListData.png[List Data For A Collection]
+
+At the top of the screen are the main listing functions
+
+image:dataBrowser_listDataOptions.png[List Data Options]
+
+These buttons allow you to
+
+* Switch Collection. Selecting this option presents you with a list of collections for the app. Click on a collection to list the data in that collection.
+* Add an entry to the collection.
+* Import & Export data ( documented later ).
+
+[[sorting-data]]
+==== Sorting Data
+
+To sort the data by a specific field, simply click in the field name at the top of the list. Sorting will alternate between ascending and descending order.
+
+[[filtering-data]]
+==== Filtering Data
+
+To filter the displayed data, click on the "Filter" button at the top of the Data Browser screen. Clicking this button displays the filtering options.
+These options allow you to filter the displayed data by one or more fields. Filtering supports the following JSON data types:
+
+* `String` - allows to filter text-based fields
+* `Number` - filters any numerical value
+* `Boolean` - accepts true and false values
+
+image:dataBrowser_filterData.png[Filter Data]
+
+[NOTE]
+--
+You can filter inside nested objects using '.' character.
+For example, using `author.name` as the filter key will filter by the value of the `name` property of `author` objects inside a collection of documents with the following structure:
+
+[source,json]
+----
+{
+   "title":"",
+   "author":{
+       "name":"John"
+   }
+}
+----
+--
+
+[[editing-data]]
+=== Editing Data
+
+Editing data in the Data Browser can be done using either the Inline or Advanced Editor
+
+* The Inline Editor is used to edit simple data in a collection (for example, changing the text in a single field).
+* The Advanced Editor is used to edit more complex data types. This can be done using an interactive Dynamic Editor or a Raw JSON editor.
+
+[[editing-using-the-inline-editor]]
+==== Editing Using the Inline Editor
+
+To edit an entry using the Inline Editor, select the Edit option to the right of a data entry and select Edit Inline. The option will turn to a green tick and black arrow icons as shown in the following picture.
+
+image:dataBrowser_editInline.png[Edit Inline]
+
+When a field is too complex to edit in the Inline Editor, the "Advanced Editor Only" text is shown. This field is editable only in the Advanced Editor.
+
+When finished updating the entry, select the green tick button to commit the changes to the data or the black arrow button to cancel any changes made.
+
+[[editing-using-the-advanced-editor]]
+==== Editing Using the Advanced Editor
+
+The advanced editor is used to edit more complex data types (for example, where a field is composed of multiple nested fields).
+
+To open the advanced editor, select the Edit option to the right of a data entry and select Advanced Editor.
+
+image:dataBrowser_editorOptions.png[Advanced Editor]
+
+The advanced editor has two modes
+
+* A Dynamic Editor to interactively add/edit fields.
+* A Raw JSON Editor to directly edit the data in JSON format.
+
+[[editing-using-the-dynamic-editor]]
+===== Editing Using the Dynamic Editor
+
+The Dynamic Editor is an interactive editor for JSON data. It presents a structured view of each field to allow adding/editing complex data types.
+
+image:dataBrowser_advancedDynamic.png[Dynamic Editor]
+
+The actions menu provides all the functionality needed to manage complex fields for the entry.
+
+image:dataBrowser_dynamicOptions.png[Dynamic Editor]
+
+The options available here are
+
+* Type: The type option changes the data type of the field to an array, JSON object or string. It is also possible to set the field to auto, where the data type is automatically selected from the data entered.
+* Sort: The sort option sorts the sub-fields of a complex type in ascending or descending order.
+* Append: The append option adds a field after the object selected.
+* Insert: The insert option inserts a field before the object selected.
+* Duplicate: The duplicate option copies the object selected and appends it to the end of the selected object.
+* Remove: The remove option deletes the field from the entry.
+
+[[editing-using-the-raw-json-editor]]
+===== Editing Using the Raw JSON Editor
+
+The Raw Editor allows for editing the JSON representation of the data. It is important to ensure that the data entered is in valid JSON format. The JSON data can be displayed in either formatted or compact form.
+
+image:dataBrowser_rawEditor.png[Raw Editor]
+
+[[exporting-and-importing-data]]
+== Exporting and Importing Data
+
+[[exporting-data]]
+=== Exporting Data
+
+[NOTE]
+The Export function built into the Data Browser interface is intended for testing and review purposes only. To export your data collections from a Cloud App or service, use xref:exporting-application-data[FHC].
+
+Data is exported from the Data Browser by using the 'Export' dropdown menu. Three formats are available:
+
+* JSON
+* CSV
+* BSON (Mongo Dump)
+
+After clicking on the export button for your chosen format, a `.zip` file will be downloaded. The contents of this is your data.
+
+To export all collections contained within your app, use the 'Export' dropdown in the toolbar on the collection listing screen. To export an individual collection's data, use the 'Export' dropdown from within that collection's data listing.
+
+Exporting data should give you a pretty good idea of the formats expected for import. This schema for each format is documented in more detail below.
+
+[[importing-data]]
+=== Importing Data
+
+[NOTE]
+The Import function built into the Data Browser interface is intended for testing and review purposes only. To import your data collections from a Cloud App or service, use xref:importing-application-data[FHC].
+
+You can import data into the data browser by clicking the 'Import' button on the collection listing screen. Supported formats are:
+
+* JSON
+* CSV
+* BSON (Mongo Dump)
+* ZIP archives containing any of the previous 3 formats
+
+Every file corresponds to a collection to be imported. The name of that file corresponds to the collection name your data will be imported to. +
+If a collection does not already exist, we will create it. If the collection already exists, imported documents are appended to the existing contents.
+
+[[importing-formats]]
+==== Importing Formats
+
+Now, we will document the expected formatting of the different types of import. In each case, we're importing a fictional data set of fruit. The collection name once imported will be `fruit`. +
+Each example contains each type supported for import: String, number and boolean. Remember, complex object types are not supported.
+
+[[importing-json]]
+==== Importing JSON
+
+JSON formatted imports are just JSON arrays of documents.
+
+`fruit.json`:
+
+[source,json]
+----
+[
+  {
+    "name":"plums",
+    "price":2.99,
+    "quantity":45,
+    "onSale":true,
+    "_id":"53767254db8fc14837000002"
+  },
+  {
+    "name":"pears",
+    "price":2.5,
+    "quantity":20,
+    "onSale":true,
+    "_id":"53767254db8fc14837000003"
+  }
+]
+----
+
+[[importing-csv]]
+==== Importing CSV
+
+To import CSV, it's important to keep in mind the separator, delimiter and newline settings used by the platform:
+
+Here's a sample file.
+
+`fruit.csv` :
+
+[source,csv]
+----
+name,price,quantity,onSale,_id
+"plums",2.99,45,true,53767254db8fc14837000002
+"pears",2.5,20,true,53767254db8fc14837000003
+----
+
+[[importing-bson-or-mongodump-output]]
+==== Importing BSON or MongoDump Output
+
+Running the `mongodump` tool is a convenient way to export the data of an existing MongoDB Database. This tool will create a directory called `dump`, and output a series of folders and subfolders containing the database, then subsequent collection names. +
+To import these collections into a {ProductShortName} database, simply take the output `.bson` files, and import these directly. We don't need the directory structure, or the outputted metadata `.json` files.
+Since BSON is a binary format, it doesn't make sense to show an example here - instead, you can https://gist.github.com/cianclarke/c96ace08b8b8dd2a1b6a/raw/388410bb86131180360c0b075538b7e21b929f6c/fruit.bson[download the file^].
+
+We can also view the data inside a `.bson` file using the `bsondump` tool supplied with any install of mongodb:
+`bsondump fruit.bson`:
+
+[source,javascript]
+----
+{ "name" : "plums", "price" : 2.99, "quantity" : 45, "onSale" : true, "_id" :   ObjectId( "53767254db8fc14837000002" ) }
+{ "name" : "pears", "price" : 2.5, "quantity" : 20, "onSale" : true, "_id" :  ObjectId( "53767254db8fc14837000003" ) }
+2 objects found
+----
+// removed db upgrade as per RHMAP-10365
+

@@ -1,0 +1,137 @@
+[[sync-server-debugging-guide]]
+= Sync Server Debugging Guide
+
+== Client Changes Are Not Applied
+
+To help debug this issue, answer the following questions:
+
+*Has the client sent the change to the Server?*
+
+Determine whether the change is sent by looking at the request body in sync requests after the client made the change.
+The change should be in the `pending` array. For example:
+
+[source,javascript]
+----
+{
+  "fn":"sync",
+  "dataset_id":"myShoppingList",
+  /*...*/
+  "pending":[{
+    "inFlight":true,
+    "action":"update",
+    "post":{
+      "name":"Modified Name",
+      "created":1495123790928
+    },
+    "postHash":"2e90b858164184b9ff31e0937cef8ddf4a959ac5",
+    "timestamp":1495799747404,
+    "uid":"591dc768a95300322eee1d1f",
+    "pre":{
+      "name":"Original Name",
+      "created":1495123790928
+    },
+    "preHash":"421932b23f05f8aef528d73fff3cbf5aa00786a4",
+    "hash":"f98f595974f7e7e1f07aed6220fab04446f459c9",
+    "inFlightDate":1495799747850
+  }]
+}
+----
+
+If the change is not in the pending array, verify your device is online.
+Check for any errors in the Client App and verify you are calling the relevant sync action, for example,  `sync.doUpdate()` for an update.
+It may help to debug or add logging in the Client App around the code where you make the change.
+
+*Is there a record for this change in the `fhsync_pending_queue` collection?*
+
+If 'No', the change was not received by the server, or there was an error receiving it.
+
+* Verify the App successfully sent the change. If it did not, debug the App to understand the issue. There may be an error in the App, or an error in the response from the Server.
+* Check the server logs for errors when receiving the change from the App. If there are no errors, see xref:enabling-debug-logs[Enabling Debug Logs].
+
+It is possible the record existed in the `fhsync_pending_queue` collection, but the Time To Live (TTL) period for queues has passed for the record, and it was removed.
+If this is the case, increasing the TTL enables debugging.
+
+*Does the record have a timestamp for the `deleted` field?*
+
+If 'No', the item has not been processed yet
+
+* Typically, the pending worker is busy processing items ahead of it in the queue. Wait until the item gets to the top of the queue for processing.
+* If an item is not processed after a significant time, or the queue is empty except for this item, check the server logs for any errors. If there are no errors, see xref:enabling-debug-logs[Enabling Debug Logs].
+
+*Is there a record for the update in the `fhsync_<datasetid>_updates` collection?*
+
+If 'No',  the update may have encountered an error while processing.
+
+* Check the server logs for any errors. If there are no errors, see xref:enabling-debug-logs[Enabling Debug Logs].
+
+*Is the `type` field in the record set to `failed` or `collision`?*
+
+If 'Yes', the update could not be applied to the Dataset back end.
+
+* A 'collision' should have resulted in the collision handler being called. The collision needs resolution.
+* A 'failed' update should have resulted in a notification on the client, with a reason for the failure. The reason is documented in the `msg` field of the record.
+
+If 'No', and the type is `applied`, you need to debug the create or update handler to see why the handler assumed the change was applied to the Dataset back end.
+
+The `type` field should never be anything other than `collision`, `failed` or `applied`.
+
+== Changes applied to the Dataset back end do not propagate to other Clients
+
+*Has sufficient time passed for the change to sync from the Dataset back end to clients?*
+
+After a change has been applied to the Dataset back end, there are 2 things that need to happen before other clients get that change.
+
+* a sync loop on the server must complete to update the records cache, that is, the list handler is called for that dataset
+* a sync loop on the client(s) must complete for the client(s) local record cache to be updated from the servers record cache
+
+If sufficient time has passed, check the server logs for any errors during the sync with the Dataset back end.
+
+*Is there a recent record in the `fhsync_queue` collection for the Dataset?*
+
+If 'No', it is possible the TTL value for the record has passed and it was deleted.
+In this case, the TTL value can be increased to enable further debugging.
+
+Another possibility is the sync scheduler has not scheduled a sync for that Dataset.
+The most likely reason is a combination of no currently active clients for that Dataset and the `clientSyncTimeout` has elapsed since the a client was last active for that Dataset.
+
+*Does the record have a timestamp for the `deleted` field?*
+
+If 'No', this means the sync is not processed yet.
+
+* Typically, the sync worker is busy processing items ahead of it in the queue. Wait until the item gets to the top of the queue.
+* If an item is not processed after a significant time, or the queue is empty except for this item, check the server logs for any errors. If there are no errors, see xref:enabling-debug-logs[Enabling Debug Logs].
+
+*Is the record in the `fhsync_<datasetid>_records` cache up to date?*
+
+The list handler should have been called, and the result added to the records cache.
+To verify the records cache is updated, check the `fhsync_<datasetid>_records` collection for the record that was updated.
+The data in this record should match the data in the Dataset back end.
+If it does not, check the server logs for errors and the behavior of the list handler.
+It may help to add logging in your list handler.
+
+*Is the client sync call successful?*
+
+Check that there is a valid response from the server when the client makes its sync call.
+If the call is successful, verify the client is getting the updated record(s).
+If the updated records are not received by the client, even though the server cache has them, verify the query parameters and any meta data sent to the server are correct.
+Enabling the Debug logs may help determine how the incorrect data is sent back to the client.
+
+[[enabling-debug-logs]]
+== Enabling Debug Logs
+
+To enable sync logs for debugging purposes, set the following environment variable in your server.
+
+```shell
+DEBUG=fh-mbaas-api:sync
+```
+
+This process generates a lot of logs.
+Each log entry is tagged with a specific Dataset ID that is being actioned in the context of that log message, if possible.
+These logs can be difficult to interpret, but allow you track updates from clients and the various stages for those updates.
+It may help to compare logs for a successful scenario with an unsuccessful scenario, and identify which stage a failure occurs.
+
+The most likely causes of issues are in custom handler implementations, particularly related to edge cases.
+It can be useful to add additional logs in your custom handlers.
+
+Dataset back end connectivity issues, particularly intermittent issues, can be difficult to debug and identify.
+It can help to have external monitoring or checks on the Dataset back end.

@@ -1,0 +1,117 @@
+// include::shared/attributes.adoc[]
+
+[[analytics]]
+= Analytics
+
+.Overview
+Both Aggregated (reporting for all Projects in your domain) and individual Reports are available from the App Studio. Analytics users can access both the Aggregated and individual App reports from the Analytics sub Nav. Additionally, Aggregated Reports can be broken down by individual Project.
+
+.Requirements
+The user must be a member of one or more teams with the following permissions:
+
+* Domain -- Project (View)
+* Domain -- Analytics (View)
+
+.Related Resources
+* link:{CloudAPI}#fh-stats[Cloud API - Statistics API]
+
+[[aggregated-reporting]]
+== Aggregated Reporting
+
+Aggregated reporting provides a high-level cumulative view of all the reports in your domain over the selected date range. 
+For example, the median number of active devices, or total number of app installations.
+
+[[monthly-active-devices]]
+=== Monthly Active Devices
+
+This is the number of devices that have made a cloud request in a 31-day period within the selected date range. A device, identified with a xref:device-identifiers[unique device identifier], is considered active if it makes at least one cloud request (via `$fh.act` or `$fh.cloud`) in the given period.
+
+[[device-identifiers]]
+==== Device Identifiers
+
+Devices are identified by the Client Unique Identifier (CUID) field, which is added to each cloud request automatically by the RHMAP client SDKs.
+
+The CUID is generated using different APIs on each platform:
+
+* On iOS, the CUID value is generated using the https://developer.apple.com/library/ios/documentation/AdSupport/Reference/ASIdentifierManager_Ref/#//apple_ref/occ/instp/ASIdentifierManager/advertisingIdentifier[Advertising Identifier^].
+* On Android, the CUID value is generated using the https://developer.android.com/reference/android/provider/Settings.Secure.html#ANDROID_ID[Android ID^].
+* For browsers that use the JavaScript SDK, the CUID is a generated random string saved in the browser (through any storage mechanism that is available). If the app data is removed, a new CUID is generated.
+
+[NOTE]
+--
+Due to the limitations on each platform, it is not guaranteed that the value of CUID remain constant for a given device. 
+Depending on the operating system of the device, the value could change after restarting the device, re-installation of apps, or removing app data on the device.
+
+On iOS, different apps on the same device will get different CUID values. This means the same device will be counted as a new device for each app. This is a limitation of the iOS platform.
+--
+
+[[per-project-reporting]]
+== Per Project Reporting
+
+There are 4 types of Reporting available for a Project: Device Installs, App Startups, Cloud Requests, and Active Devices. Depending on the configuration of your domain, the Cloud Requests and Active Devices reports may not be available to you.
+
+[[device-installs]]
+=== Device Installs
+
+Device Install reports show the number of App installs for a given date range. A Device Install is tracked the first time an App starts up on a new device and makes a call back to the cloud. Note that Device Installs differ from User Installs as tracked by App Stores in the following ways:
+
+* App Stores count an install as a user account performing a download -- regardless of how many devices the user installs the App on. This may vary for the different report types available from the individual App Stores.
+
+* App stores typically report daily figures in PST timezone (in the case of Google Play and iTunes Connect), while we report in UTC.
+
+* An App must be started up at least once with a valid Internet connection before we track the App install. We track the install as having happened at the time of the first startup, not the time of download.
+
+[[app-startups]]
+=== App Startups
+
+An App Startup is tracked every time an App is launched on a previously seen device with Internet connectivity.
+Note that App Startups are only tracked for Apps starting up 'from cold' - that is, if an App that is running in the background is brought to the foreground, this is not tracked as an 'App Startup'.
+
+[[cloud-requests]]
+=== Cloud Requests
+
+Cloud Request reports show the number of times an App Client makes a request (using `$fh.cloud`) to the App Cloud.
+
+=== Active Devices
+
+Active device reports show the median number of active devices for an app over the selected date range.
+A device, identified with a xref:device-identifiers[unique device identifier], is considered active if it makes at least one cloud request (via `$fh.act` or `$fh.cloud`) in a 24-hour period (from midnight to midnight in the GMT time zone).
+
+[[reporting-charts-graphs]]
+== Reporting Charts & Graphs
+
+Each of the report types can be viewed in a number of ways, depending on which chart best shows the data you are looking for. In general, more info on individual chart points and areas is available by hovering over them. If a chart shows multiple items being compared, an item can be toggled on/off by clicking on the name of it in the legend (most charts support this). Chart data can often be exported in CSV, PNG or PDF format by clicking the export button associated with an individual chart.
+
+The from and to date range can be changed for each chart, either by selecting a range using the calendars, or by choosing one of the quick date selections for example, "Last 30 Days", "Last 7 Days", "Previous 30 Days" etc.
+
+The data for these charts is updated daily, so the latest data will be from yesterday.
+
+[[aggregated-reporting-1]]
+=== Aggregated Reporting
+
+Aggregated Reporting on the Reporting tab gives a high level view of all the App reports, for example, By Date, By Device, By Location. You can then easily drill down into specific reports by clicking the "View Details" button associated with each analytics type.
+
+[[per-app-reporting]]
+=== Per-App Reporting
+
+Per-App Reporting on the Reporting tab allows you to view reporting for an individual App by selecting an App from the list on the left - you can also search this list if you have many Apps. Once an App is selected, you will be presented with an overview of reporting for this particular App. If you're interested in a particular metric, you can drill down via the "View Details" button.
+
+[[individual-app-analysis]]
+=== Individual App Analysis
+
+This Individual App Screen provides an overview of reporting for a particular type of analytics (Startups, Installs etc.). Either clicking their Report titles, or switching views via the navigation pills will show individual Charts.
+
+[[by-date-analysis]]
+=== By Date Analysis
+
+This chart type shows the increase/decrease of the value over time. The y-axis represents the value (for example, installs) and the x-axis shows the date. The values for each platform series (for example, Android, iPhone) are represented with separate lines.
+
+[[by-platform-analysis]]
+=== By Platform Analysis
+
+The aggregated values, per platform, can be viewed as a pie chart. The aggregation of values is for the selected date range.
+
+[[by-location-analysis]]
+=== By Location Analysis
+
+The total values for a date range, based on User location, can be viewed as a Geo Chart. The value per country is shown, as well as the position of that value on a scale from min to max, when hovering over a country.

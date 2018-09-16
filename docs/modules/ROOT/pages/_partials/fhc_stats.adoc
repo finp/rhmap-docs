@@ -1,0 +1,104 @@
+// include::shared/attributes.adoc[]
+
+[[viewing-app-stats-with-fhc]]
+= Viewing App Stats with FHC
+
+FHC can be used to access raw, JSON stats data for your apps.
+
+To access your app stats (timers and counters) for a particular app, use the following command:
+
+[source,bash]
+----
+fhc stats <APP_ID> app <NUMBER_OF_RESULTS>
+----
+
+Where `APP_ID` is the ID of your app as listed in an `fhc apps` command, and `NUMBER_OF_RESULTS` is the maximum number of results you wish to see returned. See below for a sample Stats response.
+
+[source,javascript]
+----
+{
+  interval: 10000,
+  results: [
+    {
+      "ts": 1333107734000,
+      "numStats": 6,
+      "counters": [
+        {
+          "key": "DOMAIN_APPID_api_FUNCTIONNAME_active_requests",
+          "value": {
+            "value": 3,
+            "valuePerSecond": 0.3
+          }
+        },
+        {
+          "key": "DOMAIN_APPID_api_FUNCTIONNAME2_active_requests",
+          "value": {
+            "value": 27,
+            "valuePerSecond": 2.7
+          }
+        },
+        {
+          "key": "DOMAIN_APPID_api_FUNCTIONNAME3_active_requests",
+          "value": {
+            "value": 456,
+            "valuePerSecond": 45.6
+          }
+        }
+      ],
+      "timers": [
+        {
+          "key": "DOMAIN_APPID_api_FUNCTIONNAME_request_times",
+          "value": {
+            "upper": 86,
+            "lower": 63,
+            "count": 17,
+            "pcts": [
+              {
+                "pct": "90",
+                "value": {
+                  "mean": 76,
+                  "upper": 86
+                }
+              }
+            ]
+          }
+        },
+        {
+          "key": "DOMAIN_APPID_api_FUNCTIONNAME2_request_times",
+          "value": {
+            "upper": 99,
+            "lower": 82,
+            "count": 41,
+            "pcts": [
+              {
+                "pct": "90",
+                "value": {
+                  "mean": 88.66666666666667,
+                  "upper": 99
+                }
+              }
+            ]
+          }
+        },
+        {
+          "key": "DOMAIN_APPID_api_FUNCTIONNAME3_request_times",
+          "value": {
+            "upper": 99,
+            "lower": 75,
+            "count": 2783,
+            "pcts": [
+              {
+                "pct": "90",
+                "value": {
+                  "mean": 79.1254547827,
+                  "upper": 99
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+----

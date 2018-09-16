@@ -1,0 +1,74 @@
+[[fh-sync-globalhandlecollision]]
+== $fh.sync.globalHandleCollision
+{syncnote} xref:fh-sync-globalhandlecollision-dep[section for the old version]
+
+Defines a global handler function to deal with data collisions.
+
+You can resolve the collision in this function, or just persist the collision somewhere for later review.
+
+It can be used by multiple datasets, but is only used if there is no handler assigned to the dataset using the xref:fh-sync-handlecollision[handleCollision API].
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.globalHandleCollision(function collisionHandler(dataset_id, hash, timestamp, uid, pre, post, meta_data){});
+----
+
+=== Parameters
+
+==== collisionHandler
+* Description: The function that is invoked when a collision is generated.
+* Type: Function
+* Invoked Parameters:
+** *dataset_id*
+*** Description: the id of the dataset
+*** Type: String
+** *hash*
+*** Description: the unique hash value of the collision
+*** Type: String
+** *timestamp*
+*** Description: the timestamp when the change is generated on the client. In milliseconds.
+*** Type: Number
+** *uid*
+*** Description: the unique id of the pending record
+*** Type: String
+** *pre*
+*** Description: the data before the change 
+*** Type: Object
+** *post*
+*** Description: the changed data
+*** Type: Object
+** *meta_data*
+*** Description: the meta data associated with the data, can be null.
+*** Type: Object
+
+=== Example
+
+[source,javascript]
+----
+// Typically a collision handler will write the data record to a collisions table
+// which is reviewed by a user who can manually reconcile the collisions.
+$fh.sync.globalHandleCollision(function(dataset_id, hash, timestamp, uid, pre, post, meta_data) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // Unique hash value identifying the collision
+  console.log(hash);
+
+  // Date / time that update was created on client device
+  console.log(timestamp);
+
+  // Unique Identifier for row
+  console.log(uid);
+
+  // The data row the client started with
+  console.log(pre);
+
+  //The data row the client tried to write
+  console.log(post);
+
+  // sample back-end storage call
+  saveCollisionData(dataset_id, hash, timestamp, uid, pre, post);
+});
+----

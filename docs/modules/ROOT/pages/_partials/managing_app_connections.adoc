@@ -1,0 +1,29 @@
+// include::shared/attributes.adoc[]
+
+[[managing-app-connections-studio]]
+= Managing App Connections in the Studio Using Connection Tags
+
+[[managing-app-connections-overview]]
+== Overview
+
+You can use connection tags in {ProductShortName} Studio to associate a Client App with a Cloud App. This enables you to change which Cloud App is associated with your Client App without the need to distribute an updated Client App binary. Cloud link:{ProductFeatures}#projects-connections[connections] are updated by Client Apps upon restart.
+
+[[managing-app-connections-prerequisites]]
+== Prerequisites
+
+Make sure that you have at least two link:{GettingStarted}#deploy-the-cloud-app[deployed Cloud Apps] associated with your project.
+
+[[managing-app-conections]]
+== Configuring App Connections in the Studio
+
+. Log in to {ProductShortName} Studio.
+. Navigate to the _Connections_ section, and find the app whose connection you want to re-configure.
+. Click _Configure_ next to the connection.
+. From the drop-down list, pick the Cloud App you want to be associated with your Client App.
+. Click _Save and Update Connection_ to exit the configuration window. A message is displayed stating that the re-configuration was successful.
+
+[NOTE]
+--
+Client Apps on Android might cache the location of the Cloud App, which may prevent them from immediately recognizing changes after the Cloud App connection is reconfigured.
+To ensure that the Cloud App location in your Client App is updated, restart the Client App on your device after completing the steps above.
+--

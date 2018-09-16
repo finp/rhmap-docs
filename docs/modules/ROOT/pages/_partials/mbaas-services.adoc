@@ -1,0 +1,17 @@
+// include::shared/attributes.adoc[]
+
+[[introduction-mbaas-services]]
+= Introduction to MBaaS Services
+MBaaS Services are cloud/web applications that provide shared functionalities that can be used by multiple cloud applications within multiple projects. Typical use cases include:
+
+* providing APIs to access third-party services. For example, multiple projects have a requirement to send SMS messages. You can create a service to provide the APIs to send SMS messages and that service can be accessed by multiple projects.
+
+* providing APIs to legacy customer backend systems For example, you may have legacy systems that perform user authentication. You can create a service that provides a consistent, modern set of APIs for projects to consume, hiding all the details about how to access the legacy systems.
+
+NOTE: MBaaS Services are not designed to be used by Client Apps directly: For example, an iOS app does not call an MBaaS service directly. A Client App calls the associated Cloud App, then the Cloud App sends requests to one or more MBaaS services.
+
+Benefits of using MBaaS services include:
+
+* improving code reusability. This is especially important if it is complicated to access the external services.
+
+* protecting sensitive information. Sometimes user credentials are required to access the external services. Using services eliminates the requirement to share the credentials with multiple project developers.

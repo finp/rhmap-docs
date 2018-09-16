@@ -1,0 +1,128 @@
+// include::shared/attributes.adoc[]
+
+[[viewing-submissions]]
+= Viewing Submissions
+
+[[viewing-submissions-overview]]
+== Overview
+
+The _Submissions_ page is used to view forms that have been submitted either via Studio or via a Client App. Submissions can be viewed on a per Form basis, per Project basis, or by Recent Submissions.
+
+Form Submissions can be viewed using the Submissions Viewer, and edited by the Submissions Editor.
+
+Submissions can be exported in Comma Separated Value (CSV) format using the _Export Submissions_ button. When exporting Submissions, the headers for the exported fields can be
+
+* *Field Name* -- The name of the field.
+* *Field Code* -- The Field Code assigned to the field. If no Field Code has been assigned to the field, the *Field Name* will be used instead.
+
+NOTE: *Field Names* and *Field Codes* are assigned to a Field within a Form using the link:{ProductFeatures}#content-fields[Form Builder].
+
+The Recent Submissions page also shows a list of forms that have been recently submitted. A variety of submission information is provided along with the Form and Project name. This includes the current environment the Project is deployed on, the date/time the submission was received, and the input to the form fields.
+
+Clicking on a submission will display the details of the submission.
+
+[[sorting-submissions]]
+== Sorting Submissions
+
+[[sorting-submissions-by-form]]
+=== Sorting Submissions By Form
+
+The _By Form_ Submissions page allows the user to view Submissions on a per form basis. A user can select a form from the dropdown list, and then view information regarding all the individual submissions relating to that particular form.
+
+After selecting a submission from the list, extra Submission Information is displayed. In the image below, a preview of the form is displayed along with additional Submission Information.
+
+The Form Submission section shows a preview of the form that was submitted, along with the values that were entered for each field.
+
+The Submission Information section displays more technical information such as what App ID, Device ID, and IP address are associated with the Submission.
+
+NOTE: If a Submissions Editor makes any modification to a Form Submission this is recorded in the 'Date time edited' and 'Edited by' fields.
+
+[[sorting-submissions-by-project]]
+=== Sorting Submissions By Project
+
+The Per Project Submissions page allows users to view submissions on a per Project basis. First, a Project is selected from the list. Then, a Form is selected from the list of Forms associated with that Project.
+
+[[filtering-submissions]]
+=== Filtering Submissions
+
+The _By Form_ and Per Project Submissions page contain a search field. The following fields will be compared to the value when the search button is clicked.
+
+* The ID of the submission.
+* The name of the form the submission was made against.
+* The ID of the form the submission was made against.
+* ID of the device that made the submission.
+* The IP address the submission was made from.
+
+[[searching-submissions]]
+== Searching Submissions
+
+Advanced submission search allows for searching form submissions with customized criteria. Users can build up clauses filtering the values of fields to find the relevant submissions.
+
+[[creating-search-criteria]]
+=== Creating Search Criteria
+
+To search submissions for a form:
+
+. Select a form from the list of available forms. This will populate the _Single Fields_ and _Repeating Fields_ boxes with a list of fields matching the type.
+. Add a clause by clicking the `+` icon and remove clauses by clicking the `-` icon.
+. Populate a clause by selecting the field, selecting the clause type (for example, is, is not, etc.) and enter the value to compare.
+. When all clauses have been created, click _Search_ to find the list of submissions that match the created clauses.
+
+NOTE: If the field is repeating, each entry of the repeating field will be compared to the clause.
+
+NOTE: Submissions matching the created search criteria can be exported using the _Export Submissions_ button.
+
+[[viewing-submission-details]]
+== Viewing Submission Details
+
+All non-admin fields submitted by the user are displayed along with any images and files the user uploaded.
+
+In addition, _Admin Only_ fields are displayed for adding additional information to the submission.
+
+Images are displayed inline. To save the image to your computer:
+
+. Right-click on the image.
+. Select __Save Image As__.
+. Select a location to save the image.
+
+Files can be opened by clicking on the link in each file entry.
+
+To save the file to your computer:
+
+. Right-click on the image.
+. Select __Save Link As...__.
+. Select a location to save the file.
+
+The buttons at the bottom of the screen allow for 4 functions
+
+* Download PDF: Allows for converting the submission to a PDF document. When the conversion is complete, this process triggers a download in the browser.
+* Print Submission: Allows for converting the document to a printable format. When complete, this process triggers the print function in the browser.
+* Delete Submission: The user is prompted for a confirmation to delete the submission.
+* Edit Submission: Allows for editing a submission to add additional data.
+
+CAUTION: Deleting a submission is irreversible. All content related to the submission is deleted, including files.
+
+[[editing-a-submission]]
+== Editing a Submission
+
+Editing a submission can be performed by entering data into the field (for example, text, number).
+
+Admin fields are indicated using the _(Admin)_ icon.
+
+If a field is repeating, additional values can be added to the field with the _Add Input_ button.
+
+The contents of a file or a photo field can be changed by clicking _Choose File_ below the file or a photo. The file or the photo can then be added from your local computer. When the new file has been chosen, a message will appear showing the file is queued for upload.
+
+To save any changes made to the submission, click the _Update Submission_ button. This will update the submission data in addition to uploading any files selected.
+
+Clicking _Cancel_ will abort any changes entered into the submission.
+
+[[receiving-notifications-on-every-submission]]
+== Receiving Notifications on Every Submission
+
+The Notifications section allows users to manage email addresses that will receive an automated email once a submission is received.
+
+Here, email addresses can be added to and removed from a notification list.
+Any email address that has been added to the list will receive an email whenever a copy of that Form is submitted.
+
+NOTE: Once an email address has been added to the notification list, redeploy the Form.

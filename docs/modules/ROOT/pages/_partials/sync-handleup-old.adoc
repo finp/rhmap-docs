@@ -1,0 +1,43 @@
+// include::shared/attributes.adoc[]
+[[fh-sync-handleupdate-dep]]
+== $fh.sync.handleUpdate {oldsync}
+
+[source,javascript]
+----
+$fh.sync.handleUpdate(dataset_id, callback)
+----
+
+Defines a handler function for updating a single row of data from the back end. Should be called after the dataset is initialised.
+
+[[fh-sync-example-10]]
+=== Example
+
+[source,javascript]
+----
+// data source for a dataset.
+// The sync service will verify that the update can proceed
+// (that is, collision detection) before it invokes the update function.
+$fh.sync.handleUpdate(dataset_id, function(dataset_id, uid, data, cb, meta_data) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // Unique Identifier for row to update
+  console.log(uid);
+
+  // Row of data to update
+  console.log(data);
+
+  // Sample back-end storage call
+  var updatedData = updateData(uid, data);
+  /* sample response
+    {
+      "userid": "1234",
+      "name": "Jane Bloggs",
+      "age": 27
+    }
+  */
+
+  // The callback into the sync service to return the updated row of data
+  return cb(null, updatedData);
+});
+----

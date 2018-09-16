@@ -1,0 +1,145 @@
+[[sync-upgrade-guide]]
+= Sync Server Upgrade Notes
+
+== Overview
+
+This section targets developers who:
+
+* use Sync Server in their application
+* are upgrading the version of `fh-mbaas-api` from `<7.0.0` to `>=7.0.0`
+
+If you are already using `fh-mbaas-api@>=7.0.0`, do not follow any of the procedures in this section.
+
+NOTE: There are no changes to the Sync Client in this upgrade.
+
+== Prerequisites
+
+Prior to `7.0.0` the Sync Server used the `fh.db` API to store sync operational data in MongoDB.
+`fh.db` is a wrapper around MongoDB that may go through an intermediate http API (fh-ditch).
+This resulted in a resticted set of actions that could be performed on the sync operational data.
+It also limited the potential use of modules that connect directly to MongoDB.
+As of `fh-mbaas-api@7.0.0`, the Sync Server requires a direct connection to MongoDB.
+
+This means:
+
+* for a hosted MBaaS you must 'Upgrade' your App Database.
+* for a self-managed MBaaS, no action is required as all Apps get their own Database in MongoDB by default
+
+== Data Handler Function Signature Changes
+
+The method signature for sync data handlers are different for the new Sync Framework.
+If you implemented any data handler, you must change the parameter ordering.
+These changes are to conform to the parameter ordering convention in javascript, that is, a callback is the last parameter.
+
+*IMPORTANT* Make sure that the callback function, passed to each handler as a parameter, runs for each call. This ensures that the worker can continue after the handler has completed.
+
+The data handlers and their signature prior to and as of `7.0.0` are:
+
+
+[source,json]
+----
+// <7.0.0
+sync.handleList(dataset_id, function(dataset_id, params, callback, meta_data) {});
+sync.globalHandleList(function(dataset_id, params, callback, meta_data) {});
+// >=7.0.0
+sync.handleList(dataset_id, function(dataset_id, params, meta_data, callback) {});
+sync.globalHandleList(function(dataset_id, params, meta_data, callback) {});
+
+
+// <7.0.0
+sync.handleCreate(dataset_id, function(dataset_id, data, callback, meta_data) {});
+sync.globalHandleCreate(function(dataset_id, data, callback, meta_data) {});
+// >=7.0.0
+sync.handleCreate(dataset_id, function(dataset_id, data, meta_data, callback) {});
+sync.globalHandleCreate(function(dataset_id, data, meta_data, callback) {});
+
+
+// <7.0.0
+sync.handleRead(dataset_id, function(dataset_id, uid, callback, meta_data) {});
+sync.globalHandleRead(function(dataset_id, uid, callback, meta_data) {});
+// >=7.0.0
+sync.handleRead(dataset_id, function(dataset_id, uid, meta_data, callback) {});
+sync.globalHandleRead(function(dataset_id, uid, meta_data, callback) {});
+
+
+// <7.0.0
+sync.handleUpdate(dataset_id, function(dataset_id, uid, data, callback, meta_data) {});
+sync.globalHandleUpdate(function(dataset_id, uid, data, callback, meta_data) {});
+// >=7.0.0
+sync.handleUpdate(dataset_id, function(dataset_id, uid, data, meta_data, callback) {});
+sync.globalHandleUpdate(function(dataset_id, uid, data, meta_data, callback) {});
+
+
+// <7.0.0
+sync.handleDelete(dataset_id, function(dataset_id, uid, callback, meta_data) {});
+sync.globalHandleDelete(function(dataset_id, uid, callback, meta_data) {});
+// >=7.0.0
+sync.handleDelete(dataset_id, function(dataset_id, uid, meta_data, callback) {});
+sync.globalHandleDelete(function(dataset_id, uid, meta_data, callback) {});
+
+
+// <7.0.0
+sync.listCollisions(dataset_id, function(dataset_id, callback, meta_data) {});
+sync.globalListCollisions(function(dataset_id, callback, meta_data) {});
+// >=7.0.0
+sync.listCollisions(dataset_id, function(dataset_id, meta_data, callback) {});
+sync.globalListCollisions(function(dataset_id, meta_data, callback) {});
+
+
+// <7.0.0
+sync.removeCollision(dataset_id, function(dataset_id, collision_hash, callback, meta_data) {});
+sync.globalRemoveCollision(function(dataset_id, collision_hash, callback, meta_data) {});
+// >=7.0.0
+sync.removeCollision(dataset_id, function(dataset_id, collision_hash, meta_data, callback) {});
+sync.globalRemoveCollision(function(dataset_id, collision_hash, meta_data, callback) {});
+----
+
+== Behavior Changes
+
+As the sync server now connects directly to MongoDB, there is some setup time required on startup.
+If you currently use `sync.init()`, wrap these calls in a `sync:ready` event handler.
+For example, if you use the following code:
+
+[source,json]
+----
+fh.sync.init('mydataset', options, callback);
+----
+
+Modify it to put it in an event handler.
+
+[source,json]
+----
+fh.events.on('sync:ready', function syncReady() {
+  sync.init('mydataset', options, callback);
+});
+----
+
+Alternatively, you could use the event emitter from the sync API
+[source,json]
+----
+fh.sync.getEventEmitter().on('sync:ready', function syncReady() {
+  sync.init('mydataset', options, callback);
+});
+[source,json]
+----
+
+== Logger Changes
+
+The `logLevel` option passed into `fh.sync.init()` is no longer available.
+By default, the new Sync Server does not log anything.
+All logging uses the [debug](https://www.npmjs.com/package/debug) module.
+If you want log output from the Sync Server, you can set the `DEBUG` environment variable.
+For example:
+
+[source,bash]
+----
+DEBUG=fh-mbaas-api:sync
+----
+
+To see all logs from the entire SDK, you can use
+[source,bash]
+----
+DEBUG=fh-mbaas-api:*
+----
+
+All other environment variables and behavior features of the `debug` module are available.

@@ -1,0 +1,116 @@
+// include::shared/attributes.adoc[]
+
+[[using-secure-keys-in-your-app]]
+= Using Secure Keys in your App
+
+link:{ClientAPI}#fh-sec[$fh.sec] APIs provides the functionality to generate keys and data encryption/decryption. However, after the keys are generated, you may need to save them somewhere for future usage. For example, you have some data that needs to be encrypted with a secret key and saved on the device. Next time, when the app starts again, you need to get the same secret key and decrypt the data.
+
+The best practice to achieve this is to save the keys on the cloud side, and associate the keys with the client using the client unique id (CUID) and app id.
+
+[[cuid-and-app-id]]
+== CUID and App Id
+
+Both the CUID and app id are sent by the client SDK in every $fh.act request. They are accessible via a special JSON object called `__fh`. The CUID is unique for each device and remain unchanged even if the app is deleted and re-installed. The app id is generated when the app is created on the platform and remain unchanged. You can use the following code to access them in the cloud code:
+
+[source,javascript]
+----
+getKeyId = function(params){
+  var cuid = params.__fh.cuid;
+  var appid = params.__fh.appid;
+  var keyid = cuid + "_" + appid;
+  return keyid;
+}
+
+exports.getKey = function(params, callback){
+  var keyid = getKeyId(params);
+  //get a key using this keyid
+  ....
+}
+----
+
+[[key-persistence]]
+== Key Persistence
+
+You can use whatever persistent mechanism you like to save the keys in the cloud. One recommended approach is to use `$fh.db`. Here is some example code to show how to save and retrieve keys using `$fh.db`:
+
+[source,javascript]
+----
+//read a key using $fh.db
+var getKey = function(params, cb){
+  if(typeof $fh !== "undefined" && $fh.db){
+    $fh.db({
+      act:'list',
+      'type': 'securityKeys',
+      eq: {
+        "id": getKeyId(params),  //The id is generated using the above example code
+        "keyType": params.type
+      }
+    }, function(err, data){
+      if(err) return cb(err);
+      if(data.count > 0){
+        return cb(undefined, data.list[0].fields.keyValue);
+      } else {
+        return cb(undefined, undefined);
+      }
+    });
+  } else {
+    console.log("$fh.db not defined");
+    cb("$fh.db not defined");
+  }
+}
+
+//save a key using $fh.db
+var saveKey = function(params, cb){
+  if(typeof $fh !== "undefined" && $fh.db){
+    //first check if a key with the same id and type already exsists
+    $fh.db({
+      act:'list',
+      'type': 'securityKeys',
+      eq: {
+        "id": getKeyId(params),
+        "keyType": params.type
+      }
+    }, function(err, data){
+      if(err) return cb(err);
+      //a key with the same id and type already exists, update it
+      if(data.count > 0){
+        $fh.db({
+          'act':'update',
+          'type': 'securityKeys',
+          'guid': data.list[0].guid,
+          'fields' : {
+            'id': getKeyId(params),
+            'keyType': params.type,
+            'keyValue' : params.value
+          }
+        }, function(err, result){
+          if(err) return cb(err);
+          return cb(undefined, result);
+        })
+      } else {
+        //a key with the same id and type is not found, create it
+        $fh.db({
+          'act': 'create',
+          'type': 'securityKeys',
+          'fields': {
+            'id' : getKeyId(params),
+            'keyType': params.type,
+            'keyValue': params.value
+          }
+        }, function(err, result){
+          if(err) return cb(err);
+          return cb(undefined, result);
+        });
+      }
+    });
+  } else {
+    console.log("$fh.db not defined");
+    cb("$fh.db not defined");
+  }
+}
+----
+
+[[sample-code]]
+== Sample Code
+
+A reference application has been created which fully demonstrates how to use `$fh.sec` APIs. The code for this application is available on GitHub: https://github.com/feedhenry-training/fh-security-demo-app.

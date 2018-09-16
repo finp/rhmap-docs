@@ -1,0 +1,134 @@
+// include::shared/attributes.adoc[]
+
+[[getting-started-drag-drop-apps]]
+= Getting Started: Drag & Drop Apps
+
+[[overview]]
+== Overview
+
+The {ProductName} ({ProductShortName}) Studio provides you with all the tools you need to quickly create mobile apps for capturing data submissions using a powerful drag and drop UI. Throughout this guide, these apps will be referred to as "Drag & Drop Apps".
+
+This Quickstart walks you through the steps from creating a simple form through building an app and finally viewing the data submitted by that form from a mobile device.
+
+The summary steps are:
+
+* Create a form, including rules
+* Create a group of users who can work with that form in the Studio
+* Define who will be notified of data submissions
+* Create a theme for your Forms
+* Create an app for the form
+* Generate and install a binary of that app on your phone
+* Submit data from the app
+* View and print those submissions
+
+[[create-a-form]]
+== Create a form
+
+Forms are used to capture data from the end users of your solution. To create a new form:
+
+. Click on the *Forms Builder* menu.
+. Click *New Form*. +
+. Choose a template to bootstrap your development, or simply select the *Blank Form* template to create your own from scratch.
+. The Form dashboard is displayed on the screen once the Form is created. Click *Edit Form*.
+. Add a text field to the form by clicking the *Text* field.
++
+An untitled text field will be added to the form.
++
+NOTE: Clicking a field will add it to the end of a form. Dragging allows you to position a field anywhere in the form.
+
+. Click on the newly added field.
++
+A new menu will appear at the right hand side of the page. This menu allows us to further configure the selected field.
+
+. Rename the textfield 'name', and ensure that the 'Required' check box is ticked.
++
+Having this box checked means that a user can not submit the form unless they have entered a value for this field.
++
+A preview of what the form looks like can be seen by clicking the *Preview* tab, located at the right hand side of the page. Here you can get a preview of what the current form looks like on a device.
++
+Forms can easily be created with multiple pages and fields can have specific validation rules associated to them.
++
+Advanced fields such as photo capture and signature capture are just as easy to use as simple fields and can also be repeated in a form as many times as you wish.
+
+. Click *Save*. This will save the form in its current state and cause the browser to return to the Forms Screen.
+
+xref:create-a-simple-form[Read More]
+
+[[create-rules]]
+== Create rules
+
+The powerful `Rules` section of a form enables you to create both field and page based rules. Field rules let you enable or disable the display of certain fields based on the contents of other fields. Page rules let you enable or disable the display of certain pages based on the contents of specific fields. In both cases, multiple rules and criteria can be created.
+
+link:{ProductFeatures}#dynamically-displaying-form-fields-and-pages[Read More]
+
+[[define-who-will-be-notified-of-data-submissions]]
+== Define who will be notified of data submissions
+
+E-mail notifications can be set on a per-form basis. Different users or sets of users can be notified of each new submission with the content of that submission attached as a PDF.
+
+[[create-a-theme-for-your-forms]]
+== Create a Theme for your Forms
+
+Themes are used to control the look and feel of your Drag and Drop App. You can just use the default theme if you wish to get started quickly. It's unlikely that you'll create many themes for your apps but at a minimum, you may just wish to set your logo.
+
+. Go to `Drag & Drop Apps` > `Forms Themes` > `New Theme`
+. Select a template
+. Give your theme a name and a description
+. Click *Create Theme* and you'll be brought to the *Edit Theme* page
+. Select your form in the preview window if it's not already selected
+. Make any changes you wish to colours, fonts, spacing or the main logo
+. When you are finished making changes, click *Save*
+
+xref:create-a-form-theme[Read More]
+
+[[create-an-app-for-the-form]]
+== Create an App for the Form
+
+Whilst projects in the Studio can contain multiple apps, Forms projects generally only contain one. In order to create an app with your form, you must first create a project.
+
+. Navigate to the `Forms Projects` sub-section of the `Drag & Drop Apps` area. +
+  You will see a list of the Apps that you have sufficient privileges to see.
+. Click *New Forms Project*.
+. Click *Create New Project*. +
+  You will be prompted to enter a name for the project.
+. Click *Next*. +
+  This will cause Studio to start generating all the necessary code for your app. When the project has successfully been created, you will be prompted to pick a theme and pick the form(s) that should be included in the App. You can now choose the theme and form you created above.
++
+NOTE: Multiple forms can be associated with a Project.
+
+. Click *Finish*.
+
+xref:create-a-forms-project[Read More]
+
+[[generate-and-install-a-binary-of-the-app-on-your-phone]]
+== Generate and install a binary of the App on your phone
+
+Building an application enables you to install it on a mobile device.
+
+. In the specific Forms project area for your app, scroll down and click the `Build this App` button.
+
+. In the resulting `Build a Binary` screen, pick your target mobile platform (for example, Android), pick *Debug* build type, and pick a *Cloud App Connection*. +
+  If you are building an Android Debug app, you don't need any credentials. If you are building a Production Android App or any type of iOS App, you will be prompted to upload the various credentials needed.
+
+. Click *Build*.
+
+Once the App has been built you will be presented with a QR code, a short link and a download link.
+
+[[submit-data-from-the-app]]
+== Submit data from the app
+
+Install the app on the device using the QR code or short-URL. Run the app and then start creating submissions in the forms that you included in your App.
+
+[[view-and-print-those-submissions]]
+== View and print those submissions
+
+Once submissions have been created, you can go to `Drag & Drop Apps` > `Forms Projects` > your project > `Submissions` (in left hand sidebar). You should be able to see all of the data you submitted from the app. Click on any one of them.
+
+Each submission shows text fields, photos, signatures, and any other fields that have been submitted. Depending on your Group permissions you can download PDF, print, delete or edit each submission.
+
+link:{ProductFeatures}#viewing-submissions[Read More]
+
+[[further-reading]]
+== Further reading
+
+You have now used all of the Core functionality around forms. There are many other advanced features you can use. link:{ProductFeatures}#product-features-drag-and-drop-apps[Read More]

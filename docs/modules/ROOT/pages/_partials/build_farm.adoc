@@ -1,0 +1,634 @@
+// include::shared/attributes.adoc[]
+
+[[using-build-farm]]
+= Using the Self-managed Build Farm
+
+NOTE: This feature is a technical preview. The hosted Build Farm remains the default configuration. 
+
+
+For more information, see:
+
+* link:{InstallingRHMAP}#provisioning-rhmap-buildfarm[Installing RHMAP] for prerequisites and installation instructions.
+* link:{AdminGuide}#admin-build-farm[Administrator's Guide] for information on administering the {BuildFarmName}, including specific information about link:{AdminGuide}#configuring-macos[Configuring a macOS Server for Customization].
+
+
+If RHMAP is configured to use a self-managed {BuildFarmName}, consider the following procedures when developing Client Apps.
+
+== Using RHMAP to Build Applications
+
+. Create a Project in RHMAP
+. Add a Client App to the Project
+. Add the relevant Jenkinsfile to the root of the App Code
++
+NOTE:  If you create an app from a template included with {ProductShortName} {ProductVersion}, you can build it immediately with self-managed {BuildFarmName}. However, if you are attempting to build an existing app, you must include a Jenkinsfile.
++
+The following 3 types of Application's Jenkinsfiles are supported.
++
+* https://github.com/aerogear/digger-jenkins/blob/FH-v4.5/jenkinsfiles/android_jenkinsfile.groovy[Native Android^]
+* https://github.com/aerogear/digger-jenkins/blob/FH-v4.5/jenkinsfiles/ios_jenkinsfile.groovy[Native iOS^]
+** see link:#configure-ios-jenkinsfile[Configure iOS Jenkinsfile] for details on values that require updating.
+* https://github.com/aerogear/digger-jenkins/blob/FH-v4.5/jenkinsfiles/cordova_jenkinsfile.groovy[Cordova^] (for Android and iOS)
++
+The files provided at the links above are saved in `.groovy` format. 
+
+. Rename the file you downloaded to `Jenkinsfile`.
+. Add the renamed file to the root directory of the App code repo.
+. Create any required credentials for Release Builds
+. Go to the Build Screen of the Application
+. Choose the platform
+. Choose the type of build
+. Choose credentials for Release builds
+. Click Build
+
+The application starts building and logs are shown on the screen.
+After building, a pop-up containing a QR Code and a shortened URL appears. Use this to install the mobile app.
+
+//Concept
+[[overview-jenkinsfile]]
+=== Overview of a {BuildFarmName} Jenkinsfile
+
+A Jenkinsfile for {BuildFarmName} defines:
+
+* What mobile platforms you want the mobile app to run on
+* What steps to perform during the build process
+* What steps to perform on the artifacts after building is complete
+
+=== General Jenkinsfile structure
+[source,groovy]
+----
+# Define/Assign variables e.g <1>
+def platform = "android"
+
+node(platform) { # <2>
+  stage('Checkout') { # <3>
+    checkout scm # <4>
+  }
+
+  stage('Prepare'){ # <5>
+    ...
+  }
+
+  stage('Build') { # <6>
+    ...
+  }
+
+  stage('Sign') { # <7>
+    ...
+  }
+
+  stage('Archive') { # <8>
+    ...
+  }
+}
+----
+<1> Assign values to variables. For example, the `platform` variable
+is a string that can be either `ios` or `android`. Any other value results in the
+build not being assigned to a node and timing out.
+<2> Define the node that you want the build to run on. The only argument for
+the `node` function is a string that should match a label given to a Jenkins
+node. This
+is populated by the platform parameter. By providing a variable here the
+same Jenkinsfile can be used in the case of Cordova where the builds may
+need to be executed on and `android` or `ios` node.
+<3> Add a stage to the build. Multiple stages can be added to break up builds
+logically. The `stage` function takes one argument which is the name of the
+stage.
+<4> Checkout the source code of the repo. This is done using the provided
+`checkout` function. `scm` is another helper which uses the SCM details from
+the Jenkins job configuration. When using {BuildFarmName} with RHMAP the SCM details
+will be configured automatically at build time.
+<5> Perform platform specific pre-requisite steps, for example, add platform for cordova.
+<6> Build the applications. This is done using a build tool such as Gradle for
+Android or Xcode for iOS. The steps required are describe in xref:using-jenkinsfiles[].
+<7> Sign the application using application specific steps if required
+<8> Archive the resulting artifacts of the build. When building Android and iOS
+apps there will be resulting build artifacts which can be stored. The
+`archiveArtifacts` function allows this to be done by providing the path to the
+artifacts as parameters.
+
+
+[[using-jenkinsfiles]]    
+== Using Jenkinsfiles in an App
+
+
+=== Checkout source code
+To checkout a projects source code the `checkout` step can be used.
+
+[source,groovy]
+----
+node("android"){
+  ...
+  stage("Checkout"){
+    checkout scm
+  }
+  ...
+}
+----
+
+=== Prepare the Environment/Application
+
+
+=== Configuring iOS Mobile Apps for RHMAP
+
+If you are using RHMAP to build an iOS app, you must include a `fhconfig.plist` file
+The contents of these files is provided in the Jenkinsfile through `params.FH_CONFIG_CONTENT`. 
+
+Make sure your Jenkinsfile includes contents as follows:
+
+[source,groovy]
+----
+node(platform) {
+  stage("Prepare") {
+    writeFile: file: 'app/fhconfig.plist', text: params.FH_CONFIG_CONTENT
+  }
+}
+----
+
+//Procedure
+=== Configuring Android Mobile Apps for RHMAP
+
+If you are using RHMAP to build an Android app, you must include a `fhconfig.properties`  file
+to your app directory, so that the mobile app can access a Cloud App.
+The contents of these files is provided in the Jenkinsfile through `params.FH_CONFIG_CONTENT`. 
+
+Make sure your Jenkinsfile includes contents as follows:
+[source,groovy]
+----
+node(platform) {
+  ...
+  stage("Prepare"){
+    writeFile file: 'app/src/main/assets/fhconfig.properties', text: params.FH_CONFIG_CONTENT
+  }
+  ...
+}
+----
+
+
+==== Configuring Cordova Mobile Apps for RHMAP
+For Cordova application note the following steps. These steps are for building both `android` and `ios`, depending on the value for the platform variable.
+
+[source,groovy]
+----
+node(platform) {
+  stage("Prepare") {
+    sh "cordova platform rm ${platform}"
+    sh "cordova platform add ${platform}"
+    sh "cordova prepare ${platform}"
+  }
+}
+----
+
+=== Building the Application
+
+==== Building Applications with Xcode
+To build Xcode projects you can use the `xcodeBuild` function in your
+Jenkinsfile, this requires the `XC_VERSION` environment variable to be defined.
+To sign the app the `xcodeBuild` function can then be used. See the link:#building-with-xcode[parameters section] for further details on values passed.
+
+[source,groovy]
+----
+node('ios'){
+  ...
+  stage('Build') {
+    withEnv(['XC_VERSION=8.3']) {
+      xcodeBuild(
+        cleanBeforeBuild: true,
+        src: 'helloworld-ios-swift',
+        schema: 'helloworld-ios-app',
+        workspace: 'helloworld-ios-app',
+        buildDir: 'build',
+        sdk: 'iphoneos',
+        version: '0.1-alpha',
+        shortVersion: '0.1',
+        bundleId: 'com.feedhenry.helloworld-ios-app',
+        infoPlistPath: 'helloworld-ios-app/helloworld-ios-app-Info.plist',
+        flags: '-fstack-protector -fstack-protector-all ENABLE_BITCODE=NO',
+        autoSign: false
+      )
+    }
+  }
+
+  stage('CodeSign') {
+    codeSign(
+      profileId: "${params.BUILD_CREDENTIAL_ID}",
+      clean: true,
+      verify: true,
+      ipaName: 'myapp',
+      appPath: 'helloworld-ios-swift/build/Debug-iphoneos/helloworld-ios-app.app'
+    )
+  }
+  ...
+}
+----
+
+==== Building Cordova Applications
+
+To build Cordova Applications the Jenkinsfile carries out seperate steps depending on whether the Application is being built for debug or release. Again note the use of the platform environment variable. Also BUILD_CONFIG is used in this case to decide the use of the `cordova build` command.
+
+[source,groovy]
+----
+node(platform){
+  ...
+  stage('Build'){
+      if (BUILD_CONFIG == 'debug') {
+            sh "cordova build ${platform} --debug"
+      } else {
+            sh "cordova build ${platform} --release"
+      }
+  }
+
+}
+----
+
+==== Building Android Applications
+
+See the steps shown below showing the use `gradle` to build an Android Application for Debug or Release.
+
+[source,groovy]
+----
+node("android"){
+  ...
+  stage("Build"){
+    sh 'chmod +x ./gradlew'
+    if (params.BUILD_CONFIG == 'release') {
+      sh './gradlew clean assembleRelease' // builds app/build/outputs/apk/app-release.apk file
+    } else {
+      sh './gradlew clean assembleDebug' // builds app/build/outputs/apk/app-debug.apk
+    }
+  }
+  ...
+}
+----
+
+
+
+=== Signing the Application
+
+==== Signing Android build
+When an Android apk is created it can be signed using the provided
+`signAndroidApks` function. See the link:#sign-android-apks[parameters section] for additional information of values passed.
+
+[source,groovy]
+----
+node("android"){
+  ...
+  stage("Sign"){
+    if (params.BUILD_CONFIG == 'release') {
+        signAndroidApks (
+          keyStoreId: "${params.BUILD_CREDENTIAL_ID}",
+          keyAlias: "${params.BUILD_CREDENTIAL_ALIAS}",
+          apksToSign: "**/*-unsigned.apk",
+          // uncomment the following line to output the signed APK to a
+          separate directory as described above
+          // signedApkMapping: [ $class: UnsignedApkBuilderDirMapping ],
+        )
+    } else {
+      println('Debug Build - Using default developer signing key')
+    }
+  }
+  ...
+}
+----
+
+
+
+=== Function Parameters
+
+[[sign-android-apks]]
+==== signAndroidApks Parameters
+
+The `signAndroidApks` function takes the following parameters.
+
+.signAndroidApks options
+|===
+| Parameter | Description
+
+| keyStoreId
+| Keystore ID. This will be provided through the `BUILD_CREDENTIAL_ID`
+parameter if the app is built through RHMAP.
+
+| keyAlias
+| Alias of the private key/certificate chain. This will be provided through the `BUILD_CREDENTIAL_ALIAS` parameter if the app is built through RHMAP.
+
+| apksToSign
+| A file name or glob pattern specifying the APK files to store.
+
+| signedApkMapping
+| Output the signed APK to a separate directory than the unsigned APK. Omit if
+storing in the same directory.
+
+| androidHome
+| Override Android home directory.
+|===
+
+
+
+
+The function takes the following parameters.
+
+[[building-with-xcode]]
+==== Building with xCode Parameters
+.xcodeBuild options
+|===
+| Parameter | Description
+
+| cleanBeforeBuild
+|	This will delete the build directories before invoking the build. This will
+force the rebuilding of all dependencies and can make large projects take a lot
+longer
+
+| target
+| The target to build. If left empty, this will build all targets in the
+project. If you wish to build your binary and the unit test module, it is best
+to do this as two separate steps each with their own target.
+
+| sdk
+| You only need to supply this value if you want to specify the SDK to build
+against. If empty, the SDK will be determined by XCode.
+
+| workspace
+| Workspace to build from.
+
+| buildDir
+| The value to use for CONFIGURATION_BUILD_DIR setting (BUILD_DIR in >= 2.0.0).
+
+| version
+| Version of the app.
+
+| shortVersion
+| Short representation of the apps version.
+
+| autoSign
+| Whether to sign the app automatically or not.
+
+| infoPlistPath
+| Path to the apps plist file.
+
+| flags
+| Flags to add to the command that is executed.
+|===
+
+==== CodeSign Parameters
+
+.codeSign options
+|===
+| Parameter | Description
+
+| profileId
+| ID of the developer profile. This will be provided through the
+`BUILD_CREDENTIAL_ID` parameter if the app is built through RHMAP.
+
+| clean
+| Removes the previous signature (if any) before signing the artifact.
+
+| verify
+| Whether or not to verify the signature of the app after signing.
+
+| ipaName
+| Name of the created ipa file.
+
+| appPath
+| Path to the app to sign.
+|===
+
+
+== Using specific versions of Android SDK and Gradle
+
+Android SDK and Gradle versions are defined in the Android project.
+
+To change Android SDK version change the version information in app's `app/build.gradle` file:
+
+[source,groovy]
+----
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+
+    defaultConfig {
+        ...
+        minSdkVersion 16
+        targetSdkVersion 25
+        ...
+    }
+...
+}
+----
+
+See https://developer.android.com/studio/build/index.html[Android platform documents] for
+explanation of these properties.
+
+Please note that installing different versions of Android platforms, build tools and extras
+is possible using `android_sdk_components` variable as noted in the
+link:../install-guide/bf_installation.html#variables-android-sdk[installation documentation].
+
+To change Gradle version, change the `distributionUrl` property in
+`gradle/wrapper/gradle-wrapper.properties` in the app's source tree.
+
+[source,properties]
+----
+distributionUrl=https\://services.gradle.org/distributions/gradle-3.3-all.zip
+----
+
+== Using a specific XCode version
+
+To use a specific version of XCode, you can feed the Jenkins XCode plugin
+with `XC_VERSION` parameter in the mobile app's Jenkinsfile.
+
+[source,groovy]
+----
+node('ios'){
+  ...
+  stage('Build') {
+    withEnv(['XC_VERSION=8.3']) {
+      xcodeBuild(...)
+    }
+  }
+  ...
+----
+
+Please note that installing different versions of XCode is possible using `xcode_versions`
+variable as noted in the link:../install-guide/bf_installation.html#variables-provision-osx[installation documentation].
+
+== Using a specific version of Cordova
+
+To use a specific version of Cordova, you can just install it using `npm` in the Jenkinsfile
+with a command such as `npm install cordova@6.3.1 -g`. As Android builds are done in containers,
+it is safe to install Cordova using `npm`. Once the build is done, container will deleted and
+installed Cordova version will be gone with it.
+
+However, on shared nodes like MacOS nodes, installing Cordova globally would result in overwriting
+the existing global Cordova version in the node. Thus, it is advised that Cordova should be installed
+locally and then used locally.
+
+[source, groovy]
+----
+stage('install local cordova') {
+    sh 'npm install cordova@6.3.1'
+}
+
+stage('build') {
+    ...
+    // invokes local Cordova instead of system-wide Cordova
+    sh './node_modules/.bin/cordova build ios'
+}
+----
+
+[[configure-ios-jenkinsfile]]
+== Configuring a iOS Jenkinsfile
+
+Update the following variables to ensure that each build step in the iOS Jenkinsfile works correctly. For futher options on using the xCode Build command see https://developer.apple.com/legacy/library/documentation/Darwin/Reference/ManPages/man1/xcodebuild.1.html[The XCode Documentation]
+
+|===
+| Variable name | Description | Example
+
+|PROJECT_NAME
+|Must be the main app project folder
+|helloworld-ios-app
+
+|INFO_PLIST
+|plist file name including route used when building the application
+|helloworld-ios-app/helloworld-ios-app-Info.plist
+
+|VERSION
+|The same value as `CFBundleVersion` in Info.plist file, normally used as the build version
+|1.0.0
+
+|SHORT_VERSION
+|The same value as `CFBundleShortVersionString` in Info.plist file, the applications version. Required to be the same version as iTunes connect when submitting the app to app store.
+|1.0
+
+|BUNDLE_ID
+|The BUNDLE Identifier for the Application which is the combination of the Organization identifer and the Product Name
+|com.redhat.helloworld-ios-app
+
+|SDK
+|Provide with a value to determine the SDK to build against. XCode will default if not provided.
+|iphoneos
+
+|XC_VERSION
+|XCode Version to be used when Building the Application. Will default to installed version if none is provided. 
+|""
+|===
+
+
+[[debug-failed-builds]]
+== Debugging Failed Builds
+
+The sections below details steps that can be taken to investigate and diagnose any problems during an Application Build using {BuildFarmName}.
+
+[[useful-logs]]
+=== Reviewing Logs
+
+[[studio-logs]]
+==== Studio Logs
+
+When a Build is triggered in the Studio using an On-Prem {BuildFarmName} the logs produced by Jenkins are streamed back to the Studio and can be seen in the Build Screen
+
+
+[[jenkins-build-logs]]
+==== Jenkins Build Logs
+
+In case of inability to access the logs in the Studio, the logs can also be access in Jenkins. Take the following steps to access logs in Jenkins.
+
+. Get Url for Jenkins
++
+The Url for Jenkins is outputted at the end of the Ansible Installation. To retrieve the URL if it was not logged run the following commands on the master node:
++
+[source,bash]
+--
+oc project <buildfarm-project-name>
+oc get route jenkins
+--
+
+. Navigate to Jenkins and Log-In
+. Choose The Applications Build PipeLine from the Main Landing Screen
++
+Locate the Build Pipeline from the list by searching for the Application Name as shown in the Studio.
++
+. View Logs
+
+The logs will be shown on a per build basis (see Image). To view a log for a particular stage of a particular build, click or hover over the block and click on the 'Logs; button. A pop-up will appear with the logs section. The logs can be expanded by clicking on a section.
+
+
+[[troubleshoot-jenkins-build-errors]]
+=== Troubleshooting Jenkins Build Errors
+
+==== Build Failed at Archive Stage But No Error
+
+This can happen during the archiveArtifact stage of the Build. This is a https://issues.jenkins-ci.org/browse/JENKINS-38005?page=com.atlassian.jira.plugin.system.issuetabpanels%3Aall-tabpanel[Known Issue] in Jenkins. Please check the syntax of the archiveArtifacts step in your Jenkinsfile and ensure it is correct to resolve this issue.
+
+==== Error: Current working directory is not a Cordova-based project
+
+This error occurs if the directory structure of the application is not as expected. For example, if the `www` folder is missing from the application. Please check that the structure of your application is correct. We provide sample Cordova applications within the platform which can be referenced e.g See the https://github.com/feedhenry-templates/helloworld-app[Hello World Sample Cordova Application^]
+
+==== EPEERINVALID Error
+
+The following error is seen when a Cordova plugin is incompatible with the Cordova Version installed
+
+[source,bash]
+----
+npm ERR! Linux 3.10.0-514.el7.x86_64
+npm ERR! argv "/opt/nvm/versions/node/v4.4.7/bin/node" "/opt/nvm/versions/node/v4.4.7/bin/npm" "install" "cordova-plugin-file-transfer@~1.5.1" "--save"
+npm ERR! node v4.4.7
+npm ERR! npm  v2.15.8
+npm ERR! code EPEERINVALID
+----
+
+==== CocoaPods requires your terminal to be using UTF-8 encoding
+
+As the error suggests it is required to add export LANG=en_US.UTF-8 to  `~/.profile` to resolve the following error.
+
+[source,bash]
+----
+ ^[[33mWARNING: CocoaPods requires your terminal to be using UTF-8 encoding.
+    Consider adding the following to ~/.profile:
+
+    export LANG=en_US.UTF-8
+    ^[[0m
+----
+
+==== ArgumentError - invalid byte sequence in US-ASCII
+
+This error is in relation to the above error. Once the LANG var is set the Build will also fail if there is a fuzzy char in the Podfile (e.g. emojis). This will produce the below error. Removing the fuzzy char will resolve the error.
+
+[source,bash]
+----
+ArgumentError - invalid byte sequence in US-ASCII
+/Library/Ruby/Gems/2.0.0/gems/xcodeproj-1.4.2/lib/xcodeproj/plist.rb:84:in `match'
+/Library/Ruby/Gems/2.0.0/gems/xcodeproj-1.4.2/lib/xcodeproj/plist.rb:84:in `match'
+/Library/Ruby/Gems/2.0.0/gems/xcodeproj-1.4.2/lib/xcodeproj/plist.rb:84:in `file_in_conflict?'
+/Library/Ruby/Gems/2.0.0/gems/xcodeproj-1.4.2/lib/xcodeproj/plist.rb:20:in `read_from_path'
+/Library/Ruby/Gems/2.0.0/gems/xcodeproj-1.4.2/lib/xcodeproj/project.rb:200:in `initialize_from_file'
+/Library/Ruby/Gems/2.0.0/gems/xcodeproj-1.4.2/lib/xcodeproj/project.rb:102:in `open'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/installer/analyzer.rb:855:in `block (2 levels) in inspect_targets_to_integrate'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/installer/analyzer.rb:854:in `each'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/installer/analyzer.rb:854:in `block in inspect_targets_to_integrate'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/user_interface.rb:64:in `section'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/installer/analyzer.rb:849:in `inspect_targets_to_integrate'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/installer/analyzer.rb:66:in `analyze'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/installer.rb:236:in `analyze'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/installer.rb:150:in `block in resolve_dependencies'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/user_interface.rb:64:in `section'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/installer.rb:149:in `resolve_dependencies'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/installer.rb:110:in `install!'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/command/install.rb:37:in `run'
+/Library/Ruby/Gems/2.0.0/gems/claide-1.0.1/lib/claide/command.rb:334:in `run'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/lib/cocoapods/command.rb:50:in `run'
+/Library/Ruby/Gems/2.0.0/gems/cocoapods-1.1.1/bin/pod:55:in `<top (required)>'
+/usr/local/bin/pod:23:in `load'
+/usr/local/bin/pod:23:in `<main>'
+----
+
+==== Gradle timeout behind proxy
+
+If {BuildFarmName} is installed on a network behind a proxy the Android Jenkins Slave requires additional configuration to allow gradle to work behind the proxy. If a build fails with a timeout on 'downloading gradle', check the following:
+
+. Log in to Jenkins 
+. Click on Manage Jenknins then Configure System 
+. Find Kubernetes Pod template name 'android' 
+. Ensure that there is a global Environment Variable named GRADLE_OPTS and that it contains the following values with spaces between each:
++
+* -Dhttp.proxyHost=<proxy host>
+* -Dhttps.proxhHost=<proxy host>
+* -Dhttp.proxyPort=<proxy port>
+* -Dhttps.proxyPort=<proxy port>

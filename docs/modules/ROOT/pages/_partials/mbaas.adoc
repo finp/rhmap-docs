@@ -1,0 +1,120 @@
+// include::shared/attributes.adoc[]
+
+[[mbaas-targets-and-environments]]
+= MBaaS Targets and Environments
+
+[[mbaas]]
+== MBaaS (Mobile Backend as a Service)
+MBaaS is a runtime space for Cloud Apps and Cloud Services.
+Each MBaaS provides a Node.js runtime, a MongoDB database, a caching server, and all link:{CloudAPI}[Cloud APIs].
+
+[[environments]]
+== Environments
+Environments add an additional layer of isolation for Cloud Apps and Cloud Services to support application lifecycle management.
+An Environment is hosted on MBaaS.
+
+You can configure an Environment for every life-cycle stage of your project, such as __Development__, __Testing__, and __Production__.
+Cloud Apps, Cloud Services and Forms are always deployed in a particular Environment, and can be easily promoted from one Environment to another.
+
+A single MBaaS can host one or more Environments.
+For example, you can host __Development__ and __Testing__ environments together on a single MBaaS, but have a separate MBaaS dedicated for a __Production__ Environment. Multiple Environments hosted on a single MBaaS remain isolated on most levels.
+They share system resources but have separate Node.js runtime, database, caching server, and a separate host name.
+
+[[creating-openshift-3-mbaas-target-using-studio]]
+== Creating OpenShift 3 MBaaS Target in RHMAP Studio
+
+. Click _Admin > MBaaS Targets_.
+. Set the parameters according to the instructions located under each field.
+. Click _Create MBaaS Target_.
+
+IMPORTANT: After you set up an MBaaS target, add at least one Environment. See xref:managing-environments[Managing Environments]
+
+[[managing-environments]]
+== Managing Environments
+- xref:managing-environments-using-studio[Managing Environments using RHMAP Studio]
+- xref:managing-environments-using-cli[Managing Environments using fh-fhc CLI]
+
+//STUDIO
+[[managing-environments-using-studio]]
+=== Managing Environments using RHMAP Studio
+
+[discrete]
+==== Prerequisites
+- Own correct user permissions to modify environments
+
+[[creating-environment-using-studio]]
+==== Creating an Environment using RHMAP Studio
+
+. Click _Admin>Environments>Create Environment_. 
+. Set the parameters according to the instructions located under each field.
+. Click _Save Environment_.
+
+Cloud Apps, Cloud Services and Forms can now be deployed to this new Environment.
+
+[[modify-and-delete-environment-using-studio]]
+==== Modifying and Deleting Environments using RHMAP Studio
+
+IMPORTANT: Access to modification and deleting a particular Environment can be restricted. If you are unable to delete or modify an Environment, check your user permissions.
+
+. Click _Admin>Environments_.
+. Choose an Environment you want to modify or delete from the table by clicking on it.
+. Make desired changes to Environment Label and click _Save Environment_.
+. To delete an Environment, click _Delete this Environment_.
+
+[[configuring-environments-using-gui]]
+==== Configuring Environments using RHMAP Studio
+
+. Click _Admin>Environments>Configure Environments_.
+. Reorder the Environments by dragging the Environment labels. 
+
+This is reflected in the order of Environments in Lifecycle Dashboard.
+
+//Enabled Environments in this domain can be configured here. The sort order of Environments can also be configured i.e. the order of Environments in the Lifecycle Dashboard. The list of available Environments is based on permissions of the currently logged in User, so not all Environments may be shown.
+
+//CLI
+[[managing-environments-using-cli]]
+=== Managing Environments with fh-fhc CLI
+This section contains a list of commands used to manage Environments. Follow the instructions presented after entering the command without arguments.
+
+[discrete]
+==== Prerequisites
+- fhc-fc CLI installed, See: https://www.npmjs.com/package/fh-fhc#installation
+- Target and login into a RHMAP domain, See: https://www.npmjs.com/package/fh-fhc#getting-started
+- Correct user permissions to modify environments
+
+[[listing-environments-using-fh-fhc]]
+==== Listing Available Environments using fh-fhc CLI
+This command prints a table of available Environments with basic Environment properties. No arguments required.
+----
+$ fhc admin environments list
+----
+
+[[displaying-environment-properties-using-fh-fhc]]
+==== Displaying Environment Properties using fh-fhc CLI
+Use this command to show Environment properties in JSON format:
+----
+$ fhc admin environments read
+----
+
+[[creating-environment-using-fh-fhc]]
+==== Creating Environment using fh-fhc CLI
+----
+$ fhc admin environments create
+----
+
+[[deleting-environment-using-fh-fhc]]
+==== Deleting Environment using fh-fhc CLI
+----
+$ fhc admin environments delete
+----
+
+[[updating-environment-using-fh-fhc]]
+==== Updating Environments using fh-fhc CLI
+Use this command to update an Environment label, MBaaS Target or OpenShift token:
+----
+$fhc admin environments update
+----
+
+[discrete]
+==== Additional Resources
+* https://www.npmjs.com/package/fh-fhc[FHC CLI^]

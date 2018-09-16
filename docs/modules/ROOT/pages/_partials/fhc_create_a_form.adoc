@@ -1,0 +1,161 @@
+// include::shared/attributes.adoc[]
+
+[[create-a-form-using-fhc]]
+= Create a form using FHC
+
+.Overview
+This tutorial explains how to create a form for use with an App Forms apps.
+
+.Requirements
+The user must be a member of one or more teams with the following permissions:
+
+* Domain -- Drag & Drop Apps
+* Form (View & Edit)
+
+For more information on Permissions, see link:{ProductFeatures}#teams-and-collaboration[Teams & Collaborations].
+
+[[list-available-forms]]
+== List available forms
+
+Target the Platform domain using `fhc target`.
+
+[source,bash]
+----
+fhc target exampleDomain.feedhenry.com
+----
+
+Then log in using the `fhc login` command.
+
+[source,bash]
+----
+fhc login testUser@example.com password
+----
+
+To list all forms on a domain, use the `fhc forms` command.
+
+[source,bash]
+----
+fhc forms
+----
+
+This command will list all forms that you have access to based on the Permissions assigned to the logged-in User.
+
+[[create-a-form]]
+== Create a form
+
+In order to create a form, you need to pass in a `form.json` object. Create a `form.json` object and take note of its path. The example `form.json` file used in this tutorial can be seen below.
+
+[source,json]
+----
+{
+   "description":"This is a test form",
+   "name":"Test Form",
+   "updatedBy":"testing-admin@example.com",
+   "pageRules":[
+
+   ],
+   "fieldRules":[
+
+   ],
+   "pages":[
+      {
+         "name":"Page 1",
+         "fields":[
+            {
+               "fieldOptions":{
+                  "definition":{
+                     "defaultValue":""
+                  }
+               },
+               "required":false,
+               "type":"text",
+               "name":"Text",
+               "helpText":"Text",
+               "repeating":false
+            },
+            {
+               "required":false,
+               "type":"file",
+               "name":"File",
+               "helpText":"File",
+               "repeating":false
+            }
+         ]
+      },
+      {
+         "name":"Page 2",
+         "fields":[
+            {
+               "required":false,
+               "type":"text",
+               "name":"Page 2 Text",
+               "helpText":"Page 2 Text",
+               "repeating":false
+            }
+         ]
+      }
+   ],
+   "lastUpdated":"2014-01-22T16:51:53.725Z",
+   "dateCreated":"2014-01-22T14:43:21.806Z",
+   "pageRef":{
+      "52dfd909a926eb2e3f000001":0,
+      "52dff729e02b762d3f000004":1
+   },
+   "fieldRef":{
+      "52dfd93ee02b762d3f000001":{
+         "page":0,
+         "field":0
+      },
+      "52dfd93ee02b762d3f000002":{
+         "page":0,
+         "field":1
+      },
+      "52dff729e02b762d3f000003":{
+         "page":1,
+         "field":0
+      }
+   },
+   "lastUpdatedTimestamp":1390409513725,
+   "appsUsingForm":123,
+   "submissionsToday":1234,
+   "submissionsTotal":124125
+}
+----
+
+To create the form above using fhc, we use the `fhc forms create` command. The command operates as follows:
+
+`fhc forms create <form-file.json>`
+
+A JSON form object needs to be passed as a parameter for the command. The path of the file is to be specified.
+
+[source,bash]
+----
+fhc forms create ~/Desktop/forms/form.js
+----
+
+This will recreate the given form on the Platform. After the form has been created, use the `fhc forms get` command to display the form. Then copy and paste the code into your desired directory in case you want to edit the form in future. Alternatively, you could print the result of the `fhc forms get` command to file by issuing the following command:
+
+[source,bash]
+----
+fhc forms get <app-id> > ~/Desktop/formFile.txt
+----
+
+[[update-form]]
+== Update form
+
+At some stage during development, you may want to update a form. To do this, edit whatever content you like in the file where you saved your form earlier. For example, you may wish to add another text field, or apply a rule to a page. You can then use the `fhc forms update` command to update an existing form.
+
+`fhc forms update <path_to_form>`
+
+For example:
+
+[source,bash]
+----
+fhc forms update ~/Desktop/formFiles/form
+----
+
+NOTE: If you pass in the path to the form file you used to create the form initially, the update command will actually duplicate the form, as that file has no id assigned to it. This means that instead of updating the form, a new instance will be created, and a new id will be assigned.
+
+The new changes will now have taken effect.
+
+To learn how to associate a form with a project, see the xref:associate-a-form-with-a-project[Associate a form with a project] section of the xref:create-a-forms-project-using-fhc[Create an App Forms project] tutorial.

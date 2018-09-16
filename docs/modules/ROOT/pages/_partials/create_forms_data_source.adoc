@@ -1,0 +1,77 @@
+// include::shared/attributes.adoc[]
+
+[[dynamically-populating-form-fields-from-an-mbaas-service]]
+= Dynamically Populating Form Fields From an MBaaS Service
+
+[[dynamically-populating-form-fields-from-an-mbaas-service-overview]]
+== Overview
+
+You can use an endpoint of an MBaaS service as the data source for a form field in the Forms Builder.
+This guide shows you how to create the MBaaS service, define the data source, and populate a form field using the data source.
+
+See link:{MobileDeveloperGuide}#using-data-sources[Using Data Sources] for more information on data sources for Forms.
+
+[[creating-a-service-for-a-data-source]]
+== Creating a Service for a Data Source
+
+To define a data source, you must provide an MBaaS service endpoint which serves valid JSON responses for the data source.
+In this example, you'll create a new MBaaS service which serves static data from a JSON file.
+
+. In the Studio, navigate to __Services & APIs__. Click __Provision MBaaS Service/API__.
+. On the left, choose the _Data Sources_ category.
+. Select a template. For example, __Static Data Source__.
+. Choose a name for the service and deploy it to an environment.
+
+[[defining-a-data-source]]
+== Defining a Data Source
+
+Once you've created the MBaaS service providing the data, you can now use it in a data source.
+
+. In the Studio, navigate to __Drag & Drop Apps > Data Sources__. Click __New Data Source__.
+
+. Set a name and a description. Both are required.
+
+. Choose the previously created MBaaS service and its endpoint to use as the data source.
++
+The _Static Data Source_ template used in this example serves data at the endpoint `/static_ds/months`.
++
+You can check, whether the service returns data valid for use as a data source, using the _Validate_ button.
+Before the validation, make sure the correct environment is selected using the environment selector in the top right-hand corner.
++
+If the data is valid, you'll see the message __"**Success** Data Source Is Valid"__.
+If the data is not valid, or the service can not be reached, an error message will indicate the problem.
++
+After a successful validation, you can view the returned data using the _View_ button.
++
+image:data-source-create-configuration.png[Choose a service and schedule]
+
+. Choose an update frequency – how often the configured MBaaS service endpoint will be called to obtain new data.
+The update frequency is a value in the range of 1 minute to 7 days.
+
+. Choose how many responses from calls to the MBaaS service endpoint should be kept in the audit log.
+
+. Click __Create Data Source__.
+You will see the message __Data Source Created Successfully__.
+
+Now, the data source can be used in the Forms Builder to populate a form field.
+
+[[using-a-data-source-in-a-form-field]]
+== Using a Data Source in a Form Field
+
+After defining the data source, you can now use it in the Forms Builder.
+
+. In the Studio, navigate to __Drag & Drop Apps > Forms Builder__.
+. Open an existing form, or create a new form. Navigate to __Edit Form__.
+. Drag one of the supported types into the form – for example, a _Dropdown_ field. Select the created field.
+. In the _Options_ section, check __Use a Data Source to populate field options?__.
+. Select the data source created in the previous step.
++
+image:data-source-select.png[Select a data source]
++
+If a selected data source has loaded data at least once before – for example, while validating during creation – the last available version of the data will be displayed in the field options, as a preview.
++
+Use the environment selector in the top right-hand corner to ensure that the same environment is selected, where the MBaaS service of the data source is deployed.
+
+. Save and deploy the form.
+
+If you navigate to the __Dashboard__, you can now see the field populated by data from the data source in the preview on the right.

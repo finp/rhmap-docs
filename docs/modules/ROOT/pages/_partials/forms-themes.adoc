@@ -1,0 +1,44 @@
+// include::shared/attributes.adoc[]
+
+[[themes]]
+= Themes
+
+.Overview
+Themes are used to customise the appearance of a form. Form Editors can create and manage themes, as well as associating them with forms to personalize form appearance. Elements of a theme that can be customised include the theme logo, background colours, typography, and border settings.
+
+[[creating-a-theme]]
+== Creating a Theme
+
+When creating a theme, select a theme from a list of templates.
+
+When a theme template is selected, a preview of the theme is displayed. Once a template has been selected, the user then enters a theme name, and description (optional). The theme can now be edited to customise the appearance of the form.
+
+[[editing-themes]]
+== Editing Themes
+
+[[logo]]
+=== Logo
+
+You can upload a logo via the file upload option in the Logo section. Any image to be used as a logo must be in either the PNG or JPEG format.
+
+[[backgrounds]]
+=== Backgrounds
+
+In the _Background Color_ section, you can change background colours for different parts of the theme. The colour can be set by clicking on the coloured square beside the section title, and then selecting a colour from the picker. The update will take place once the colour picker has been closed.
+
+[[typography]]
+=== Typography
+
+The Typography section allows for the customization of font size, type, and text decorations. The colour of a selected field can also be changed by clicking on the coloured square beside the section title. Clicking the coloured square displays a colour picker.
+
+[[borders]]
+=== Borders
+
+Customizations can be made to the border sections of a theme. You can make customizations based on colour, border type and border width.
+
+[[spacing]]
+=== Spacing
+
+Certain fields have options for customizing the margin and padding between fields.
+
+NOTE: To get a preview of how changes made to the various sections affect the theme, select a form from the drop-down menu at the bottom of the preview area.

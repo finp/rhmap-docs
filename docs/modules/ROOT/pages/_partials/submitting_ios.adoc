@@ -1,0 +1,74 @@
+// include::shared/attributes.adoc[]
+
+[[submitting-an-app-to-the-app-store]]
+= Submitting an App to the Apple App Store
+
+.Prerequisites
+This guide assumes that a number of things have already been done by the developer. They are:
+
+* A 'Release' App has been built either from the Platform or using xCode
+* The developer has 2 icon files for the application
+** 57x57 PNG format
+** 512x512 PNG format
+* The developer has at least one screenshot of the app 320x480 PNG format
+
+.Overview
+There are a number of steps for publishing an app to the iPhone App Store, all of which are done with a web browser. They are:
+
+* Create a new Application
+* Set up any in-app purchasing
+* Submit Application for Sale
+
+[[creating-a-new-application]]
+== Creating a new Application
+
+. Log into iTunes Connect at link:http://itunesconnect.apple.com/[http://itunesconnect.apple.com^] using your Developer Login (that is, email address)
+.. Click on Manage Your Applications
+.. Click on Add New Application
+.. Select a choice for the "Export Laws and Encryption" question
+. Overview Tab
+.. Fill in the Overview section using your app details
+.. Select a choice for "Restrict this binary to a specific platform" question
+.. Enter a Version Number for example, 1.0
+.. Enter a unique value for the SKU Number: for example, the current date and time
+.. Click the (blue) Continue button at the end of the screen.
+. Ratings Tab
+.. Select the appropriate check boxes for you application
+.. Click (blue) Save Changes button
+. Upload Tab
+.. Click the Upload application binary later option
+.. Upload the icons and screen shots mentioned in the xref:Prerequisites[Prerequisites] (Large Icon and Primary Screen Shot are mandatory). _TIP: When adding additional screen shots, you may like to select them in reverse order so that they appear in the correct order when added by the uploader (which seems to add/upload them in the opposite order that you selected them)._
+.. Click the (blue) Continue button
+. Localization Tab
+.. Choose the appropriate language for you app
+.. Click the Continue button
+. Pricing Tab
+.. Choose the Availability Date (Start Date) of your app for example, today
+.. Choose the appropriate Price Tier
+.. Select the stores you want your app to be available in and continue
+. Review Tab
+.. Choose the appropriate review store (for example, the country your company resides in)
+.. Click the (black) Submit Application button.
+
+[[submit-application-for-sale]]
+== Submit Application for Sale
+
+. Upload Application Binary
+.. Once logged into iTunes Connect, click Manager your Applications
+.. Click the application you want to submit for approval by Apple (Note the current status should be orange, indicating the Application binary is yet to be uploaded)
+
+.. Click the Upload Binary button (The maximum binary size accepted is 64MB) 
+.. Click Choose File and locate your binary zip file mentioned in the xref:Prerequisites[Prerequisites].
+.. Click Upload File
+.. Click the Save Changes button in the bottom right
+. Confirm Review App Store
+.. Click Manager your Applications
+.. Click your application that was submitted for approval
+.. Click the Edit Information button and open the Review Tab
+.. Verify that the Review App Store is set to the country selected while creating the application (necessary due to a suspected bug in iTunes Connect)
+.. Click Done and your application is now ready for approval by Apple
+
+[[external-links]]
+== External Links
+
+link:https://developer.apple.com/library/ios/documentation/LanguagesUtilities/Conceptual/iTunesConnect_Guide/Chapters/About.html[In depth information on managing apps^]

@@ -1,0 +1,23 @@
+// include::shared/attributes.adoc[]
+
+[[fh-sync-globalinterceptrequest-dep]]
+== $fh.sync.globalInterceptRequest {oldsync}
+
+[source,javascript]
+----
+$fh.sync.globalInterceptRequest(callback)
+----
+
+Similar to $fh.sync.interceptRequest, but set the handler globally which means the same handler function can be used by multiple datasets.
+The global handler will only be used if there is no handler assigned to the dataset via $fh.sync.interceptRequest.
+
+[[fh-sync-example-21]]
+=== Example
+
+[source,javascript]
+----
+
+$fh.sync.globalInterceptRequest(function(dataset_id, interceptorParams, cb){
+
+});
+----

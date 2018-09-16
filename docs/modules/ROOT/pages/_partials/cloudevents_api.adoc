@@ -1,0 +1,78 @@
+// include::shared/attributes.adoc[]
+
+[[cloud-events-api]]
+= Cloud Events API
+
+[[cloud-events-api-list-events]]
+== List Events
+
+[[cloud-events-api-description]]
+=== Description
+
+List events from the event log for an app.
+
+[[cloud-events-api-endpoint]]
+=== Endpoint
+
+* uri - /box/srv/1.1/app/eventlog/listEvents
+
+* method - POST
+
+[[cloud-events-api-request-body]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "appGuid":"<24 char String>",
+  "env":"<environment>"
+}
+----
+
+[[cloud-events-api-response-body]]
+=== Response Body
+
+[[cloud-events-api-success]]
+==== Success
+
+[source,javascript]
+----
+{
+  "list":[{
+    "fields":
+      {
+        "appGuid": "WaD9Fgzx7yMZRfAvQSwO85el",
+        "category": "APP_STATE",
+        "dismissed": false,
+        "env": "dev",
+        "eventDetails": {message:Completed app deployment},
+        "message": "Completed app deployment",
+        "eventType": "DEPLOYED",
+        "guid": "43f-WyNeI4Wlif07-cgpBZVy",
+        "message": "Completed app deployment",
+        "severity": "INFO",
+        "sysCreated": "2013-07-04 14:47:49:034",
+        "timestamp": "2013-07-04 14:47:48:977",
+        "title": "DEPLOYED",
+        "uid": "WaD9Fgzx7yMZRfAvQSwO85el",
+        "updatedBy": "System"
+      },
+      "guid":"rVfKTjq-YoosmcGUJf96f0xx",
+      "type":"eventlog_EventLog"
+    },
+    ...
+  ],
+  "status":"ok"
+}
+----
+
+[[cloud-events-api-error]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----

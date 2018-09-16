@@ -1,0 +1,53 @@
+// include::shared/attributes.adoc[]
+
+[[importing-application-data]]
+= Importing Application Data
+
+.Overview
+After exporting application data with `fhc appdata export`,
+you can use `fhc appdata import` to import the data from the file system to a hosted database associated with a Cloud App or service.
+
+For a full reference, run `fhc help appdata import` to see a list of available commands.
+Run `fhc help appdata import <command>` for a reference of a particular command.
+
+.Requirements
+* {ProductShortName} version 3.12.0 or later
+* fhc version 2.10.0 or later
+* The format of the file to be imported must be the same as created by the `fhc appdata export`. See xref:exported-data-format[Exported data format] for more details.
+
+[[importing-application-data-1]]
+== Importing Application Data
+
+The process of importing application data involves two main steps:
+
+. xref:starting-a-new-import-job[Starting a new import job]
+. xref:querying-the-status-of-an-import-job[Querying the status of an import job]
+
+[[starting-a-new-import-job]]
+=== Starting a New Import Job
+
+To start a new import job, enter the following command:
+
+`fhc appdata import start --appId=<APP_ID> --envId=<ENV_ID> --path=<FILE_PATH>`
+
+* `APP_ID` - ID of the Cloud App or service
+* `ENV_ID` - ID of the deployment environment where the app is running
+* `FILE_PATH` - Path to the file to be imported
+
+Upon execution, the command starts uploading the provided file, and keeps running without printing any messages until the upload is finished.
+Once the upload is finished, the command exits and the import job starts.
+
+If another import job is already running for the same app in the same environment, the start command exits without performing any action.
+
+[[querying-the-status-of-an-import-job]]
+=== Querying the Status of an Import Job
+
+Once the job starts, the command line tool prints out the following status command with all the relevant fields already filled in.
+
+`fhc appdata import status --appId=<APP_ID> --envId=<ENV_ID> --jobId=<JOB_ID> [--interval=<MILLISECONDS>]`
+
+To query the status of an import job, copy and paste this command into the shell.
+
+To keep the command running and periodically reporting the job status, include the optional `--interval` flag and specify the interval at which the status of the job is to be queried.
+
+Once the job is finished, the status command returns the job status as `complete`.

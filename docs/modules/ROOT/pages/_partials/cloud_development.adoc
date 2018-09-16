@@ -1,0 +1,123 @@
+// include::shared/attributes.adoc[]
+
+[[cloud-development]]
+= Cloud Development
+
+[[cloud-development-overview]]
+== Overview
+
+One of the core concepts in the {ProductName} ({ProductShortName}) are _Cloud Apps_ -- server-side applications
+which handle communication between Client Apps deployed on mobile devices, and back-end systems which contain business
+logic and data.
+
+Cloud apps are developed using http://www.nodejs.org[Node.js^] -- _a platform built on Chrome's JavaScript runtime for
+easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it
+lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices._
+
+For those not familiar with Node.js development, the http://www.nodebeginner.org/[Node Beginner Website^] is an
+excellent resource.
+
+[[cloud-app-structure]]
+== Cloud App Structure
+
+When a Cloud App is created in {ProductShortName}, this newly created Cloud App is essentially a pre-configured Node.js application. If a corresponding pre-configured
+Client App is also generated, the Cloud App will include all basic configuration (routes) so that the Client and Cloud App are in sync. In addition, the infrastructure
+for hosting the Cloud App is also in place (MBaaS) and is easily accessible.
+
+As the configuration and infrastructure are all in place, the Cloud App can be deployed to an MBaaS and is capable of routing the Client App's requests without the
+need of additional code. Should an advanced Node.js developer wish to re-engineer the server or implement their own server, this is possible through the manipulation of the
+code within the _application.js_ file.
+
+NOTE: Ensure that the file that represents the main entry point to your App is always called _application.js_.
+
+The following files are provided by default in a Cloud App:
+
+[[application-js]]
+=== application.js
+
+This file is invoked when your application is deployed to _an MBaaS_ - our cloud execution environment.
+Typically, you will not need to modify this file and it is by default set to handle `fh.cloud()` requests from the client and route them accordingly.
+
+Should you need to modify this file, Red Hat recommends that you use _fh lib_ and that you also add routes directly _after_
+`app.use(mbaasExpress.fhmiddleware());` in the application.js file otherwise there is a risk that the
+cloud section in the analytics panel will not display data.
+See the following snippet of code taken from from the application.js file for reference:
+
+[source,javascript]
+----
+// Note: important that this is added just before your own Routes
+app.use(mbaasExpress.fhmiddleware());
+
+//Example of a route added in the correct position
+app.use('/myroute', require('./lib/example.js')());
+
+// Important that this is last!
+app.use(mbaasExpress.errorHandler());
+----
+
+[[package-json]]
+=== package.json
+
+The configuration file for your Cloud App is primarily used for dependency management. If you are using third-party Node
+modules, they will be specified in this file.
+
+See also:
+
+* xref:using-node-js-modules-in-cloud-apps[Using Node.js Modules in Cloud Apps]
+* xref:node-js-dependency-management-using-npm[Node.js Dependency Management Using npm]
+* https://docs.npmjs.com/files/package.json[official documentation of `package.json`^].
+
+[[cloud-development-example]]
+== Example
+
+There are only a few steps to get a Cloud App running. You can explore a simple example by trying the _Hello World
+Project_ template when creating a new project in the Studio, or by looking at the source code of the template on GitHub:
+https://github.com/feedhenry-templates/helloworld-cloud[feedhenry-templates/helloworld-cloud^]. This is a brief
+overview of the template.
+
+The first step is to configure a custom route in application.js:
+
+[source,javascript]
+----
+app.use('/hello', require('./lib/hello.js')());
+----
+
+In the referenced `hello.js` file, you would define the logic for that particular route.
+
+[source,javascript]
+----
+var express = require('express');
+var bodyParser = require('body-parser');
+var cors = require('cors');
+
+function helloRoute() {
+  var hello = new express.Router();
+  hello.use(cors()); // enables cross-origin access from all domains
+  hello.use(bodyParser()); // parses POST request data into a JS object
+
+  hello.post('/', function(req, res) {
+    res.json({msg: 'Hello ' + req.body.hello});
+  });
+  return hello;
+}
+module.exports = helloRoute;
+----
+
+The client-side call to this endpoint using `$fh.cloud` might look like the following:
+
+[source,javascript]
+----
+$fh.cloud({
+    path: 'hello',
+    data: {
+      hello: 'World'
+    }
+  },
+  function (res) {
+    // response handler
+  },
+  function (code, errorprops, params) {
+    // error handler
+  }
+);
+----

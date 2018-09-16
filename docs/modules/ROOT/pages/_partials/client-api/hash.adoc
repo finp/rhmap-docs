@@ -1,0 +1,39 @@
+// include::shared/attributes.adoc[]
+
+[[fh-hash]]
+= $fh.hash
+
+[source,javascript]
+----
+$fh.hash(options, success, failure);
+----
+
+Generate hash value of a string.
+
+[[hash-supported-platforms]]
+.Supported Platforms
+
+* JavaScript SDK
+** Cordova
+** Web Apps
+
+For detailed version information, see link:https://access.redhat.com/node/2357761[Supported Configurations^].
+
+[[hash-example]]
+== Example
+
+[source,javascript]
+----
+var options = {
+  "algorithm": "SHA256", // Can be MD5 | SHA1 | SHA256 | SHA512
+  "text": "Need more widgets. Add some columns." // Text to hash
+};
+
+$fh.hash(options, function (res) {
+  // The generated hash value
+  var hashvalue = res.hashvalue;
+}, function(msg) {
+  // Error message for why the hash failed
+  console.error(msg);
+});
+----

@@ -1,0 +1,84 @@
+// include::shared/attributes.adoc[]
+
+[[node-js-dependency-management-using-npm]]
+= Node.js Dependency Management Using npm
+
+[[node-js-dependency-management-using-npm-overview]]
+== Overview
+
+http://npmjs.org[npm^], the __node package manager__, is a dependency management tool for Node.js and is an integral part
+of developing any Node.js application. In its principles, npm is similar to any other dependency management system,
+like Maven, Cocoapods, or NuGet:
+
+* projects declare dependencies in a standardized file - `package.json` in case of Node.js;
+* packages are hosted in a central location - the npm registry at http://registry.npmjs.org/[registry.npmjs.org^];
+* dependency versions can be specified explicitly, or using wildcards or ranges;
+* versions of transitive dependencies can be decided automatically, or fixed (see
+xref:using-npm-shrinkwrap[Using an npm-shrinkwrap file]);
+* packages are cached locally after installation (`node_modules` folder).
+
+For an introduction to using Node.js modules in your Cloud Apps, see
+xref:using-node-js-modules-in-cloud-apps[Using Node.js modules in Cloud Apps].
+
+[[npm-and-app-staging]]
+== npm and App Staging
+
+When deploying your Cloud App, the _npm_ command is run in your app's environment, to download and install the
+dependencies of your app.
+
+[NOTE]
+====
+The first time your Cloud App is deployed, the build can take some time as a full `npm install` is performed.
+
+For each subsequent deployment:
+
+* when deploying to a hosted MBaaS (RHMAP 3.x):
+** If the package.json file has changed from the previous deploy, RHMAP runs `npm update`.
+** If no changes have been made to package.json, no npm command is run (neither __update__, nor __install__).
+** To perform a clean stage, and run `npm install`:
+*** In the Studio, check the _Clean Stage_ check box in the _Deploy_ section of the Cloud App
+*** If using fhc, use the _--clean_ option, that is, `fhc app stage <app-id> <env-name> --clean`
+
+* when deploying to a self-managed MBaaS (RHMAP 4.x):
+*** If either the gitref or the nodejs runtime are changed then a new image is built.
+*** If the gitref and Node.JS Runtime are unchanged from a previous build then the existing image is used where possible.
+*** To force a fresh image to be built use the _Clean Stage_ check box in the _Deploy_ section of the cloud App.
+
+====
+
+[[npm-best-practices]]
+== npm Best Practices
+
+The fundamental best practice with npm is to understand how versioning works with node modules (see
+https://docs.npmjs.com/misc/semver[The semantic versioner for npm^]) and to avoid using `*` for any dependencies in
+package.json.
+
+A handy tip for developing locally is to use the `--save` flag when installing a module using npm, for example,
+`npm install request --save`. The `--save` flag will append the new module to the dependencies section in your
+package.json with the version that has just been installed. We also recommend using a _shrinkwrap_ file.
+
+[[using-npm-shrinkwrap]]
+=== Using an npm-shrinkwrap file
+
+An _npm-shrinkwrap.json_ file locks down the versions of a package's transitive dependencies so that you can control
+exactly which versions of each dependency will be used when your package is installed.
+
+To create a shrinkwrap file, run:
+
+....
+npm shrinkwrap
+....
+
+Put the resulting `npm-shrinkwrap.json` file to the root directory of your Cloud App. When `npm install` is invoked on
+your app in {ProductShortName}, it will use exactly the versions defined in the shrinkwrap file.
+
+To learn more about shrinkwrap, see the official npm documentation -
+https://docs.npmjs.com/cli/shrinkwrap[Lock down dependency versions^].
+
+[[uploading-node_modules]]
+== Uploading node_modules
+
+{ProductShortName} allows you to commit your `node_modules` directory and to use this in your Cloud App, even though it's *not* a
+recommended practice. That way, npm is not run at all when your app is staged (even if the `clean` option is specified),
+and whatever modules you've uploaded will be used to run your app. However, native node modules need to be compiled on
+the same architecture on which they execute, which might vary between instances of {ProductShortName}.

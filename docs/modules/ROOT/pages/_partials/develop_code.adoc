@@ -1,0 +1,447 @@
+// include::shared/attributes.adoc[]
+
+[[developing-code-locally]]
+= Developing Code Locally
+
+.Overview
+The following tutorial describes how to set up a local environment for developing a mobile application with the {ProductName} ({ProductShortName}).
+
+
+NOTE: See the link:https://access.redhat.com/node/2357761[Red Hat Mobile Application Platform Supported Configurations] page for appropriate versions of software.
+
+.Requirements
+You must have completed the following tutorials:
+
+* xref:installing-fhc[Installing FHC]
+* xref:working-with-projects-apps[Working with Projects & Apps]
+
+
+[[development-tools]]
+== Development Tools
+
+In addition to `fhc`, Node.js and NPM, other development tools are required.
+
+[[git]]
+=== Git
+
+_"Git is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency."_
+
+* http://git-scm.com/downloads[Download^]
+* http://git-scm.com/doc[Docs^]
+* http://git-scm.com/book/en/Getting-Started[Getting Started^]
+
+Install git on a specific operating system:
+
+* RHEL / Fedora: see http://git-scm.com/book/en/Getting-Started-Installing-Git[Git Installation Page^]
+* Debian based distros: `sudo apt-get install git-core`
+* Mac OSX: `brew install git` or `sudo port install git-core +doc +bash_completion` or via the graphical git http://code.google.com/p/git-osx-installer[installer^]
+* Windows: see http://msysgit.github.com/[msysgit^]
+
+NOTE: To install *Homebrew* package manager for Mac OSX, see http://brew.sh/[http://brew.sh/]
+
+[[grunt]]
+=== Grunt
+
+_"The JavaScript Task Runner"_
+
+* http://gruntjs.com/getting-started[Getting Started^]
+* http://gruntjs.com/plugins[Plugins^]
+
+`grunt` is available from  NPM. To install:
+[source,bash]
+----
+sudo npm install -g grunt-cli
+----
+
+NOTE: All {ProductShortName} Template Apps uses `grunt` as the task runner for local development.
+
+[[cloning-the-source-code]]
+== Cloning the source code
+
+Create a new directory to house your project development:
+[source,bash]
+----
+mkdir helloworld
+cd helloworld
+----
+
+Clone the source code for all apps in your project using `fhc projects clone <project-guid>`, for example:
+[source,bash]
+----
+fhc projects clone XME5iUr2VoBV3DbXrVF7qApG  # <== Replace this projectId with your projectId
+----
+
+An output message is displayed, for example:
+....
+Cloning into 'helloWorld-Hello-World-Cloud-App'...
+
+Cloning into 'helloWorld-Hello-World-Client'...
+....
+
+Once complete, check what new directories were created:
+[source,bash]
+----
+ls
+
+helloWorld-Hello-World-Client   helloWorld-Hello-World-Cloud-App
+----
+
+
+
+[[using-code-from-remote]]
+== Using Code from Another Git Repository
+
+If you want to use code from a remote repository, for example https://github.com/evanshortiss/rhmap-express-template, complete the following procedure:
+
+. Create an appropriate blank app, for example, blank_advanced_webapp
+. Clone the repo you want to use into a temporary directory:
++
+[source,bash]
+----
+git clone git@github.com:evanshortiss/rhmap-express-template.git temp_express
+----
+. Delete the `.git` directory:
++
+[source,bash]
+----
+cd temp_express
+rm -rf .git
+----
+. Copy the contents of the repo to your App repo, for example:
++
+[source,bash]
+----
+cd temp_express
+cp -r * <repo-path>
+cd <repo-path>
+----
+
+You can now develop your app and push the results to RHMAP.
+
+
+
+[[accessing-cloud-apps-during-development]]
+== Accessing Cloud Apps During Development
+
+The two methods for accessing Cloud Apps are:
+
+. Access the _cloud instance_ running in an environment on the Platform
+. Run the Cloud App in a _local instance_ of Node.js to access it
+
+[[using-cloud-runtime]]
+=== Using Cloud Runtime
+
+Client Apps point to `http://localhost:8001` by default
+
+Determine the URL that is hosting the Cloud App:
+[source,bash]
+----
+fhc app hosts --app=<app-guid> --env=<some-env>
+----
+
+The response is:
+[source,json]
+----
+{
+  "url": "https://testing-3utxgzhawprfqot3tya04v5i-example.feedhenry.com"
+}
+----
+
+Identify the variable `default_local_server_url` in the `Gruntfile.js` file belonging to the Client App.
+Set the `default_local_server_url` variable to the value returned by the `fhc app hosts` command.
+
+The locally running Client App will now route requests to the Cloud App running in the Platform.
+
+[[using-local-runtime]]
+=== Using Local Runtime
+
+NOTE: Your npm version should be at least 1.4.15 to run `grunt serve`.
+
+Run the Cloud Server code locally:
+[source,bash]
+----
+cd <PROJECT-DIR>/helloWorld-Hello-World-Cloud-App
+----
+
+Install all the dependancies for the Cloud app:
+[source,bash]
+----
+npm install
+----
+
+Once complete (this may take a number of minutes), start the Node.js server.
+[source,bash]
+----
+grunt serve
+----
+
+An output message is displayed, for example:
+....
+Running "env:local" (env) task
+
+Running "concurrent:serve" (concurrent) task
+Running "watch" task
+Waiting...
+Running "nodemon:dev" (nodemon) task
+[nodemon] v1.0.20
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching: *.*
+[nodemon] starting `node application.js`
+App started at: Tue Sep 30 2014 15:39:07 GMT+0100 (IST) on port: 8001
+....
+
+The Node.js process has a lock on the Terminal Window.
+The Cloud Server is now running however, to proceed, open another terminal window and verify the Cloud Server is running:
+[source,bash]
+----
+curl -X POST http://localhost:8001/hello?hello=world
+----
+
+An output message is displayed, for example:
+[source,json]
+----
+{"msg":"Hello world"}
+----
+
+Change the input parameter from `world` to another value and observe the updated response.
+
+The `Gruntfile.js` file contains a number of useful commands such as:
+[source,bash]
+----
+grunt serve     # run you server locally with 'live reload'
+grunt test      # run your tests locally
+grunt coverage  # run your tests with code coverage
+----
+
+See the Grunt-ReadMe.md file or run `grunt --help` for more information.
+
+[[running-the-client-locally]]
+== Running the Client locally
+
+Run the Client App locally:
+[source,bash]
+----
+cd <PROJECT-DIR>/helloWorld-Hello-World-Client
+----
+
+Install all the dependancies for the Client App - mainly around grunt:
+[source,bash]
+----
+npm install
+----
+
+Start up a web browser session:
+[source,bash]
+----
+grunt serve:local
+----
+
+`grunt serve:local` attempts to contact a local Node.js Cloud App on port 8001 by default. A similar message is displayed:
+....
+Running "serve:local" (serve) task
+
+Running "clean:server" (clean) task
+
+Running "connect:livereload" (connect) task
+Started connect web server on http://localhost:9002
+
+Running "watch" task
+Waiting...
+....
+
+See the local README.md for the 'Hello World Client' Template App to learn more.
+
+[[working-with-mbaas-services-locally]]
+== Working with MBaaS Services locally
+
+MBaaS Services are Node.js applications. MBaaS Services can be used by projects to integrate with back-end systems, for example, an Oracle integration service.
+MBaaS Services are associated with one or more projects and must be made available to apps otherwise an app in a project cannot access the MBaaS Service.
+For more information on MBaaS Services, see the link:{ProductFeatures}#mbaas-services[relevant product documentation].
+
+Services are invoked from a Cloud App via the link:{CloudAPI}#fh-service[$fh.service Cloud API call], for example:
+
+[source,javascript]
+----
+$fh.service({
+  guid: "PFi1ftKRBvlp-qSmgdcOeGe3",
+  path: "/hello",
+  method: "GET",
+  params: {
+    "hello": "world"
+  }
+}, function(err, data) {
+  if (err) {
+    return console.log(err);
+  }
+  return console.log(data);
+});
+----
+
+To interact with an MBaaS Service from a local development environment, a mapping is required between:
+
+. The service guid (that is, the unique id of the service)
+. The hostname of the running instance of the service, that is being targeted
+
+A new environment variable definition in the Gruntfile.js is required:
+
+[source,javascript]
+----
+env : {
+  options : {},
+  // environment variables - see https://github.com/jsoverson/grunt-env for more information
+  local: {
+    FH_USE_LOCAL_DB: true,
+    FH_SERVICE_MAP: function() {
+      /*
+       * Define the mappings for your services here - for local development.
+       * You must provide a mapping for each service you wish to access
+       * This can be a mapping to a locally running instance of the service (for local development)
+       * or a remote instance.
+       */
+      var serviceMap = {
+        'PFi1ftKRBvlp-qSmgdcOeGe3': 'http://127.0.0.1:8010'
+      };
+      return JSON.stringify(serviceMap);
+    }
+  }
+},
+----
+
+In the above example, `FH_SERVICE_MAP` is added to the local environment variable definitions.
+The new variable is mapped to a function and stores the GUID `PFi1ftKRBvlp-qSmgdcOeGe3` which points to a service running locally on port 8010.
+To target a hosted instance of the service, use the _Current Host_ URL of the service, found on the _Details_ page in the Studio.
+All additional services are added to the  `serviceMap` variable.
+
+NOTE: `FH_SERVICE_MAP` environment variable is defined as a function rather than a simple string.
+
+Users can define the service mappings as a standard JSON object rather than as a stringified JSON object.
+`FH_SERVICE_MAP` environment variable is set using a standard JSON object in the following example:
+
+....
+FH_SERVICE_MAP: '{"PFi1ftKRBvlp-qSmgdcOeGe3":"http://127.0.0.1:8010"}'
+....
+
+A working example can be seen https://github.com/feedhenry-templates/helloworld-cloud/blob/master/Gruntfile.js[here^].
+
+[[editing-the-cloud-code]]
+== Editing the cloud code
+
+NOTE: When the Node.js Cloud API server is running, `grunt` is monitoring for all changes. `grunt`  applies changes in real time.
+
+Navigate to the Cloud App directory and open `./lib/hello.js`.
+
+To add an additional parameter that sets the current time in the response, input a new parameter to both the GET and POST request.
+Replace both occurrences of:
+[source,javascript]
+----
+res.json({msg: 'Hello ' + world});
+----
+
+with:
+
+[source,javascript]
+----
+res.json({msg: 'Hello ' + world, 'timestamp': new Date().getTime() });
+----
+
+The will add a timestamp with the current time in milliseconds to the response. The reason there are two occurrences is that we have a route handler for both GET and POST requests.
+
+Your Cloud App should automatically restart as soon as the file is saved. After saving the file, re execute the previous curl command:
+
+[source,bash]
+----
+curl -X POST http://localhost:8001/hello?hello=world
+----
+
+The response now includes a timestamp:
+[source,json]
+----
+{"msg":"Hello World","timestamp":1412111429480}
+----
+
+[[editing-the-client-code]]
+== Editing the client code
+
+Navigate to your Client App directory and open `./www/index.html`.
+This is a basic web-page with an input field for a "name" and a button to call the Cloud.
+There is also a cloudResponse div that is used to populate the response from the Cloud Call.
+
+Directly under the code "cloudResponse":
+[source,html]
+----
+<div id="cloudResponse"></div>
+----
+
+Add a timestamp div:
+[source,html]
+----
+<div id="timestamp"></div>
+----
+
+In `./www/hello.js`, a click handler is assigned to the "Say Hello" button.
+When triggered, the Cloud App's /hello endpoint is called using the $fh.cloud API.
+
+To cater for the timestamp, open `./www/hello.js` and directly under the code:
+[source,javascript]
+----
+document.getElementById('cloudResponse').innerHTML = "<p>" + res.msg + "</p>";
+----
+
+Add this code:
+[source,javascript]
+----
+document.getElementById('timestamp').innerHTML = "<p>" + new Date(res.timestamp) + "</p>";
+----
+
+NOTE: A new Date Object is created to accept the timestamp value returned from the cloud for the purposes of displaying the value.
+
+[[viewing-changes-in-the-app-studio]]
+== Viewing changes in the App Studio
+
+Execute the following command in the client directory and also in the cloud directory:
+[source,bash]
+----
+git commit -am"Add timestamp parameter"
+git push origin master
+----
+
+The changes made locally are now visible within the App Studio.
+
+[[advanced-development]]
+== Advanced Development
+
+For advanced development that makes use of MBaaS APIs, for example, `fh.db()` and `fh.cache()`, additional software is required.
+
+[[using-fh-cache]]
+=== Using fh.cache
+
+To develop locally using link:{CloudAPI}#fh-cache[fh.cache], install http://redis.io/download[Redis^] locally:
+
+* RHEL / Fedora: see http://redis.io/download[Redis Download Page^]
+* Debian based distros: `apt-get install redis-server`
+* Mac: `brew install redis` or `sudo port install redis`
+* Windows: see https://github.com/MSOpenTech/redis[MSOpenTech Redis^]
+
+Once installed and running, calls to link:{CloudAPI}#fh-cache[fh.cache] in the Cloud Server will operate in the same manner as the {ProductShortName} Cloud.
+
+IMPORTANT: The default Redis port is used therefore there is no need to modify the Redis config file.
+
+[[using-fh-db]]
+=== Using fh.db
+
+To develop locally using link:{CloudAPI}#fh-db[fh.db], install https://www.mongodb.org/downloads[Mongo^] locally:
+
+* RHEL / Fedora: follow the instructions http://docs.mongodb.org/manual/tutorial/install-mongodb-on-red-hat-centos-or-fedora-linux/[here^]
+* Debian based distros: follow the instructions http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/[here^]
+* Mac: follow the instructions http://docs.mongodb.org/manual/tutorial/install-mongodb-on-os-x/[here^] or `brew install mongodb`
+* Windows: follow the instructions http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows/[here^]
+
+Once installed and running, calls to link:{CloudAPI}#fh-db[fh.db] in the Cloud Server will operate in the same manner as the {ProductShortName} Cloud.
+
+IMPORTANT: The default Mongo port is used therefore there is no need to modify the Mongo config file.
+
+[[developing-code-locally-next-steps]]
+== Next Steps
+
+* xref:building-an-app-binary[Building App Binaries]
+* https://www.npmjs.com/package/fh-fhc[FHC CLI^]

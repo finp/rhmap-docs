@@ -1,0 +1,29 @@
+// include::shared/attributes.adoc[]
+
+[[deploying-an-app-on-android]]
+= Deploying an App on Android
+
+There are many ways to install an `.apk` file onto an Android device or emulator. Some of these ways are detailed in the text below. If you do not have an Android device, use an Android emulator which is installed as part of Android SDK installation. See https://developer.android.com/studio/run/emulator.html[Running Apps on the Android Emulator^] for more information.
+
+[[browser-method]]
+== Browser Method
+
+If you are using the link:{LocalDevelopmentGuide}#local-development-guide-setting-up-fhc[FHC command line tool] to generate your binary, the output will contain a URL value for example,
+
+....
+http://[your-studio-domain].redhatmobile.com/digman/A/B/C/android~2.2~50~MyApp.apk
+....
+
+This is the download URL of the binary. By navigating to this URL on the device browser, the binary can be downloaded and installed.
+
+TIP: Using a URL shortener like link:https://bitly.com/[bit.ly^] makes entering the download URL a lot easier
+
+[[dropbox-method]]
+== Dropbox Method
+
+If you have a https://www.dropbox.com[Dropbox^] account, there is a Dropbox app available in the Google Play Store. Placing the APK file in your Dropbox folder (on your PC/Mac) will make the file available through the Dropbox app, allowing you to open and install.
+
+[[android-tools-method]]
+== Android Tools Method
+
+If you have the http://developer.android.com[android tools^] installed, you can follow the http://developer.android.com/guide/developing/tools/adb.html#move[instructions^] for sending the APK file to the device over a USB cable.

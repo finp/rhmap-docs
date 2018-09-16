@@ -1,0 +1,35 @@
+// include::shared/attributes.adoc[]
+[[fh-sync-handlecreate-dep]]
+== $fh.sync.handleCreate {oldsync}
+
+[source,javascript]
+----
+$fh.sync.handleCreate(dataset_id, callback)
+----
+
+Defines a handler function for creating a single row of data in the back end. Should be called after the dataset is inited.
+
+[[fh-sync-example-6]]
+=== Example
+
+[source,javascript]
+----
+// data source for a dataset.
+$fh.sync.handleCreate(dataset_id, function(dataset_id, data, cb, meta_data) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // Row of data to create
+  console.log(data);
+
+  // Sample back-end storage call
+  var savedData = saveData(data);
+  var res = {
+    "uid": savedData.uid, // Unique Identifier for row
+    "data": savedData.data // The created data record - including any system or UID fields added during the create process
+  };
+
+  // Callback function for when the data has been created, or if theres an error
+  return cb(null, res);
+});
+----

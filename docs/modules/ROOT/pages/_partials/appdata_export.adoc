@@ -1,0 +1,86 @@
+// include::shared/attributes.adoc[]
+
+[[exporting-application-data]]
+= Exporting Application Data
+
+.Overview
+It is often necessary to export data from a database of a Cloud App for purposes of creating backups, testing or setting up other hosted databases with existing data.
+`fhc` allows you to export all data from a hosted database associated with a Cloud App or service.
+
+For a full reference, run `fhc help appdata export` to see a list of available commands.
+Run `fhc help appdata export <command>` for a reference of a particular command.
+
+.Requirements
+* {ProductShortName} version 3.11.0 or later
+* fhc version 2.9.0 or later
+
+[[exported-data-format]]
+== Exported Data Format
+
+All collections associated with a Cloud App or Service are exported into a single `tar` archive, comprising each of the individual collections as a compressed binary JSON (BSON) file. The name of each BSON file matches the name of the collection from which it originates.
+
+Example:
+
+....
+    export.tar
+    |__ <COLLECTION_1_NAME>.bson.gz
+    |__ <COLLECTION_2_NAME>.bson.gz
+....
+
+The BSON files are compatible with standard MongoDB backup and restore tools.
+See https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#binary-bson-dumps[Back Up and Restore with MongoDB Tools^] for more information.
+
+[[exporting-application-data-1]]
+== Exporting Application Data
+
+The process of exporting application data involves three main steps:
+
+. xref:starting-a-new-export-job[Starting a new export job]
+. xref:querying-the-status-of-an-export-job[Querying the status of an export job]
+. xref:downloading-the-exported-data[Downloading the exported data]
+
+[[starting-a-new-export-job]]
+=== Starting a New Export Job
+
+To start a new export job, enter the following command:
+
+`fhc appdata export start --appId=<APP_ID> --envId=<ENV_ID> [--stopApp=[y/n>]]`
+
+* `APP_ID` - ID of the Cloud App or service
+* `ENV_ID` - ID of the deployment environment where the app is running
+
+Once done, you receive a prompt asking whether you want to stop the app during data export.
+
+* Choosing `n` leaves the Cloud App running during the export job. If new data is added to any of the collections during the export, it will not be included in the current export job.
+* Choosing `y` stops the Cloud App once the export job starts. You have to restart the app manually once the export job is finished.
+
+To skip the prompt after running the command (for example, when scripting fhc), provide the optional `--stopApp` flag with the command before running.
+
+If another export job is already running for the same app in the same environment, the start command will exit without performing any action.
+
+[[querying-the-status-of-an-export-job]]
+=== Querying the Status of an Export Job
+
+Once the job starts, the command line tool prints out the following status command with all the relevant fields already filled in.
+
+`fhc appdata export status --appId=<APP_ID> --envId=<ENV_ID> --jobId=<JOB_ID> [--interval=<MILLISECONDS>]`
+
+To query the status of an export job, copy and paste this command into the shell.
+
+To keep the command running and periodically reporting the job status, include the optional `--interval` flag and specify the interval at which the status of the job is to be queried.
+
+Once the job is finished, the status command returns the job status as `complete`.
+
+[[downloading-the-exported-data]]
+=== Downloading the Exported Data
+
+To download your exported data once the job is finished, run the following `download` command:
+
+`fhc appdata export download --appId=<APP_ID> --envId=<ENV_ID> --jobId=<JOB_ID> --file=<FILENAME>`
+
+* `APP_ID` - ID of the Cloud App or Service
+* `ENV_ID` - ID of the deployment environment where the app is running
+* `JOB_ID` - ID of the export job and the corresponding export file
+* `FILENAME` - path to the file in which the exported data is to be stored
++
+If a file already exists at the specified location, the download command exits without performing any action.

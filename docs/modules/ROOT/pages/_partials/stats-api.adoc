@@ -1,0 +1,30 @@
+// include::shared/attributes.adoc[]
+
+[[fh-stats]]
+= $fh.stats
+
+Utilise temporary stats counters and timers, which can then be viewed as graphs in the Studio.
+
+[[fh-stats-example]]
+== Example
+
+[source,javascript]
+----
+// Increment a counter.
+// The name for the counter you want to increment.
+// If this doesn't exist, it is created, and starts at 0.
+var counter = 'my_counter';
+$fh.stats.inc(counter);
+
+// Decrement a counter
+$fh.stats.dec(counter);
+
+// Record a timer value
+// The name for the timer you want to record a value for.
+// If it doesn't exist, it is created.
+var timer_name = 'my_timer';
+// Timing in milliseconds of the interval you wish to record
+// (for example, time difference between a timer start and end)
+var time_in_ms = 500;
+$fh.stats.timing(timer_name, time_in_ms);
+----

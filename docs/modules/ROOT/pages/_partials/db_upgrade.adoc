@@ -1,0 +1,29 @@
+// include::shared/attributes.adoc[]
+
+[[upgrading-the-database]]
+== Upgrading the Database
+
+If you need to perform database operations beyond those provided by the `$fh.db` API,  you can access the database directly using the MongoDB driver. To enable direct access to the database, it first has to be _upgraded_ - migrated to a dedicated instance.
+
+To upgrade your app's database, click the _Upgrade Database_ button in the top right corner of the Data Browser screen.
+
+image:databrowser_upgrade.png[Upgrade Database]
+
+The following steps are performed by the platform during the upgrade:
+
+* Your app is stopped.
+* A new database is created specifically for the app.
+* The environment variable `FH_MONGODB_CONNURL` is set for your app, containing the database connection string, which can be passed to the MongoDB driver.
+
+In addition, if the database already contained data:
+
+* Data are migrated from the old database to the new one.
+* If everything has succeeded, data are removed from the old database.
+* Data are validated in the new database.
+
+Note: you may also need to update the contents of your `application.js` and your `package.json` files. If this is the case, you will be informed on the migrate screen.
+
+After all data migration steps have completed, you have to redeploy the app.
+
+After the database upgrade is complete, new collections with the prefix `fhsync_` are created to enable sync functionality. Red Hat recommends that you keep these collections, even if you do not intend to use sync functionality.
+

@@ -1,0 +1,138 @@
+[[sync-terminology]]
+= Sync Terminology
+
+[[sync-protocol]]
+== Sync Protocol
+
+The protocol for communication between the xref:sync-client[Sync Client] and the xref:sync-server[Sync Server]. +
+
+[[sync-server]]
+== Sync Server
+
+The Sync Server is the server part of the
+xref:sync-protocol[Sync Protocol], and is included in the fh-mbaas-api module. It:
+
+* exposes the link:{CloudAPI}#fh-sync[Sync Server API] for integrating with a xref:dataset-backend[DataSet Backend]
+* runs the xref:sync-server-loop[Sync Server Loop], updating xref:dataset[DataSets] when updates from a DataSet Backend are detected.
+
+[[sync-client]]
+== Sync Client
+
+* exposes the link:{ClientAPI}#fh-sync[Sync Client API] to the front end for CRUDL actions against a xref:dataset[DataSet]
+* runs the xref:sync-client-loop[Sync Client Loop], making a call to the xref:sync-server[Sync Server] at the specified xref:sync-frequency[Sync Frequency] for a particular xref:dataset[DataSet].
+
+The Sync Client is the client part of the xref:sync-protocol[Sync Protocol]
+There are 3 Sync Client implementations available:
+
+* Javascript, in the
+https://github.com/feedhenry/fh-sync-js/blob/master/src/sync-client.js[FeedHenry Javascript SDK]
+* Objective C, in the
+https://github.com/feedhenry/fh-ios-sdk/tree/master/fh-ios-sdk/Sync[FeedHenry iOS SDK]
+* Java, in the
+https://github.com/feedhenry/fh-android-sdk[FeedHenry Android SDK]
+
+[[sync-server-loop]]
+== Sync Server Loop
+
+The Sync Server Loop is a function that runs continuously on the
+xref:sync-server[Sync Server] with a 500ms wait between each run. +
+During each run, it iterates over all xref:dataset-client[DataSet Clients] to
+see if a xref:dataset[DataSet] should be synced from the
+xref:dataset-backend[DataSet Backend].
+
+[[sync-client-loop]]
+== Sync Client Loop
+
+The Sync Client Loop is a function that runs continuously on the
+xref:sync-client[Sync Client] with a 500ms wait between each run. +
+During each run, it iterates over all xref:dataset-client[DataSet Clients] to
+see if a xref:dataset[DataSet] should be synced with the
+xref:sync-server[Sync Server].
+
+[[sync-frequency]]
+== Sync Frequency
+
+On the xref:sync-client[Sync Client], this is the interval between checks
+for updates from the xref:sync-server[Sync Server] for a particular
+xref:dataset[DataSet]. +
+On the xref:sync-server[Sync Server], this is the interval between checks
+for updates from the xref:dataset-backend[DataSet Backend] for a
+particular xref:dataset[DataSet].
+
+For more information, see xref:configuring-sync-frequency[Configuring Sync Frequency].
+
+[[dataset]]
+== DataSet
+
+A DataSet is a collection of records synchronized between 1 or
+more xref:sync-client[Sync Clients], the xref:sync-server[Sync Server]
+and the xref:dataset-backend[DataSet Backend].
+
+Red Hat recommends that you use an indexing strategy when working with data sets to improve performance.
+For more information about indexing strategies for MongoDB, please see the link:https://docs.mongodb.com/manual/applications/indexes/[MongoDB Manual].
+
+[[dataset-backend]]
+== DataSet Backend
+
+The system of record for data synchronized between the
+xref:sync-client[Sync Client] and the xref:sync-server[Sync Server]. +
+It can be any system that provides an API and can be integrated with
+from the xref:sync-server[Sync Server], for example, a mysql database or a SOAP
+service. +
+The Sync Server exposes the link:{CloudAPI}#fh-sync[Sync Server API]
+for integration with a DataSet Backend using xref:dataset-handler[DataSet
+Handlers].
+
+[[dataset-handler]]
+== DataSet Handler
+
+A DataSet Handler is a function for integrating the
+xref:sync-server[Sync Server] into a xref:dataset-backend[DataSet
+Backend]. +
+There are many handlers for doing CRUDL actions on a
+xref:dataset[DataSet] and managing collisions between
+xref:dataset-record[DataSet Records]. +
+The default implementation of these handlers uses fh.db (MongoDB backed
+in an RHMAP MBaaS). +
+You can override each of these handlers. See the
+link:{CloudAPI}#fh-sync[Sync Server API] for details.
+
+*IMPORTANT*: If you are overriding handlers, Red Hat recommends overriding
+_all_ handlers to avoid unusual behavior with some handlers
+using the default implementation and others using an overridden
+implementation.
+
+[[dataset-client]]
+== DataSet Client
+
+A DataSet Client is a configuration stored in the xref:sync-client[Sync
+Client] & xref:sync-server[Sync Server] for each xref:dataset[DataSet]
+that is actively syncing between the client & server. +
+It contains data such as:
+
+* the xref:sync-frequency[Sync Frequency] of the xref:dataset[DataSet]
+* any query parameters to include when making calls to the
+xref:dataset-backend[DataSet Backend]
+* the latest xref:hash[Hash] of the xref:dataset-record[DataSet
+Records]
+* data regarding whether a sync with the xref:dataset-backend[DataSet Backend] is currently
+in progress
+
+[[dataset-record]]
+== DataSet Record
+
+A DataSet Record is an individual record in a xref:dataset[DataSet]. +
+It contains:
+
+* the raw data that this record represents, for example, the row values from a
+MySQL table
+* a xref:hash[Hash] of the raw data
+
+[[hash]]
+== Hash
+
+There are 2 types of Hash used in the Sync Protocol:
+
+* hash of an individual xref:dataset-record[DataSet Record] which is used to compare individual records to see if they are different.
+* hash of all xref:dataset-record[DataSet Records] for a particular
+xref:dataset-client[DataSet Client] which is used to compare a client's set of records with the servers without iterating over all records.

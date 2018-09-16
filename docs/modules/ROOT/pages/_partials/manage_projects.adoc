@@ -1,0 +1,157 @@
+// include::shared/attributes.adoc[]
+
+[[working-with-projects-apps]]
+= Working with Projects and Apps
+
+.Overview
+In the Platform, a project is used as a container for grouping related apps together and all apps must be created within a project.
+The following information describes how to create and add projects using `fhc`.
+
+.Requirements
+You must have completed the following tutorials:
+
+* xref:installing-fhc[Installing FHC]
+
+[[log-in-to-the-platform]]
+== Log in to the Platform
+
+Enter `fhc targets` in the terminal to display a list of available target domains:
+[source,bash]
+----
+fhc targets list
+----
+
+Use the `fhc target` command to select a target domain:
+[source,bash]
+----
+fhc target exampleDomain.redhatmobile.com
+----
+
+NOTE: The code above selects 'exampleDomain.redhatmobile.com' as the target domain.
+
+The target domain has now being selected. To login, use `fhc login` followed by the username and password:
+[source,bash]
+----
+fhc login username@example.com password
+----
+
+NOTE: Once logged in, access restrictions can apply. Team Permissions determine the level of access a User has within the Platform. See link:{ProductFeatures}#teams-and-collaboration[Teams & Collaborations] for more information.
+
+[[list-existing-projects]]
+== List existing Projects
+
+List existing projects:
+
+[source,bash]
+----
+fhc projects list
+----
+
+NOTE: To return the project list in raw JSON format, append `--json` to the end of the command, for example, `fhc projects list --json`.
+
+A list of existing projects is displayed (ordered by date lasted modified), for example:
+
+[source,bash]
+----
+--------------------------------------------------------------------------
+| Id                       | Title            | No. Apps | Last Modified |
+--------------------------------------------------------------------------
+| 1234567890abcdefghijklmn | Hello World      | 3        | 3 hours ago   |
+--------------------------------------------------------------------------
+| 9876543210zyxwvutsrqpomn | Welcome to RHMAP | 2        | 3 hours ago   |
+--------------------------------------------------------------------------
+----
+
+[[creating-a-project]]
+== Creating a Project
+
+It is possible to create a new project that contains no Client or Cloud Apps however a project *must* have a name. Use `fhc projects create` to create a project.
+
+Typically, a new project is created using a pre-defined template.
+Project templates allow you to bootstrap your development by cloning the project template which typically provides at least one Client App and one Cloud App.
+
+To learn more about Projects, see the link:{ProductFeatures}#projects[Projects Documentation].
+
+In this tutorial, `hello_world_project` template is used. This is a basic project with one Client App and one Cloud App, and uses the standard Hello World paradigm to demonstrate basic functionality.
+
+List all the project templates:
+[source,bash]
+----
+fhc templates projects
+----
+
+Create a new project based on the `hello_world_project` template:
+[source,bash]
+----
+fhc projects create helloWorld hello_world_project
+----
+
+Verify successful creation of the project by searching for the new project:
+[source,bash]
+----
+fhc projects list
+----
+
+Alternatively, you could search for your specific project by piping the output of the `fhc projects` command to the `grep` command:
+[source,bash]
+----
+fhc projects list | grep 'helloWorld'
+
+# Example:
+
+XME5iUr2VoBV3DbXrVF7qApG ┃ helloWorld  ┃ 2  ┃ 3 minutes ago
+# ProjectId | Title | Number of apps | Minutes since last update
+----
+
+The console output will display the recently created project that contains a Client App and a Cloud App.
+
+To list all apps in a project, select a projectId (also known as a 'guid' (Global Unique IDentifier)) and use it in conjunction with the `fhc apps`:
+
+[source,bash]
+----
+fhc projects list
+
+fhc apps <the_selected_project_guid>
+----
+
+This will list all the apps for the given projectId:
+
+* Id - The guid of the App.
+* Title - The title of the app. This will be used as the app name for Client Apps on mobile devices.
+* Description - A description for the application. This will be blank by default.
+* Type - The type of the app. Term used by Platform to distinguish between different app types.
+* Git - The Git URL of the App. This can be used to clone the app for local development
+* Branch - The currently selected branch for editing app code in the platform.
+
+[[adding-apps-to-a-project]]
+== Adding Apps to a Project
+
+A Project can contain many apps however, apps that have no relationship with each other should be housed in separate projects.
+Apps are normally added to a project using an existing App Template. There are a selection of App Templates available for both Client and Cloud Apps.
+
+List all available App Templates:
+[source,bash]
+----
+fhc templates apps
+----
+
+To add a Client App, use the following command, specifying  the `<projectId>`, the name for the `<appTitle>`, and the `<appTemplate>` to add an app to a project.
+
+[source,bash]
+----
+fhc app create --project=<projectId> --title=<appTitle> --type=<type> --template=<appTemplate>
+
+ #The following example illustrates the creation of a new project
+
+fhc app create --project=xe2cbz3cky6zfxq2ca66t55u --title='My Native iOS App' --type=client_native_ios --template=native_ios_swift_blank_app
+----
+
+NOTE: If no template is specified, a blank Client App is created.
+
+To verify the successful creation of the app, list all apps in the project.
+
+[[working-with-projects-apps-next-steps]]
+== Next Steps
+
+* xref:developing-code-locally[Local App Development]
+* xref:building-an-app-binary[Building App Binaries]

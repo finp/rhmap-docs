@@ -1,0 +1,299 @@
+// include::shared/attributes.adoc[]
+
+[[devices-api]]
+= Devices API
+
+[[devices-api-list-devices]]
+== List Devices
+
+[[devices-api-description]]
+=== Description
+
+Get a list of the devices which have autheticated against the platform.
+
+[[devices-api-endpoint]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/device/list
+
+* method - POST
+
+[[devices-api-request-body]]
+=== Request Body
+
+[source,javascript]
+----
+{}
+----
+
+[[devices-api-response-body]]
+=== Response Body
+
+[[devices-api-success]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "count": <total device count>,
+  "list" : [
+    {
+      "guid": "<device_global_unique_id>",
+      "fields": {
+        "cuid": "<id_assigned_by_device>",
+        "name": "<Friendly_name_of_device>",
+        "disabled": true|false, /* Is this device currently blocked from logging in */
+        "blacklisted": true|false /* Should data be purged from apps the next time the device authenticates */
+      }
+    },
+    ...
+  ]
+}
+----
+
+[[devices-api-error]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[devices-api-read-device]]
+== Read Device
+
+[[devices-api-description-1]]
+=== Description
+
+Read details of a specific device based on its id.
+
+[[devices-api-endpoint-1]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/device/read
+
+* method - POST
+
+[[devices-api-request-body-1]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "cuid": "<id_assigned_by_device>"
+}
+----
+
+[[devices-api-response-body-1]]
+=== Response Body
+
+[[devices-api-success-1]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "guid": "<global_unique_id>",
+  "fields": {
+    "cuid": "<id_assigned_by_device>",
+    "name": "<Friendly_name_of_device>",
+    "disabled": true|false, /* Is this device currently blocked from logging in */
+    "blacklisted": true|false /* Should data be purged from apps the next time the device authenticates */
+  }
+}
+----
+
+[[devices-api-error-1]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[devices-api-update-device]]
+== Update Device
+
+[[devices-api-description-2]]
+=== Description
+
+Update details of a specific device based on its guid.
+
+[[devices-api-endpoint-2]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/device/update
+
+* method - POST
+
+[[devices-api-request-body-2]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "cuid": "<id_assigned_by_device>",
+  "name": "<Friendly_name_of_device>",  /* Optional */
+  "disabled": true|false   /* Optional - DEFAULT=false - Is this device currently blocked from logging in */
+  "blacklisted": true|false /* Optional - DEFAULT=false - Should data be purged from apps the next time the device authenticates */
+}
+----
+
+[[devices-api-response-body-2]]
+=== Response Body
+
+[[devices-api-success-2]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "guid": "<global_unique_id>",
+  "fields": {
+    "cuid": "<id_assigned_by_device>",
+    "name": "<Friendly_name_of_device>",
+    "disabled": true|false, /* Is this device currently blocked from logging in */
+    "blacklisted": true|false /* Should data be purged from apps the next time the device authenticates */
+  }
+}
+----
+
+[[devices-api-error-2]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[devices-api-list-apps]]
+== List Apps
+
+[[devices-api-description-3]]
+=== Description
+
+Return a list of the apps which have autheticated from the specified device id.
+
+[[devices-api-endpoint-3]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/device/listapps
+
+* method - POST
+
+[[devices-api-request-body-3]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "cuid": "<id_assigned_by_device>"
+}
+----
+
+[[devices-api-response-body-3]]
+=== Response Body
+
+[[devices-api-success-3]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "count": <total apps count>,
+  "list" : [
+    {
+      "guid": <unique app guid>,
+      "fields" : {
+        "name" : <app name>,
+        "description" : <app description>,
+      }
+    },
+    ...
+  ]
+}
+----
+
+[[devices-api-error-3]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[devices-api-list-users]]
+== List Users
+
+[[devices-api-description-4]]
+=== Description
+
+Return a list of the user ids which have autheticated from the specified device id.
+
+[[devices-api-endpoint-4]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/device/listusers
+
+* method - POST
+
+[[devices-api-request-body-4]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "cuid": "<id_assigned_by_device>"
+}
+----
+
+[[devices-api-response-body-4]]
+=== Response Body
+
+[[devices-api-success-4]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "count": <total users count>,
+  "list" : [
+    {
+      "guid": <unique user guid>,
+      "fields" : {
+        "userId" : <unique user id>,
+        "email" : <user email>
+      }
+    },
+    ...
+  ]
+}
+----
+
+[[devices-api-error-4]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----

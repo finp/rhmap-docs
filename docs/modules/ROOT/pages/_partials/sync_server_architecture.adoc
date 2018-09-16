@@ -1,0 +1,51 @@
+[[sync-server-architecture]]
+= Sync Server Architecture
+
+For a general overview of the Sync Framework, see xref:data-sync-framework[Sync Overview] and xref:sync-terminology[Sync Terminology].
+
+[[architecture]]
+== Architecture
+
+The Sync Server architecture includes:
+* HTTP handlers
+* Queues and processors
+* The sync scheduler
+
+Each of these components persist data in MongoDB.
+
+image::sync_server_arch.png[Sync Server Architecture]
+
+[[http-handlers]]
+=== HTTP Handlers
+These handlers are responsible for handling the Sync requests from Sync Clients.
+
+==== Sync HTTP Handler
+Creates or updates the Dataset Client and pushes pending records
+and acknowledgements on to the appropriate queues for processing.
+
+==== Sync Records HTTP Handler
+Compares up-to-date data with a client's state. After getting the delta, it checks for updates that are processed, but not yet synced. 
+This handler iterates through all the records in the delta. If any records are in the pending queue or have been applied, this handler removes them from the delta and returns the updated delta to the client.
+
+=== Queues
+
+The following queues are used in the Sync Framework:
+
+* `fhsync_queue` - jobs for datasets that require synchronization.
+* `fhsync_ack_queue` - jobs for pending changes that require acknowledgement.
+* `fhsync_pending_queue` - jobs for pending changes that require processing.
+
+Messages are placed on these queues and are consumed by processors.
+
+=== Processors
+
+Each queue has a corresponding processor:
+
+* Sync Processor - takes jobs from `fhsync_queue` and processes those jobs.
+* Ack Processor - takes acknowledgements from `fhsync_ack_queue` and removes those acknowledgements from MongoDB.
+* Pending Processor - takes pending items from `fhsync_pending_queue` and applies the changes to the Dataset Backend.
+
+Each worker in a Sync Server has one instance of each of these processors allowing the tasks to be distributed.
+
+=== Sync Scheduler
+When horizontally scaled, each Sync Worker attempts to become the Sync Scheduler at fixed intervals. Each worker tries to obtain a lock which is located in MongoDB. The worker that has the Sync Scheduler lock determines which Datasets need to be synchronized  by looking at the timestamp of the last synchronization and the sync frequency for the Dataset. If a Dataset needs to be synchronized, a job is added to `fhsync_queue`.

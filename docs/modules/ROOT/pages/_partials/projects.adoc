@@ -1,0 +1,171 @@
+// include::shared/attributes.adoc[]
+
+[[projects]]
+= Projects
+
+[[projects-overview]]
+== Overview
+
+The projects section allows you to create and manage projects. Once a project has been created, multiple Apps can then be associated with those projects. If you have an existing App, the 'Import' feature can be used to import it into the Platform.
+
+.Requirements
+The user must be a member of one or more teams with the following permissions:
+
+* Domain -- Project (View and Edit)
+
+[[new-project]]
+== New Project
+
+A Project consists of Apps for different platforms, and a Cloud App that they talk to.
+
+NOTE: Although a new project generally consists of one Client App and a Cloud App for it to communicate with, multiple Apps can be added to any given project.
+
+[[client-platforms]]
+=== Client Platforms
+
+All Projects have a template as an initial starting point. The following example describes the makeup of a template:
+
+* A single App that uses the technology Cordova and a Cloud App that uses the technology Node.js.
+
+[[import]]
+== Import
+
+As well as creating Apps, existing Apps can be imported into the Platform. When importing an App, you have the choice to either create a new project and add the App to it, or to simply add the App to an existing project. There are a number of different App types that can be imported into the Platform. These include Native iOS, Native Android, PhoneGap, Basic Web App, and Advanced Web App. There are also a number of different ways in which an App can be imported to the Platform. These include :
+
+* Cloning an existing Git repo
+* Uploading a Zip
+* Creating an App with a blank repo, and then pushing the code there
+* Not importing source, but integrating {ProductShortName} SDK
+
+Step by step instructions will be provided, informing users of how to successfully import their Apps into the Platform. These steps will differ slightly depending on which import method was selected. For example, only the 'Cloning an existing Git repo' option has instructions on how to clone Git repositories.
+
+[[apps-cloud-apps-services]]
+== Apps, Cloud Apps & Services
+
+The Apps, Cloud Apps & Services section allows for the managing of Client Apps and Cloud Apps within a project. Here, new Client and Cloud Apps can be added to a project. Cloud Apps serve as a gateway between the Client App and the cloud back-end storage and services.
+
+[[projects-apps]]
+=== Apps
+
+A project can consist of multiple Apps. In general, a project will consist of at least one Client App, along with a Cloud App for it to communicate with. Multiple Apps and Cloud Apps can be added to a project. When adding a Client App, Apps can be created based on a number of Native or Hybrid templates. Multiple Cloud Apps can also be added to a project. As mentioned above, an existing App can also be imported into an existing project.
+
+[[cloud-code-apps]]
+=== Cloud Code Apps
+
+Cloud Apps allow developers to link their Apps to back-end cloud storage. It allows for extensive user management, where users can manage mBaaS Services such as online data storage, web based email services, push notifications, and more. Client Apps will communicate with Cloud Apps to avail of this functionality. For example, since all functionality created in your cloud can be accessed via a simple API call, you can make use of a cloud cache for performance so less work needs to be done by the device itself.
+
+[[services]]
+=== Services
+
+External mBaaS Services can be added to a project in order to provide increased functionality. Services can be added to a project in the same way as a Client App or mBaaS Cloud Instance. Cloud Instances make calls to these services to avail of increased functionality such as PayPal. Only a user with the xref:service-administrator-serviceadmin[Service Administrator] role can provision mBaaS services. When a Service Administrator is creating a service, they have the option to make the service globally available to all projects. If it is made globally available, users with the xref:developer-dev[Developer] role can select it for inclusion in their project.
+
+[[add-apps-to-a-project]]
+== Add Apps to a Project
+
+You can add as many Apps to a Project as you like - you have three options to choose from:
+
+[[create-a-new-app]]
+=== Create a New App
+
+Creating a new App allows you to select template to base your new App on - alternatively, if you have an existing App, you may want to select the "Import Existing App" option
+
+[[import-existing-app]]
+=== Import Existing App
+
+If you have an existing App, you can select this option and we'll guide you through importing and integrating your existing Apps with the Platform. You'll need to select an appropriate App Type and make sure the pre-requisites are met - the App Studio will help guide you through the process.
+
+[[clone-existing-app]]
+=== Clone Existing App
+
+If there's an App in this (or another Project) that you'd like to clone, select this option. You'll be asked to give your cloned App a new name. Depending on the source App, you may also be presented with some additional choices in terms of cloning depending on the source App.
+
+Some Apps can have their types changed while being cloned, and other Apps can share their Git repositories with existing Apps. We recommend that Apps have their own dedicated Git repository, but there are some instances where it's desirable to share Git repositories between Apps (for example, where a Basic Web App and a Cordova App share extremely similar source) - in these cases, Apps can share repositories and choose to elect folders within a shared repo to be used for Building, Previewing and Deploying.
+
+[[projects-connections]]
+== Connections
+
+The connections section provides an overview of Binaries built in the selected project, along with running Cloud code. A project contains both Client Apps, and Cloud Apps. A Connection dictates which Cloud Instance a Client App points towards. A connection will point towards a particular Cloud App in a given environment. The Dashboard provides an overview of connections that are present in all environments. From the dashboard, users can see how each Client App is connected to a Cloud Instance. Connections between Client Apps and Cloud Apps can be reconfigured or disabled as often as you like.
+
+[[sdk-config]]
+=== SDK Config
+
+When a connection between a Client App and a Cloud Instance is created, an SDK configuration file is generated. Selecting the `SDK Config` option displays this config file. The contents of this file can be copied and pasted into your Client Apps `fhconfig.json` file in order to instruct the Client App to use that particular Connection.
+
+[[reconfiguring-a-connection]]
+=== Reconfiguring a connection
+
+Connections can be reconfigured to allow a Client App to communicate with a different Cloud Instance. Cloud connections are refreshed by Apps upon startup.
+
+[[disabling-a-connection]]
+=== Disabling a Connection
+
+This removes the connection between a Client App and a Cloud Instance. This may be necessary if a new App has been added to a project and an update is required. Disabling a connection can cause a Client App to stop functioning. It is possible to send a message to clients informing them of a connection being disabled.
+
+[[git-quickstart]]
+== Git QuickStart
+
+The Git QuickStart page shows how to access Client and Cloud code of an App on your local system by using Git. To access your project from your computer, you must first clone the repository. Cloning a repository creates an exact copy of an existing repository. All versions of all files in project are pulled down when a 'git clone' is performed. However before you can clone a repository, you need to upload your SSH Public Key. Once a Public Key has been uploaded, repositories can be cloned at will.
+
+For more information regarding cloning a Git repository, see the Git Documentation on http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository[Getting started with Git^].
+
+For a more in-depth list of useful Git commands, see http://git-scm.com/docs[Git Reference^].
+
+[[lifecycle-management]]
+== Lifecycle Management
+
+A Project typically starts as a single App (for example, a Cordova App) and a Cloud App (for example, Node.js Application).
+As a Project progresses, it goes through various stages, that is, a Project Lifecycle.
+Every Project moves at a different pace, and grows & varies in composition over time.
+The goal of the Lifecycle Management Dashboard is to make this process easier for both the developer(s) and the project manager.
+
+The Dashboard provides a snapshot view of a Project at the current point in time.
+All Apps are represented by a row on the dashboard.
+Each Environment corresponds to a column on the dashboard.
+This grid can give a quick overview of the stage that each part of the Project is in, without having to consult with each team member.
+
+If an App has been built, the most recent build will be shown in the column that represents the Environment it is targeting a Cloud App in.
+The App binary can be downloaded from here, or rebuilt from a different git branch or tag.
+The 'Promote' option is a shortcut to rebuild the same code, but connect it to a different Cloud App Environment.
+
+If a Cloud App has been deployed, the most recent deploy details and status will be shown in the corresponding Environment column.
+The Cloud App code can be deployed (or redeployed) to any available Environment.
+The 'Promote' option for Cloud Apps is a shortcut to deploy an already deployed git branch or tag to a different Environment.
+
+NOTE: Any App binary builds done outside the platform will not be reflected on the Lifecycle Management Dashboard.
+
+[[forms]]
+== Forms
+
+The Forms configuration page allows users to both associate Forms and Themes with a Project, and also configure Client Side AppForms settings. Users can manage settings relating to Camera Settings, Submissions, Admin Users, Client Logging, and Cloud Logging.
+
+Submissions associated with a project can also be viewed from this page.
+
+NOTE: If a user does not have sufficient privileges, they will not be able to view submissions. For more information regarding user roles, see the xref:user-roles[Administration Documentation].
+
+[[reporting]]
+== Reporting
+
+NOTE: The Reporting data is generated once per day.
+
+The reporting section offers high level graphical representation of analytical information for both Client and Cloud Apps in a given project. Users can access a variety of information, such as how many Device Installs were performed, how many App Startups occurred, and more. Any one of these areas can be further investigated to access analytical information based on Date, Platform, and Location.
+
+In Studio, this information is represented via a number of different graphs. Date specific data is represented by a line graph. This allows users to see a breakdown of App activity for a specific date range. Users can see the volume of activity for any given date in the range. For example, users could see how many Cloud Requests were performed on any given date in a date range.
+
+The donut graph shows a breakdown of activity per platform. For example, the number of installs performed per platform inside a specified date range. Location specific data is represented on a Geographical map. This provides users with a breakdown of App activity based on geographical location. Each graph has a corresponding legend. Hovering the cursor over any of these charts will provide more info on the corresponding value in the legend.
+
+The date range from which the data is gathered can be altered. Predefined ranges display information based on the 'Last 7 Days', 'Last 30 Days', and 'Previous Month', however if none of these are applicable, it is also possible to manually select a start and end date for the Range. This enables users to retrieve App data for a specific date range by simply selecting a data category, and then entering a date range.
+
+[[settings]]
+== Settings
+
+From the Project Settings page, projects can be renamed or deleted.
+
+[[deleting-a-project]]
+=== Deleting a project
+
+Once a project is deleted, it can not be undone. All Git repositories, Client Apps, and Cloud Apps will be removed. Any Apps that are associated with the project will no longer function.
+
+[[renaming-a-project]]
+=== Renaming a project
+
+Here a project can be renamed.

@@ -1,0 +1,31 @@
+// include::shared/attributes.adoc[]
+
+
+[[androido]]
+== Android O
+
+//Info obtained from: https://developer.android.com/studio/releases/index.html?utm_campaign=android_update_releasenotes_101217&utm_source=anddev&utm_medium=yt-desc
+Android O allows you to use certain Java 8 language features and consume libraries built with Java 8:
+
+* xref:lambda-expressions[Lambdas]
+* link:https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html[Method references]
+* Default and static interface methods
+* link:https://docs.oracle.com/javase/tutorial/java/annotations/repeating.html[Type and repeating annotations]
+* link:https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html[Java 7 'Try-with-resources' feature on all API levels]
+
+NOTE: As Jack is no longer required, link:https://developer.android.com/studio/write/java8-support.html#disable_jack[disable Jack] to use the improved Java 8 support built into the default toolchain.
+
+For more information, see link:https://developer.android.com/studio/write/java8-support.html[Use Java 8 Language Features].
+
+[[migrating-to-androido]]
+=== Migrating Apps to Android O
+
+To migrate your app to Android O:
+
+//Info obtained from: https://developer.android.com/studio/build/gradle-plugin-3-0-0-migration.html#update_gradle
+NOTE: Android plugin 3.0.0 requires Gradle version 4.1 or higher. For more information, see link:https://developer.android.com/studio/build/gradle-plugin-3-0-0-migration.html#update_gradle[Update Gradle version].
+
+. Make sure your code is working before migrating.
+. Update the fh-android-sdk dependency to `3.3.0` in your package management software.
+. Update the build tools and target APIs in the `AndroidManifest` and `build.gradle` files to API level 24.
+. Build your app locally and validate that everything is working.

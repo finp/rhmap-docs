@@ -1,0 +1,77 @@
+// include::shared/attributes.adoc[]
+
+[[create-a-form-theme]]
+= Create a Form Theme
+
+.Overview
+This tutorial will cover how to:
+
+* Create a Drag & Drop Apps theme
+
+Themes allow designers to customize the visual appearance of a Form.
+
+.Requirements
+* App Studio Account
+
+[[tutorial-theme]]
+== Tutorial
+
+[[create-a-theme-from-scratch]]
+=== Create a theme from scratch
+
+. Log in to the Studio using your credentials.
+. Click on the `Forms` tab and select `Themes` from the sub-navigation. +
+  If no themes have been created, or the current user does not have sufficient priviliges to view the already created themes, the themes list will appear blank. If there are already themes created, then the themes list will be populated. Listed, is the name of the theme, the date it was last modified, the user that created the theme, and Projects currently using this theme.
+
+. In order to create a new theme, click on the `New Theme` button. +
+  The theme creation screen will be displayed. The option to select a template will be presented. In order to create a theme from scratch, do not select any template.
+. Enter the name of the theme. +
+  You can also enter a description for the theme, however this is not mandatory.
+. Click `Create`. 
++
+NOTE: Leaving the name field blank will result in an error being displayed. All themes require a name.
+
+. Select the newly created theme from the list. +
+  A preview of the theme will automatically load. This will show various aspects of the theme configuration, such as logos used, fonts, colours etc.
+
+[[create-a-theme-from-a-template]]
+=== Create a theme from a template
+
+When creating a theme, users can choose to create a theme from scratch, or choose a theme from an existing template. Using an existing theme can be useful for developers, as it is far less time consuming to modify an existing theme rather than create a theme from scratch.
+
+. In order to use a template, click on the `Forms` tab, and select `Themes` from the sub-navigation.
+. Select `New Theme`. +
+  This will display the theme creation screen. From here you can create a theme from scratch, or select a theme from a list of templates. Selecting a template will display a preview of the theme. Here, customization settings such as colour schemes, logos, typography etc. can be seen. 
+  
+. Choose a template.
+
+. Enter a theme name and a optionally a theme description.
+
+. Select `Create Theme`.
+
+The theme has now been successfully created based off of an existing template, and is ready to be associated with an App.
+
+[[editing-the-theme]]
+== Editing a Theme
+
+Select `Edit` from the sidebar. This will produce a similar screen, however you will now be able to change the values for the various sections of the theme.
+
+////
+maybe this general theme info below should be moved to the product features section for Drag & Drop Apps, rather than in this tutorial
+////
+
+.Logo
+Users can upload their own logo via the file upload option in the Logo section. Any image to be used as a logo must be in the .jpeg format.
+
+.Backgrounds
+In the background section, users can change background colours for different sections of the theme. a colour can be changed by clicking the coloured circle above a section name, and then selecting a colour from the picker. The update will take place once the colour picker has been closed.
+
+.Typography
+The Typography section allows for the customization of font size, type, and text decorations. The colour of a selected field can also be changed by clicking on the coloured square beside the section title. Clicking the coloured square displays a colour picker.
+
+.Borders
+Here customizations can be made to the border sections of a theme. Users can make customizations based on colour, border type and border width.
+
+NOTE: To get a preview of how changes made to the various sections affect the theme select a form from the dropdown menu and preview it in the simulator.
+
+When you are happy with the customization of the theme, click the `Save` button at the bottom of the screen. This will save the theme and return you to the Themes page.

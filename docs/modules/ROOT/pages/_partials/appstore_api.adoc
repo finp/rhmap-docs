@@ -1,0 +1,1612 @@
+// include::shared/attributes.adoc[]
+
+[[mobile-app-management-api]]
+= Mobile App Management API
+
+[[mobile-app-management-api-read-app-store-admin]]
+== Read App Store
+
+[[mobile-app-management-api-description]]
+=== Description
+
+Read details of the app store.
+
+[[mobile-app-management-api-endpoint]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/appstore/read
+
+* method - POST
+
+[[mobile-app-management-api-request-body]]
+=== Request Body
+
+N/A
+
+[[mobile-app-management-api-response-body]]
+=== Response Body
+
+[[mobile-app-management-api-success]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "guid": "<app_store_global_unique_id>",
+  "name": "<app_store_name>",
+  "description": "<app_store_description>",
+  "icon":"<base64_String>"
+  "storeitems": ["store_item_global_unique_id_1", "store_item_global_unique_id_2", ... "store_item_global_unique_id_N"],
+  "authpolicies":["active_policy_ids"]
+}
+----
+
+[[mobile-app-management-api-error]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-update-app-store-admin]]
+== Update App Store
+
+[[mobile-app-management-api-description-1]]
+=== Description
+
+Update details of the app store
+
+[[mobile-app-management-api-endpoint-1]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/appstore/update
+
+* method - POST
+
+[[mobile-app-management-api-request-body-1]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "name": "<app_store_name>", /*optional*/
+  "description": "<app_store_description>" /*optional*/
+  "storeitems":["store_item_global_unique_id_1"] /*optional*/
+  "authpolicies":[policy_ids]
+}
+----
+
+[[mobile-app-management-api-response-body-1]]
+=== Response Body
+
+[[mobile-app-management-api-success-1]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "guid": "<app_store_global_unique_id>",
+  "name": "<app_store_name>",
+  "description": "<app_store_description>"
+  "icon":"<base64_string>"
+  "storeitems": ["store_item_global_unique_id_1", "store_item_global_unique_id_2", ... "store_item_global_unique_id_N"],
+  "authpolicies":[active_policy_ids]
+}
+----
+
+[[mobile-app-management-api-error-1]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-add-storeitem-to-app-store-admin]]
+== Add StoreItem to App Store
+
+[[mobile-app-management-api-description-2]]
+=== Description
+
+Add an existing Store Item to the store, making it visible in the store.
+
+[[mobile-app-management-api-endpoint-2]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/appstore/additem
+
+* method - POST
+
+[[mobile-app-management-api-request-body-2]]
+=== Request Body
+
+[source,javascript]
+----
+{"guid":"<unique_store_item_id>"}
+----
+
+[[mobile-app-management-api-response-body-2]]
+=== Response Body
+
+[[mobile-app-management-api-success-2]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status":"ok"
+}
+----
+
+[[mobile-app-management-api-error-2]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-remove-storeitem-to-app-store-admin]]
+== Remove StoreItem to App Store
+
+[[mobile-app-management-api-description-3]]
+=== Description
+
+Remove existing Store Item from the store, making it invisible in the store.
+
+[[mobile-app-management-api-endpoint-3]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/appstore/removeitem
+
+* method - POST
+
+[[mobile-app-management-api-request-body-3]]
+=== Request Body
+
+[source,javascript]
+----
+{"guid":"<unique_store_item_id>"}
+----
+
+[[mobile-app-management-api-response-body-3]]
+=== Response Body
+
+[[mobile-app-management-api-success-3]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status":"ok"
+}
+----
+
+[[mobile-app-management-api-error-3]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-upload-app-store-icon-admin]]
+== Upload App Store Icon
+
+[[mobile-app-management-api-description-4]]
+=== Description
+
+Add an icon for your store.
+
+[[mobile-app-management-api-endpoint-4]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/appstore/uploadbinary
+
+* method - POST
+
+[[mobile-app-management-api-request-body-4]]
+=== Request Body
+
+Multipart request with the image.
+
+[[mobile-app-management-api-response-body-4]]
+=== Response Body
+
+[[mobile-app-management-api-success-4]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "guid": "<app_store_global_unique_id>",
+  "name": "<app_store_name>",
+  "description": "<app_store_description>"
+  "icon":"<base64_string>"
+  "storeitems": ["store_item_global_unique_id_1", "store_item_global_unique_id_2", ... "store_item_global_unique_id_N"],
+  "authpolicies":[active_policy_ids]
+}
+----
+
+[[mobile-app-management-api-error-4]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-list-store-items-in-app-store-admin]]
+== List Store Items In App Store
+
+[[mobile-app-management-api-description-5]]
+=== Description
+
+List the current items in the App Store. The "binaries" fields are defined in the xref:mobile-app-management-api-binaries-field[Binaries Options].
+
+[[mobile-app-management-api-endpoint-5]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/appstore/liststoreitems
+* method - POST
+
+[[mobile-app-management-api-request-body-5]]
+=== Request Body
+
+[source,javascript]
+----
+{}
+----
+
+[[mobile-app-management-api-response-body-5]]
+=== Response Body
+
+[[mobile-app-management-api-success-5]]
+==== Success
+
+[source,javascript]
+----
+{
+  "list": [
+    {
+      "authToken": "<unique id for auth>",
+      "authpolicies": [unique_policy_ids],
+      "binaries": [
+        {
+          "config": {
+                      "bundle_id": "<ios_bundle_id>"
+          },
+          "storeItemBinaryVersion": 2,
+          "sysModified": "Fri Nov 02 10:06:48 GMT 2012",
+          "type": "iphone | android | ios | ipad",
+          "url": "http://<domain>/box/srv/1.1/mas/storeitem/install?guid=dweFfHihI616y67aQB4sNGQt",
+          "versions": [{
+                      "config": {},
+                      "destinationCode": "iphone | android | ios | ipad",
+                      "storeItemBinaryGuid": "Y8a8lFjFufZyqd1tAdjonufw",
+                      "storeItemBinaryModified": "Fri Nov 02 10:44:45 GMT 2012",
+                      "storeItemBinaryVersion": 1,
+                      "url": "http://<domain>/box/srv/1.1/mas/storeitem/downloadvers?guid=o1Z1S_t-hyGMXymqTzIWS4xd"
+          }]
+        }
+      ],
+      "description": "description",
+      "guid": "<unique_id>",
+      "icon": "<base64_string>",
+      "name": "<string_item_name>"
+    }
+  ],
+  "status": "ok"
+}
+----
+
+[[mobile-app-management-api-error-5]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-binaries-options]]
+=== Options
+
+[[mobile-app-management-api-binaries-field]]
+==== Binaries field
+
+The binaries field is an array of information about the currently uploaded Store Item Binaries. It consists of :
+
+* *config* - a field for any extra OS related configuraton. For example, the ios bundle id.
+* *storeItemBinaryVersion* - The current store item binary version number.
+* *sysModified* - The last modified date of this store item binary.
+* *type* - The store item binary type.
+* *url* - You can use this url to download the latest version this store item binary.
+* *versions* - An array containing a history of older Store Item Binaries (a maximum of 4 entries is kept).
+
+[[mobile-app-management-api-add-auth-policy-admin]]
+== Add Auth Policy
+
+[[mobile-app-management-api-description-6]]
+=== Description
+
+Add an Auth policy to be used with the appstore.
+
+[[mobile-app-management-api-endpoint-6]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/appstore/addpolicy
+
+* method POST
+
+[[mobile-app-management-api-request-body-6]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid":"<policy_id>"
+}
+----
+
+[[mobile-app-management-api-response-body-6]]
+=== Response Body
+
+[[mobile-app-management-api-success-6]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok"
+}
+----
+
+[[mobile-app-management-api-error-6]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-remove-store-auth-policy-admin]]
+== Remove Store Auth Policy
+
+[[mobile-app-management-api-description-7]]
+=== Description
+
+Remove an Auth policy from being used in with the appstore.
+
+[[mobile-app-management-api-endpoint-7]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/appstore/removepolicy
+
+* method POST
+
+[[mobile-app-management-api-request-body-7]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid":"<policy_id>"
+}
+----
+
+[[mobile-app-management-api-response-body-7]]
+=== Response Body
+
+[[mobile-app-management-api-success-7]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok"
+}
+----
+
+[[mobile-app-management-api-error-7]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-list-auth-policies-admin]]
+== List Auth Policies
+
+[[mobile-app-management-api-description-8]]
+=== Description
+
+List the policies attached to the appstore.
+
+[[mobile-app-management-api-endpoint-8]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/appstore/listpolicies
+
+* method POST
+
+[[mobile-app-management-api-request-body-8]]
+=== Request Body
+
+[source,javascript]
+----
+{}
+----
+
+[[mobile-app-management-api-response-body-8]]
+=== Response Body
+
+[[mobile-app-management-api-success-8]]
+==== Success
+
+[source,javascript]
+----
+{
+  "list": [
+    "ORF5SiIH623yYmBD1ftlFOA4"
+  ],
+  "status": "ok"
+}
+----
+
+[[mobile-app-management-api-error-8]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-create-app-store-item-admin]]
+== Create App Store Item
+
+[[mobile-app-management-api-description-9]]
+=== Description
+
+Create an app store item.
+
+[[mobile-app-management-api-endpoint-9]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/storeitem/create
+
+* method - POST
+
+NOTE: The icon is uploaded after the item is created. The item will be created with a no icon.
+
+[[mobile-app-management-api-request-body-9]]
+=== Request Body
+
+[source,javascript]
+----
+  {
+    "name" : String,
+    "description": String <optional>,
+    "authToken":String <optional>
+  }
+----
+
+[[mobile-app-management-api-response-body-9]]
+=== Response Body
+
+[source,javascript]
+----
+{
+  "status": "ok",
+    "guid": "<app_store_global_unique_id>",
+    "name": "<app_store_name>",
+    "description": "<app_store_description>",
+    "authToken": "<unique_token_used_by_client_to_autheticate>",
+    "icon": "<base_64_encoded_icon_data>",
+    "binaries": [
+      {
+        "config": {
+          "bundle_id": "<ios_bundle_id>"
+        },
+        "storeItemBinaryVersion": 2,
+        "sysModified": "Fri Nov 02 10:06:48 GMT 2012",
+        "type": "iphone | android | ios | ipad",
+        "url": "http://<domain>/box/srv/1.1/mas/storeitem/install?guid=dweFfHihI616y67aQB4sNGQt",
+        "versions": [{
+            "config": {},
+            "destinationCode": "iphone | android | ios | ipad",
+            "storeItemBinaryGuid": "Y8a8lFjFufZyqd1tAdjonufw",
+            "storeItemBinaryModified": "Fri Nov 02 10:44:45 GMT 2012",
+            "storeItemBinaryVersion": 1,
+            "url": "http://<domain>/box/srv/1.1/mas/storeitem/downloadvers?guid=o1Z1S_t-hyGMXymqTzIWS4xd"
+          }]
+      }
+  ],
+  "authpolicies": [<unique_policy_id>],
+  "restrictToGroups": true|false,
+  "groups": ["<store_item_group_id>",...]
+}
+----
+
+[[mobile-app-management-api-error-9]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-read-app-store-item-admin]]
+== Read App Store Item
+
+[[mobile-app-management-api-description-10]]
+=== Description
+
+Read details of a store item.
+
+[[mobile-app-management-api-endpoint-10]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/storeitem/read
+
+* method - POST
+
+[[mobile-app-management-api-request-body-10]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid":String
+}
+----
+
+[[mobile-app-management-api-response-body-10]]
+==== Response Body
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "guid": "<app_store_global_unique_id>",
+  "name": "<app_store_name>",
+  "description": "<app_store_description>",
+  "authToken": "<unique_token_used_by_client_to_autheticate>",
+  "icon": "<base_64_encoded_icon_data">,
+  "binaries": [
+    {
+      "config": {
+        "bundle_id": "<ios_bundle_id>"
+      },
+        "storeItemBinaryVersion": 2,
+        "sysModified": "Fri Nov 02 10:06:48 GMT 2012",
+        "type": "iphone | android | ios | ipad",
+        "url": "http://<domain>/box/srv/1.1/mas/storeitem/install?guid=dweFfHihI616y67aQB4sNGQt",
+        "versions": [{
+          "config": {},
+          "destinationCode": "iphone | android | ios | ipad",
+          "storeItemBinaryGuid": "Y8a8lFjFufZyqd1tAdjonufw",
+          "storeItemBinaryModified": "Fri Nov 02 10:44:45 GMT 2012",
+          "storeItemBinaryVersion": 1,
+          "url": "http://<domain>/box/srv/1.1/mas/storeitem/downloadvers?guid=o1Z1S_t-hyGMXymqTzIWS4xd"
+        }]
+    }],
+  "authpolicies": [<unique_policy_id>],
+  "restrictToGroups": true|false,
+  "groups": [<store_item_group_id>]
+}
+----
+
+[[mobile-app-management-api-error-10]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-update-item-admin]]
+== Update Item
+
+[[mobile-app-management-api-endpoint-11]]
+=== Endpoint
+
+* /box/srv/1.1/admin/storeitem/update
+
+* method POST
+
+[[mobile-app-management-api-request-body-11]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "name": String,
+  "description": String,
+  "authToken": String,
+  "restrictToGroups": true|false // optional - will not change if not set
+}
+----
+
+[[mobile-app-management-api-response-body-11]]
+=== Response Body
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "guid": "<app_store_global_unique_id>",
+  "name": "<app_store_name>",
+  "description": "<app_store_description>",
+  "authToken": "<unique_token_used_by_client_to_autheticate>",
+  "icon": "<base_64_encoded_icon_data>",
+  "binaries": [
+    {
+      "config": {
+        "bundle_id": "<ios_bundle_id>"
+      },
+        "storeItemBinaryVersion": 2,
+        "sysModified": "Fri Nov 02 10:06:48 GMT 2012",
+        "type": "iphone | android | ios | ipad",
+        "url": "http://<domain>/box/srv/1.1/mas/storeitem/install?guid=dweFfHihI616y67aQB4sNGQt",
+        "versions": [{
+          "config": {},
+          "destinationCode": "iphone | android | ios | ipad",
+          "storeItemBinaryGuid": "Y8a8lFjFufZyqd1tAdjonufw",
+          "storeItemBinaryModified": "Fri Nov 02 10:44:45 GMT 2012",
+          "storeItemBinaryVersion": 1,
+          "url": "http://<domain>/box/srv/1.1/mas/storeitem/downloadvers?guid=o1Z1S_t-hyGMXymqTzIWS4xd"
+        }]
+    }],
+  "authpolicies": [<unique_policy_id>],
+  "restrictToGroups": true|false,
+  "groups": ["<store_item_group_id>",...]
+}
+----
+
+[[mobile-app-management-api-error-11]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-delete-app-store-item-admin]]
+== Delete App Store Item
+
+[[mobile-app-management-api-endpoint-12]]
+=== Endpoint
+
+* /box/srv/1.1/admin/storeitem/delete
+
+* method POST
+
+[[mobile-app-management-api-request-body-12]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid" : "unique store item id"
+}
+----
+
+[[mobile-app-management-api-respose-body]]
+=== Respose Body
+
+[source,javascript]
+----
+{
+  "status":"ok"
+}
+----
+
+[[mobile-app-management-api-error-12]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-list-app-store-items-admin]]
+== List App Store Items
+
+[[mobile-app-management-api-description-11]]
+=== Description
+
+List items in an app store.
+
+[[mobile-app-management-api-endpoint-13]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/storeitem/list
+
+* method - POST
+
+[[mobile-app-management-api-request-body-13]]
+=== Request Body
+
+[source,javascript]
+----
+  {}
+----
+
+[[mobile-app-management-api-response-body-12]]
+=== Response Body
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "list":[
+    {
+      "guid": "<app_store_global_unique_id>",
+      "name": "<app_store_name>",
+      "description": "<app_store_description>",
+      "authToken": "<unique_token_used_by_client_to_autheticate>",
+      "icon": "<base_64_encoded_icon_data>",
+      "binaries": [
+      {
+        "config": {
+          "bundle_id": "<ios_bundle_id>"
+        },
+        "storeItemBinaryVersion": 2,
+        "sysModified": "Fri Nov 02 10:06:48 GMT 2012",
+        "type": "iphone | android | ios | ipad",
+        "url": "http://<domain>/box/srv/1.1/mas/storeitem/install?guid=dweFfHihI616y67aQB4sNGQt",
+          "versions": [{
+            "config": {},
+            "destinationCode": "iphone | android | ios | ipad",
+            "storeItemBinaryGuid": "Y8a8lFjFufZyqd1tAdjonufw",
+            "storeItemBinaryModified": "Fri Nov 02 10:44:45 GMT 2012",
+            "storeItemBinaryVersion": 1,
+            "url": "http://<domain>/box/srv/1.1/mas/storeitem/downloadvers?guid=o1Z1S_t-hyGMXymqTzIWS4xd"
+          }]
+      }],
+      "authpolicies": [<unique_policy_id>],
+      "restrictToGroups": true|false,
+      "groups": ["<store_item_group_id>",...]
+    }
+  ]
+}
+----
+
+[[mobile-app-management-api-error-13]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-upload-binary-admin]]
+== Upload Binary
+
+[[mobile-app-management-api-endpoint-14]]
+=== Endpoint
+
+* /box/srv/1.1/admin/storeitem/uploadbinary
+
+* method POST
+
+* file sent as multipart request
+
+[[mobile-app-management-api-request-body-14]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid":"String",
+  "type":"<icon|ios|ipad|iphone|android>"
+}
+----
+
+[[mobile-app-management-api-response]]
+=== Response
+
+[source,javascript]
+----
+{
+  "status": "ok"
+  "list":[
+    {
+      "guid": "<app_store_global_unique_id>",
+      "name": "<app_store_name>",
+      "description": "<app_store_description>",
+      "authToken": "<unique_token_used_by_client_to_autheticate>",
+      "icon": "<base_64_encoded_icon_data>",
+      "binaries": [
+      {
+        "config": {
+          "bundle_id": "<ios_bundle_id>"
+        },
+        "storeItemBinaryVersion": 2,
+        "sysModified": "Fri Nov 02 10:06:48 GMT 2012",
+        "type": "iphone | android | ios | ipad",
+        "url": "http://<domain>/box/srv/1.1/mas/storeitem/install?guid=dweFfHihI616y67aQB4sNGQt",
+          "versions": [{
+            "config": {},
+            "destinationCode": "iphone | android | ios | ipad",
+            "storeItemBinaryGuid": "Y8a8lFjFufZyqd1tAdjonufw",
+            "storeItemBinaryModified": "Fri Nov 02 10:44:45 GMT 2012",
+            "storeItemBinaryVersion": 1,
+            "url": "http://<domain>/box/srv/1.1/mas/storeitem/downloadvers?guid=o1Z1S_t-hyGMXymqTzIWS4xd"
+          }]
+      }],
+      "authpolicies": [<unique_policy_id>],
+      "restrictToGroups": true|false,
+      "groups": ["<store_item_group_id>",...]
+    }
+  ]
+}
+----
+
+[[mobile-app-management-api-error-14]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-add-auth-policy-admin-1]]
+== Add Auth Policy
+
+[[mobile-app-management-api-endpoint-15]]
+=== Endpoint
+
+* /box/srv/1.1/admin/storeitem/addpolicy
+
+* method POST
+
+[[mobile-app-management-api-request-body-15]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid":"<store_item_id>",
+  "authguid":"<policy_id>"
+}
+----
+
+[[mobile-app-management-api-response-body-13]]
+=== Response Body
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "list":[
+    {
+      "guid": "<app_store_global_unique_id>",
+      "name": "<app_store_name>",
+      "description": "<app_store_description>",
+      "authToken": "<unique_token_used_by_client_to_autheticate>",
+      "icon": "<base_64_encoded_icon_data>",
+      "binaries": [
+      {
+        "config": {
+          "bundle_id": "<ios_bundle_id>"
+        },
+        "storeItemBinaryVersion": 2,
+        "sysModified": "Fri Nov 02 10:06:48 GMT 2012",
+        "type": "iphone | android | ios | ipad",
+        "url": "http://<domain>/box/srv/1.1/mas/storeitem/install?guid=dweFfHihI616y67aQB4sNGQt",
+          "versions": [{
+            "config": {},
+            "destinationCode": "iphone | android | ios | ipad",
+            "storeItemBinaryGuid": "Y8a8lFjFufZyqd1tAdjonufw",
+            "storeItemBinaryModified": "Fri Nov 02 10:44:45 GMT 2012",
+            "storeItemBinaryVersion": 1,
+            "url": "http://<domain>/box/srv/1.1/mas/storeitem/downloadvers?guid=o1Z1S_t-hyGMXymqTzIWS4xd"
+          }]
+      }],
+      "authpolicies": [<unique_policy_id>],
+      "restrictToGroups": true|false,
+      "groups": ["<store_item_group_id>",...]
+    }
+  ]
+}
+----
+
+[[mobile-app-management-api-error-15]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-remove-store-item-auth-policy-admin]]
+== Remove Store Item Auth Policy
+
+[[mobile-app-management-api-endpoint-16]]
+=== Endpoint
+
+* /box/srv/1.1/admin/storeitem/removepolicy
+
+* method POST
+
+[[mobile-app-management-api-request-body-16]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid":"<store_item_id>",
+  "authguid":"<policy_id>"
+}
+----
+
+[[mobile-app-management-api-response-body-14]]
+=== Response Body
+
+[source,javascript]
+----
+{
+  "status": "ok"
+  "list":[
+    {
+      "guid": "<app_store_global_unique_id>",
+      "name": "<app_store_name>",
+      "description": "<app_store_description>",
+      "authToken": "<unique_token_used_by_client_to_autheticate>",
+      "icon": "<base_64_encoded_icon_data>",
+      "binaries": [
+      {
+        "config": {
+          "bundle_id": "<ios_bundle_id>"
+        },
+        "storeItemBinaryVersion": 2,
+        "sysModified": "Fri Nov 02 10:06:48 GMT 2012",
+        "type": "iphone | android | ios | ipad",
+        "url": "http://<domain>/box/srv/1.1/mas/storeitem/install?guid=dweFfHihI616y67aQB4sNGQt",
+          "versions": [{
+            "config": {},
+            "destinationCode": "iphone | android | ios | ipad",
+            "storeItemBinaryGuid": "Y8a8lFjFufZyqd1tAdjonufw",
+            "storeItemBinaryModified": "Fri Nov 02 10:44:45 GMT 2012",
+            "storeItemBinaryVersion": 1,
+            "url": "http://<domain>/box/srv/1.1/mas/storeitem/downloadvers?guid=o1Z1S_t-hyGMXymqTzIWS4xd"
+          }]
+      }],
+      "authpolicies": [<unique_policy_id>],
+      "restrictToGroups": true|false,
+      "groups": ["<store_item_group_id>",...]
+    }
+  ]
+}
+----
+
+[[mobile-app-management-api-error-16]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-get-binary-config-admin]]
+== Get Binary Config
+
+[[mobile-app-management-api-endpoint-17]]
+=== Endpoint
+
+* /box/srv/1.1/admin/storeitem/getbinaryconfig
+
+* method POST | GET
+
+[[mobile-app-management-api-request-body-17]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid":"<store_item_guid>",
+  "type":"<ios|ipad|iphone|android>"
+}
+----
+
+[[mobile-app-management-api-response-1]]
+=== Response
+
+[source,javascript]
+----
+{
+  "status":"ok"
+  "guid":"<store_item_guid>",
+  "type": "<ios|iphone|ipad|android>",
+  "config": {
+    "<config_key>": "<config_value>"
+  }
+}
+----
+
+[[mobile-app-management-api-error-17]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-set-binary-config-admin]]
+== Set Binary Config
+
+[[mobile-app-management-api-endpoint-18]]
+=== Endpoint
+
+* /box/srv/1.1/admin/storeitem/setbinaryconfig
+
+* method POST
+
+[[mobile-app-management-api-request-body-18]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid":"<store_item_guid>",
+  "type":"<ios|ipad|iphone|android>",
+  "config": {
+    "<config_key>": "<config_value>"
+   }
+ }
+----
+
+[[mobile-app-management-api-response-2]]
+=== Response
+
+[source,javascript]
+----
+{
+  "status":"ok"
+  "guid":"<store_item_guid>",
+  "type": "<ios|iphone|ipad|android>",
+  "config": {
+    "<config_key>": "<config_value>"
+  }
+}
+----
+
+[[mobile-app-management-api-error-18]]
+=== Error
+
+[[mobile-app-management-api-possible-error-messages]]
+==== Possible error messages:
+
+* invalid_type
+
+* invalid_guid
+
+[[mobile-app-management-api-add-storeitem-groups-admin]]
+== Add StoreItem Groups
+
+[[mobile-app-management-api-endpoint-19]]
+=== Endpoint
+
+* /box/srv/1.1/admin/storeitem/addgroups
+
+* method POST
+
+[[mobile-app-management-api-request-body-19]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid":"<store_item_id>",
+  "groups": ["<store_item_group_id>",...]
+}
+----
+
+[[mobile-app-management-api-response-body-15]]
+=== Response Body
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "list":[
+    {
+      "guid": "<app_store_global_unique_id>",
+      "name": "<app_store_name>",
+      "description": "<app_store_description>",
+      "authToken": "<unique_token_used_by_client_to_autheticate>",
+      "icon": "<base_64_encoded_icon_data>",
+      "binaries": [
+      {
+        "config": {
+          "bundle_id": "<ios_bundle_id>"
+        },
+        "storeItemBinaryVersion": 2,
+        "sysModified": "Fri Nov 02 10:06:48 GMT 2012",
+        "type": "iphone | android | ios | ipad",
+        "url": "http://<domain>/box/srv/1.1/mas/storeitem/install?guid=dweFfHihI616y67aQB4sNGQt",
+          "versions": [{
+            "config": {},
+            "destinationCode": "iphone | android | ios | ipad",
+            "storeItemBinaryGuid": "Y8a8lFjFufZyqd1tAdjonufw",
+            "storeItemBinaryModified": "Fri Nov 02 10:44:45 GMT 2012",
+            "storeItemBinaryVersion": 1,
+            "url": "http://<domain>/box/srv/1.1/mas/storeitem/downloadvers?guid=o1Z1S_t-hyGMXymqTzIWS4xd"
+          }]
+      }],
+      "authpolicies": [<unique_policy_id>],
+      "restrictToGroups": true|false,
+      "groups": ["<store_item_group_id>",...]
+    }
+  ]
+}
+----
+
+[[mobile-app-management-api-error-19]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-remove-storeitem-groups-admin]]
+== Remove StoreItem Groups
+
+[[mobile-app-management-api-endpoint-20]]
+=== Endpoint
+
+* /box/srv/1.1/admin/storeitem/removegroups
+
+* method POST
+
+[[mobile-app-management-api-request-body-20]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid":"<store_item_id>",
+  "groups": ["<store_item_group_id>",...]
+}
+----
+
+[[mobile-app-management-api-response-body-16]]
+=== Response Body
+
+[source,javascript]
+----
+{
+  "guid": "<app_store_global_unique_id>",
+  "name": "<app_store_name>",
+  "description": "<app_store_description>",
+  "authToken": "<unique_token_used_by_client_to_autheticate>",
+  "icon": "<base_64_encoded_icon_data">,
+  "binaries": [
+    {
+      "type": "<ios|iphone|ipad|android>",
+      "url": "<url_to_app_binary">
+    }
+  ],
+  "authpolicies": [<unique_policy_id>],
+  "restrictToGroups": true|false,
+  "groups": ["<store_item_group_id>",...]
+}
+----
+
+[[mobile-app-management-api-error-20]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-list-audit-log-entries-admin]]
+== List Audit Log entries
+
+[[mobile-app-management-api-description-12]]
+=== Description
+
+Get a list of the Audit Log entries.
+
+[[mobile-app-management-api-endpoint-21]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/auditlog/listlogs
+
+* method - POST | GET
+
+[[mobile-app-management-api-auth]]
+=== Auth
+
+Restricted - requires sessionId as header.
+
+....
+X-FH-AUTH-SESSION: "<sessionId_returned_from_fh.auth_call>"
+....
+
+[[mobile-app-management-api-request-body-21]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "userId":"<unique user guid>",
+  "storeItemGuid":"<store_item_global_unique_id>",
+  "storeItemBinaryType":"ios | iphone | ipad | android",
+  "limit":"10 | 100 | 1000"
+}
+----
+
+[[mobile-app-management-api-response-body-17]]
+=== Response Body
+
+[[mobile-app-management-api-success-9]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "list": [{
+    "deviceId":"<device_global_unique_id>",
+    "domain":"<domain name>",
+    "guid":"<audit_log_entry_global_unique_id>_RA2E11wCdS>",
+    "ipAddress":"<downloading host ip address>",
+    "storeItemBinaryGuid":"<store item binary guid>",
+    "storeItemBinaryType":"<store item binary type>",
+    "storeItemBinaryVersion":"<store item binary version>",
+    "storeItemGuid":"<store_item_global_unique_id>",
+    "storeItemTitle":"<store item title>",
+    "sysCreated":"<audit log creation time>",
+    "sysVersion":"<version>",
+    "userGuid":"<user guid>",
+    "userId":"<user_friendly_id>"
+  },
+  /* ... */
+  ]
+}
+----
+
+[[mobile-app-management-api-error-21]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-possible-error-messages-1]]
+===== Possible error messages:
+
+* invalid_type
+
+[[mobile-app-management-api-read-app-store]]
+== Read App Store
+
+[[mobile-app-management-api-description-13]]
+=== Description
+
+Read details of the app store - name, description, icon & supported Auth policies.
+
+[[mobile-app-management-api-endpoint-22]]
+=== Endpoint
+
+* uri - /box/srv/1.1/mas/appstore/read
+
+* method - POST | GET
+
+[[mobile-app-management-api-auth-1]]
+=== Auth
+
+Open - a public endpoint which can be called with no authentication.
+
+[[mobile-app-management-api-request-body-22]]
+=== Request Body
+
+N/A
+
+[[mobile-app-management-api-response-body-18]]
+=== Response Body
+
+[[mobile-app-management-api-success-10]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "guid": "<app_store_global_unique_id>",
+  "name": "<app_store_name>",
+  "description": "<app_store_description>",
+  "icon" : "<base64_encoded_representation_of_app_store_icon>"
+  "authpolicies": [
+    {
+      "name": "<auth_policy_name_1>",
+      "type": "<auth_policy_type_1>"
+    },
+    {
+      "name": "<auth_policy_name_2>",
+      "type": "<auth_policy_type_2>"
+    },
+    ...
+    {
+      "name": "<auth_policy_name_N>",
+      "type": "<auth_policy_type_N>"
+    }
+  ]
+}
+----
+
+[[mobile-app-management-api-error-22]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-get-app-store-items]]
+== Get App Store Items
+
+[[mobile-app-management-api-description-14]]
+=== Description
+
+Read list of Store Items availabe from the app store. Includes a list of available binaries and their type.
+
+[[mobile-app-management-api-endpoint-23]]
+=== Endpoint
+
+* uri - /box/srv/1.1/mam/appstore/getstoreitems
+
+* method - POST
+
+[[mobile-app-management-api-auth-2]]
+=== Auth
+
+Restricted - requires sessionId as header.
+
+....
+X-FH-AUTH-SESSION: "<sessionId_returned_from_fh.auth_call>"
+....
+
+[[mobile-app-management-api-request-body-23]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "appstore": "<app_store_global_unique_id>"
+}
+----
+
+[[mobile-app-management-api-response-body-19]]
+=== Response Body
+
+[[mobile-app-management-api-success-11]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "storeitems": [{
+    "guid": "<store_item_global_unique_id_1>",
+    "name": "<store_item_name_1>",
+    "description": "<store_item_description_2>",
+    "icon": "<base64_encoded_representation_of_store_item_icon_2>",
+    "targets" : [
+      {
+        "type": "ios | iphone | ipad | android",
+        "url": "url_of_installable_artifact_1"
+      },
+      {
+        "type": "ios | iphone | ipad | android",
+        "url": "url_of_installable_artifact_2"
+      },
+      ...
+      {
+        "type": "ios | iphone | ipad | android",
+        "url": "url_of_installable_artifact_N"
+      }
+    ]
+  },
+  {
+    "guid": "<store_item_global_unique_id_2>",
+    "name": "<store_item_name_2>",
+    "description": "<store_item_description_2>",
+    "icon": "<base64_encoded_representation_of_store_item_icon_2>",
+    "targets" : [
+      {
+        "type": "ios | iphone | ipad | android",
+        "url": "url_of_installable_artifact_1"
+      },
+      {
+        "type": "ios | iphone | ipad | android",
+        "url": "url_of_installable_artifact_2"
+      },
+      ...
+      {
+        "type": "ios | iphone | ipad | android",
+        "url": "url_of_installable_artifact_N"
+      }
+    ]
+  }
+  ...
+  {
+    "guid": "<store_item_global_unique_id_N>",
+    "name": "<store_item_name_N>",
+    "description": "<store_item_description_N>",
+    "icon": "<base64_encoded_representation_of_store_item_icon_N>",
+    "targets" : [
+      {
+        "type": "ios | iphone | ipad | android",
+        "url": "url_of_installable_artifact_1"
+      },
+      {
+        "type": "ios | iphone | ipad | android",
+        "url": "url_of_installable_artifact_2"
+      },
+      ...
+      {
+        "type": "ios | iphone | ipad | android",
+        "url": "url_of_installable_artifact_N"
+      }
+    ]
+  }
+}
+----
+
+[[mobile-app-management-api-error-23]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-install-store-item]]
+== Install Store Item
+
+[[mobile-app-management-api-description-15]]
+=== Description
+
+Install an App Store Item. Depending on the type requested, this API may return a binary stream or a URL redirect.
+
+[[mobile-app-management-api-endpoint-24]]
+=== Endpoint
+
+* uri - /box/srv/1.1/mas/storeitem/install
+
+* method - POST | GET
+
+[[mobile-app-management-api-auth-3]]
+=== Auth
+
+Restricted - requires sessionId as header.
+
+....
+X-FH-AUTH-SESSION: "<sessionId_returned_from_fh.auth_call>"
+....
+
+[[mobile-app-management-api-request-body-24]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid": "<store_item_global_unique_id>",
+  "type": "ios | iphone | ipad | android"
+}
+----
+
+[[mobile-app-management-api-response-3]]
+=== Response
+
+[[mobile-app-management-api-success-12]]
+==== Success
+
+The response will vary depending on the "type" parameter in the request.
+
+[[mobile-app-management-api-ios-iphone-ipad]]
+===== ios | iphone | ipad
+
+iOS Over The Air (OTA) installer page.
+
+[[mobile-app-management-api-android]]
+===== android
+
+Installable binary artifact for android device - .apk file.
+
+[[mobile-app-management-api-error-24]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[mobile-app-management-api-possible-error-messages-2]]
+===== Possible error messages:
+
+* invalid_type
+* invalid_guid

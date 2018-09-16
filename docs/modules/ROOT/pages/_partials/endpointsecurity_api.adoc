@@ -1,0 +1,407 @@
+// include::shared/attributes.adoc[]
+
+[[endpoint-security-api]]
+= Endpoint Security API
+
+[[endpoint-security-api-getsecureendpoint]]
+== getSecureEndpoint
+
+[[endpoint-security-api-description]]
+=== Description
+
+Get the endpoint security data for the specified app and runtime environment.
+
+[[endpoint-security-api-endpoint]]
+=== Endpoint
+
+* uri - /box/srv/1.1/app/endpointsecurity/get
+
+* method - POST
+
+[[endpoint-security-api-request-body]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required
+  "appId": "unqiue app identifier",
+  // required
+  "environment": "dev",
+}
+----
+
+[[endpoint-security-api-response-body]]
+=== Response Body
+
+[[endpoint-security-api-success]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "appId": "unqiue app identifier",
+  "environment": "dev",
+  "default": "https", // can be "https" | "appapikey"
+  "updatedBy": "user@example.com",
+  "updatedWhen": "2012-12-04 12:00",
+  "overrides": {
+    "<endpoint name 1>": {
+      "security" : "https", // can be "https" | "appapikey",
+      "updatedBy": "user@example.com",
+      "updatedWhen": "2012-12-04 12:00"
+    },
+    "<endpoint name 2>": {
+      "security" : "https", // can be "https" | "appapikey",
+      "updatedBy": "user@example.com",
+      "updatedWhen": "2012-12-04 12:00"
+    },
+    // ...
+    "<endpoint name n>": {
+      "security" : "https", // can be "https" | "appapikey",
+      "updatedBy": "user@example.com",
+      "updatedWhen": "2012-12-04 12:00"
+    }
+  }
+}
+----
+
+[[endpoint-security-api-error]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[endpoint-security-api-setsecureendpoint]]
+== setSecureEndpoint
+
+[[endpoint-security-api-description-1]]
+=== Description
+
+Set the endpoint security data for the specified app and runtime environment.
+
+[[endpoint-security-api-endpoint-1]]
+=== Endpoint
+
+* uri - /box/srv/1.1/app/endpointsecurity/set
+
+* method - POST
+
+[[endpoint-security-api-request-body-1]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required
+  "appId": "unqiue app identifier",
+  // required
+  "environment": "dev",
+  // required
+  "default": "https", // can be "https" | "appapikey"
+  "overrides": {
+    "<endpoint name 1>": {
+      "security" : "https" // can be "https" | "appapikey"
+    },
+    "<endpoint name 2>": {
+      "security" : "https" // can be "https" | "appapikey"
+    },
+    // ...
+    "<endpoint name n>": {
+      "security" : "https" // can be "https" | "appapikey"
+    }
+  }
+}
+----
+
+[[endpoint-security-api-response-body-1]]
+=== Response Body
+
+[[endpoint-security-api-success-1]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok"
+}
+----
+
+[[endpoint-security-api-error-1]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[endpoint-security-api-setsecureendpointoverride]]
+== setSecureEndpointOverride
+
+[[endpoint-security-api-description-2]]
+=== Description
+
+Set the endpoint security data for the specified endpoints of an app and runtime environment. This does not change the default security setting for the app.
+
+[[endpoint-security-api-endpoint-2]]
+=== Endpoint
+
+* uri - /box/srv/1.1/app/endpointsecurity/setOverride
+
+* method - POST
+
+[[endpoint-security-api-request-body-2]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required
+  "appId": "unqiue app identifier",
+  // required
+  "environment": "dev",
+  // required
+  "overrides": {
+    "<endpoint name 1>": {
+      "security" : "https" // can be "https" | "appapikey"
+    },
+    "<endpoint name 2>": {
+      "security" : "https" // can be "https" | "appapikey"
+    },
+    // ...
+    "<endpoint name n>": {
+      "security" : "https" // can be "https" | "appapikey"
+    }
+  }
+}
+----
+
+[[endpoint-security-api-response-body-2]]
+=== Response Body
+
+[[endpoint-security-api-success-2]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok"
+}
+----
+
+[[endpoint-security-api-error-2]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[endpoint-security-api-removesecureendpointoverride]]
+== removeSecureEndpointOverride
+
+[[endpoint-security-api-description-3]]
+=== Description
+
+Remove the endpoint security overrides for the specified endpoints of an app and runtime environment. This does not change the default security setting for the app.
+
+[[endpoint-security-api-endpoint-3]]
+=== Endpoint
+
+* uri - /box/srv/1.1/app/endpointsecurity/removeOverride
+
+* method - POST
+
+[[endpoint-security-api-request-body-3]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required
+  "appId": "unqiue app identifier",
+  // required
+  "environment": "dev",
+  // required
+  "endpoint": "<endpoint name>"
+}
+----
+
+[[endpoint-security-api-response-body-3]]
+=== Response Body
+
+[[endpoint-security-api-success-3]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok"
+}
+----
+
+[[endpoint-security-api-error-3]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[endpoint-security-api-setdefaultsecureendpoint]]
+== setDefaultSecureEndpoint
+
+[[endpoint-security-api-description-4]]
+=== Description
+
+Set the default endpoint security for the specified app and runtime environment.
+
+[[endpoint-security-api-endpoint-4]]
+=== Endpoint
+
+* uri - /box/srv/1.1/app/endpointsecurity/setDefault
+
+* method - POST
+
+[[endpoint-security-api-request-body-4]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required
+  "appId": "unqiue app identifier",
+  // required
+  "environment": "dev",
+  // required
+  "default": "https" // can be "https" | "appapikey"
+}
+----
+
+[[endpoint-security-api-response-body-4]]
+=== Response Body
+
+[[endpoint-security-api-success-4]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok"
+}
+----
+
+[[endpoint-security-api-error-4]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[endpoint-security-api-auditlog]]
+== auditLog
+
+[[endpoint-security-api-description-5]]
+=== Description
+
+Get the Endpoint Security Audit Log data for the specified app and runtime environment.
+
+An optional `filter` parameter can be specified to filter the returned audit log records by the following criteria:
+
+* `endpoint`: the name of an endpoint
+* `security`: can be `https` or `appapikey`
+* `updatedBy`: a _userId_
+* `event`: one of "Set App Security", "Add Endpoint", "Remove Endpoint"
+* `limit`: number of records to return
+
+[[endpoint-security-api-endpoint-5]]
+=== Endpoint
+
+* uri - /box/srv/1.1/app/endpointsecurity/auditLog
+
+* method - POST
+
+[[endpoint-security-api-request-body-5]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required
+  "appId": "unqiue app identifier",
+  // required
+  "environment": "dev",
+  "filter": {
+    "endpoint": "<endpoint>",
+    "security": "<security>",
+    "updatedBy": "<updatedBy>",
+    "event": "<event>",
+    "limit": "<num records>"
+  }
+}
+----
+
+[[endpoint-security-api-response-body-5]]
+=== Response Body
+
+[[endpoint-security-api-success-5]]
+==== Success
+
+[source,javascript]
+----
+{
+  "list": [
+    {
+      "appId": "O_6sZAYZN4O3KsJtJ2-ssvAf",
+      "endpoint": "getDemo",
+      "environment": "dev",
+      "event": "Add Endpoint",
+      "security": "https",
+      "updatedBy": "training@example.com",
+      "updatedWhen": "Thu Dec 13 12:01:33 UTC 2012",
+      "updatedWhenMillis": 1355400093157
+    },
+    {
+      "appId": "O_6sZAYZN4O3KsJtJ2-ssvAf",
+      "endpoint": "",
+      "environment": "dev",
+      "event": "Set App Security",
+      "security": "appapikey",
+      "updatedBy": "training@example.com",
+      "updatedWhen": "Thu Dec 13 11:57:24 UTC 2012",
+      "updatedWhenMillis": 1355399844528
+    }
+  ],
+  "status": "ok"
+}
+----
+
+[[endpoint-security-api-error-5]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----

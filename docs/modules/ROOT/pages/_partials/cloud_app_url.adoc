@@ -1,0 +1,56 @@
+// include::shared/attributes.adoc[]
+
+[[fh-getCloudURL]]
+= $fh.getCloudURL
+
+[source,javascript]
+----
+$fh.getCloudURL();
+----
+
+Get the URL of the Cloud App that the current Client App is communicating with. Should only be used after the SDK is initialized.
+
+Once you have the URL of the Cloud App, you can use any other HTTP/AJAX client to communicate with the Cloud App. However, the downside of this approach is that your app won't be able to use the analytics service provided by the platform as some meta data is missing in the requests, or if the endpoints are secured, you will not be able to call them without providing the API keys.
+
+To make it easier, the SDKs also have APIs to provide this meta data as request parameters or headers. You just need to get the data and add it to the requests either as part of the request body or request headers. See xref:fh-getFHParams[$fh.getFHParams].
+
+[[cloud-app-url-supported-platforms]]
+.Supported Platforms
+
+* JavaScript SDK
+** Cordova
+** Web Apps
+* Android SDK
+* iOS Objective-C SDK
+* iOS Swift SDK
+* .NET SDK
+** Xamarin
+
+For detailed version information, see link:https://access.redhat.com/node/2357761[Supported Configurations^].
+
+[[cloud-app-url-example]]
+== Example
+
+.JavaScript
+[source,javascript]
+----
+var cloud_url = $fh.getCloudURL();
+----
+
+.Android (Java)
+[source,java]
+----
+String cloudAppHost = FH.getCloudHost();
+----
+
+.iOS (Objective-C)
+[source,objectivec]
+----
+NSString * cloudAppHost = [FH getCloudHost];
+----
+
+.{nbsp}.NET (C#)
+[source,csharp]
+----
+string cloudAppHost = FH.GetCloudHost();
+----

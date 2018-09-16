@@ -1,0 +1,73 @@
+// include::shared/attributes.adoc[]
+
+
+[#install-cocoapods{suffix}]
+== CocoaPods
+
+[NOTE]
+--
+CocoaPods is available only on OSX.
+--
+
+CocoaPods is a Swift And Objective-C dependency manager for link:https://developer.apple.com/download/[Xcode^] projects. It is built with Ruby, which comes pre-installed with OSX. It is used to distribute the {ProductShortName} iOS Swift and iOS Objective-C Client SDKs.
+
+[#install-cocoapods-gem{suffix}]
+=== Install CocoaPods Using RubyGems
+
+To install CocoaPods using the RubyGems package manager, execute the following command. This requires the `sudo` command to be  link:https://support.apple.com/en-us/HT204012[enabled^] in OSX.
+
+[source,bash]
+--
+sudo gem install cocoapods
+--
+
+As an optional part of the CocoaPods setup, you can store your link:http://guides.cocoapods.org/making/specs-and-specs-repo.html[Podspec^] metadata locally at `~/.cocoapods/repos`. This helps to increase the dependency resolution speed and shortens the build time for your apps. To clone the link:https://github.com/CocoaPods/Specs[spec-repo^] and create the directory, execute the following command:
+
+[source,bash]
+--
+pod setup
+--
+
+[#install-cocoapods-no-root{suffix}]
+=== Install CocoaPods Without Using sudo.
+
+Alternatively, to install CocoaPods without using sudo, follow the _Sudo-less Installation_ section of the link:https://guides.cocoapods.org/using/getting-started.html#getting-started[CocoaPods Getting Started Guide^].
+
+[#install-cocoapods-plugins{suffix}]
+=== Install the Required Plugins
+
+The {ProductShortName} iOS Objective-C and Swift SDK packages rely on the `cocoapods-packager` and `cocapods-appledoc` plugins. To install both plugins, execute the following command:
+
+[source,bash]
+--
+[sudo] gem install cocoapods-packager cocoapods-appledoc
+--
+
+[#install-cocoapods-initialize{suffix}]
+=== Enable CocoaPods in an Xcode Project
+
+To enable Cocoapods Xcode app project after installation execute the following commands:
+
+. To navigate to the folder of your Xcode project, use:
++
+[source,bash]
+--
+cd <project_directory>
+--
++
+. To create a podfile (if it does not already exist) in your project folder and automatically populate it with targets specified within the project, execute the following command:
++
+[source,bash]
+--
+pod init
+--
+
+[#install-cocoapods-dependencies{suffix}]
+=== Install Dependencies Using CocoaPods
+
+To install the dependencies defined in the podfile of Xcode project using CocoaPods, execute the following command:
+
+[source,bash]
+--
+pod install
+--

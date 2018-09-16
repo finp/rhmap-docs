@@ -1,0 +1,40 @@
+// include::shared/attributes.adoc[]
+
+
+
+The following table outlines the changes to the APIs relating to the introduction of `fh-mbaas-api` version 7 in this release.
+You can continue to use the pre 7.0.0 version, and the old documentation is still available.
+
+[format="csv",options="header"]
+|===
+
+API,	7.0.0 or later,	pre 7.0.0
+$fh.sync.setConfig,xref:fh-sync-setconfig[New],N/A
+$fh.sync.connect,xref:fh-sync-connect[New],N/A
+$fh.sync.init,xref:fh-sync-init[Unchanged],xref:fh-sync-init-dep[Old documentation]
+$fh.sync.invoke,xref:fh-sync-invoke[Unchanged],xref:fh-sync-invoke-dep[Old documentation]
+$fh.sync.stop,xref:fh-sync-stop[Unchanged],xref:fh-sync-stop-dep[Old documentation]
+$fh.sync.stopAll,xref:fh-sync-stopall[Unchanged],xref:fh-sync-stopall-dep[Old documentation]
+$fh.sync.handleList,xref:fh-sync-handlelist[Changed],xref:fh-sync-handlelist-dep[Old documentation]
+$fh.sync.globalHandleList,xref:fh-sync-globalhandlelist[Changed],xref:fh-sync-globalhandlelist-dep[Old documentation]
+$fh.sync.handleCreate,xref:fh-sync-handlecreate[Changed],xref:fh-sync-handlecreate-dep[Old documentation]
+$fh.sync.globalHandleCreate,xref:fh-sync-globalhandlecreate[Changed],xref:fh-sync-globalhandlecreate-dep[Old documentation]
+$fh.sync.handleRead,xref:fh-sync-handleread[Changed],xref:fh-sync-handleread-dep[Old documentation]
+$fh.sync.globalHandleRead,xref:fh-sync-globalhandleread[Changed],xref:fh-sync-globalhandleread-dep[Old documentation]
+$fh.sync.handleUpdate,xref:fh-sync-handleupdate[Changed],xref:fh-sync-handleupdate-dep[Old documentation]
+$fh.sync.globalHandleUpdate,xref:fh-sync-globalhandleupdate[Changed],xref:fh-sync-globalhandleupdate-dep[Old documentation]
+$fh.sync.handleDelete,xref:fh-sync-handledelete[Changed],xref:fh-sync-handledelete-dep[Old documentation]
+$fh.sync.globalHandleDelete,xref:fh-sync-globalhandledelete[Changed],xref:fh-sync-globalhandledelete-dep[Old documentation]
+$fh.sync.handleCollision,xref:fh-sync-handlecollision[Unchanged],xref:fh-sync-handlecollision-dep[Old documentation]
+$fh.sync.globalHandleCollision,xref:fh-sync-globalhandlecollision[Unchanged],xref:fh-sync-globalhandlecollision-dep[Old documentation]
+$fh.sync.listCollisions,xref:fh-sync-listcollisions[Changed],xref:fh-sync-listcollisions-dep[Old documentation]
+$fh.sync.globalListCollisions,xref:fh-sync-globallistcollisions[Changed],xref:fh-sync-globallistcollisions-dep[Old documentation]
+$fh.sync.removeCollision,xref:fh-sync-removecollision[Changed],xref:fh-sync-removecollision-dep[Old documentation]
+$fh.sync.globalRemoveCollision,xref:fh-sync-globalremovecollision[Changed],xref:fh-sync-globalremovecollision-dep[Old documentation]
+$fh.sync.setGlobalHashFn,xref:fh-sync-setglobalhashfn[New],N/A
+$fh.sync.setRecordHashFn,xref:fh-sync-setrecordhashfn[New],N/A
+$fh.sync.interceptRequest,xref:fh-sync-interceptrequest[Changed],xref:fh-sync-interceptrequest-dep[Old documentation]
+$fh.sync.globalInterceptRequest,xref:fh-sync-globalinterceptrequest[Changed],xref:fh-sync-globalinterceptrequest-dep[Old documentation]
+$fh.sync.getEventEmitter,xref:fh-sync-geteventemitter[New],N/A
+
+|===

@@ -1,0 +1,178 @@
+// include::shared/attributes.adoc[]
+
+[[fh-push]]
+= $fh.push
+
+[source,javascript]
+----
+$fh.push(onNotification(e), regSuccessHandler, regErrorHandler(err), pushConfig)
+----
+
+Register with the server to start receiving push notifications.
+
+[[push-supported-platforms]]
+.Supported Platforms
+
+* JavaScript SDK
+** Cordova
+* Android SDK
+* iOS Objective-C SDK
+* iOS Swift SDK
+* .NET SDK
+** Xamarin
+
+For detailed version information, see link:https://access.redhat.com/node/2357761[Supported Configurations^].
+
+[[push-example]]
+== Example
+.Javascript
+[source,javascript]
+----
+// register with the server to start receiving push notifications
+$fh.push(function(e) {
+    // on android we could play a sound, if we add the Media plugin
+    if (e.sound && (typeof Media != 'undefined')) {
+      var media = new Media("/android_asset/www/" + e.sound);
+      media.play();
+    }
+
+    if (e.coldstart) {
+      // notification started the app
+    }
+
+    // show text content of the message
+    alert(e.alert);
+
+    // only on iOS
+    if (e.badge) {
+      push.setApplicationIconBadgeNumber(successHandler, e.badge);
+  }
+}, function() {
+  // successfully registered
+}, function(err) {
+  // handle errors
+}, {
+  // optional filtering criteria
+  alias: "user@example.com",
+  categories: ["Curling", "Hurling"]
+});
+----
+
+.Parameters
+* `onNotification(e)` Function - handler for incoming notifications, contains the following properties:
+** `alert`, `sound`, `badge` - equivalent semantics as the corresponding options in the `message` object of the link:{CloudAPI}#fh-push[cloud API]
+** `coldstart` - true, if the received notification was the cause of application start
+** `payload` - corresponds to the `message.userData` option of the Cloud API
+* `regSuccessHandler` Function - callback invoked upon successful registration
+* `regErrorHandler(err)` Function - callback invoked if the registration fails due to an error, which is then passed
+as a String argument
+* `pushConfig` Object - optional configuration, which allows filtering of notifications received by a client using a set
+of criteria. See link:{ProductFeatures}#sending-notifications[Sending Notifications] for
+semantics of these criteria and usage information. Available properties:
+** `alias` String - user-specific identifier
+** `categories` Array - list of categories
+
+.Android (Java)
+Register with the server to start receiving push notifications.
+
+[source,java]
+----
+FH.pushRegister(new FHActCallback() {
+    @Override
+    public void success(FHResponse fhResponse) {
+        startActivity(...);
+    }
+
+
+    @Override
+    public void fail(FHResponse fhResponse) {
+        Toast.makeText(getApplicationContext(),
+                fhResponse.getErrorMessage(), Toast.LENGTH_SHORT).show();
+        finish();
+    }
+});
+----
+
+To handle messages, create an implementation of `MessageHandler`.
+Register the `MessageHandler` with the `RegistrarManager` to enable it, as documented in link:https://aerogear.org/docs/unifiedpush/aerogear-push-android/guides/#_receiving_notifications[Receiving notifications^] in the Aerogear
+documentation.
+
+[source,java]
+----
+import org.jboss.aerogear.android.unifiedpush.MessageHandler;
+import org.jboss.aerogear.android.unifiedpush.gcm.UnifiedPushMessage;
+
+public class MyMessageHandler implements MessageHandler {
+    @Override
+    public void onMessage(Context context, Bundle bundle) {
+        String message = bundle.getString(UnifiedPushMessage.ALERT_KEY);
+    }
+}
+----
+.Parameters
+The keys in the `Bundle` passed to the `onMessage` method of the message handler:
+
+* `UnifiedPushMessage.ALERT_KEY` - the notification text, corresponding to the `message.alert` property in the link:{CloudAPI}#fh-push[cloud API].
+* All the keys sent with `message.userData` in the Cloud API, represented as strings containing JSON objects.</li>
+
+.iOS (Objective-C)
+
+Register with the server to start receiving push notifications.
+[source,objectivec]
+----
+- (void)application:(UIApplication )application didRegisterForRemoteNotificationsWithDeviceToken:(NSData )deviceToken {
+  [FH pushRegister:deviceToken andSuccess:^(FHResponse success) {
+    NSLog(@"Push registration successful");
+  } andFailure:^(FHResponse failed) {
+    NSLog(@"Push registration Error: %@", failed.error);
+  }];
+}
+----
+
+Handling messages:
+[source,objectivec]
+----
+- (void)application:(UIApplication )application didReceiveRemoteNotification:(NSDictionary )userInfo {
+    NSLog(@"message received: %@", userInfo[@"aps"][@"alert"][@"body"]);
+}
+----
+.Parameters
+
+* `userInfo` NSDictionary
+** `aps` NSDictionary
+*** `alert` NSString/NSDictionary - the notification text, corresponding to the `message.alert` property in the link:{CloudAPI}#fh-push[cloud API]. The type can be either `NSString` or `NSDictionary`, as documented in the link:https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html[Local and Remote Notification Programming Guide^] in iOS documentation.
+*** All the keys sent with `message.userData` in the Cloud API.
+
+.{nbsp}.NET (C#)
+Register with the server to start receiving push notifications.
+[source,csharp]
+----
+protected override async void OnNavigatedTo(NavigationEventArgs e)
+{
+    try
+    {
+        await FHClient.Init();
+        // register with the server to start receiving push notifications
+        FH.RegisterPush(HandleNotification);
+    }
+    catch (Exception ex)
+    {
+        new MessageDialog("Error", ex.Message).ShowAsync();
+    }
+...
+----
+
+Handling messages:
+
+[source,csharp]
+----
+private void HandleNotification(object sender, PushReceivedEvent e)
+{
+    Console.WriteLine(e.Args.Message);
+}
+----
+
+.Parameters
+* `PushReceivedEvent.Args`
+** `Message` string - the notification text, corresponding to the `message.alert` property in the link:{CloudAPI}#fh-push[cloud API].
+** `Data` IDictionary<string, string> - a dictionary of values passed to `message.userData` in the Cloud API

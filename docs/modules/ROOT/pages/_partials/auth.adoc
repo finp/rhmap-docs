@@ -1,0 +1,556 @@
+// include::shared/attributes.adoc[]
+
+[[fh-auth]]
+= $fh.auth
+
+[source,javascript]
+----
+$fh.auth(options, success, failure);
+----
+
+Authenticate and optionally authorise a user via access rights management. Note that in order to use fh.auth, you will need to have a domain Administrator account. Read about our user levels here: link:{ProductFeatures}#administration[User Administration]. If you intend to use $fh.auth against an oauth provider, take a look at setting up an link:{ProductFeatures}#auth-policies[OAuth Policy].
+
+Generally speaking, if the Auth type is FeedHenry or LDAP, you just need to construct a view to allow users to enter their credentials and set them on the auth request instance.
+
+If the auth policy type is OAuth, the authentication process is quite complicated. The user has to login to the OAuth provider's login page and give permission to allow the application to access his/her information.
+
+To make this process easier to handle, the native SDKs (iOS, Android and .NET) provide extra UI components to handle this seemlessly: the UI component appears on the screen and loads the OAuth provider's authentication page. The component will know when the OAuth process is finished and close itself automatically and pass the results back to the success or failure function. The UI component will look like this:
+
+image:ios_oauth_sample.png[iOS_OAuth_Sample.png]
+
+[[auth-supported-platforms]]
+.Supported Platforms
+
+* JavaScript SDK
+** Cordova
+** Web Apps
+* Android SDK
+* iOS Objective-C SDK
+* iOS Swift SDK
+* .NET SDK
+** Xamarin
+
+For detailed version information, see link:https://access.redhat.com/node/2357761[Supported Configurations^].
+
+[[auth-example]]
+== Example
+
+// javascript
+.JavaScript
+[source,javascript]
+----
+// LDAP or Platform User Example
+$fh.auth({
+  "policyId": "My LDAP Auth Policy", // name of auth policy to use - see link:{ProductFeatures}#administration[Auth Policies Administration] for details on how to configure an auth policy
+  "clientToken": "myAppId", // Your App ID
+  "endRedirectUrl": window.location.href, // The URL to return to after authentication. Optional
+  "params": { // the parameters associated with the requested auth policy - see below for full details.
+    "userId": "joe@bloggs.com", // LDAP or Platform username
+    "password": "password" // LDAP or Platform password
+  }
+}, function (res) {
+  // Authentication successful - store sessionToken in variable
+  var sessionToken = res.sessionToken; // The platform session identifier
+  var authResponse = res.authResponse; // The authentication information returned from the authentication service.
+  // This may include things such as validated email address,
+  // OAuth token or other response data from the authentication service
+}, function (msg, err) {
+  var errorMsg = err.message;
+  /* Possible errors:
+    unknown_policyId - The policyId provided did not match any defined policy. Check the auth policies defined. See link:{ProductFeatures}#administration[Auth Policies Administration]
+      user_not_found - The auth policy associated with the policyId provided has been set up to require that all users authenticating exist on the platform, but this user does not exists.
+      user_not_approved - - The auth policy associated with the policyId provided has been set up to require that all users authenticating are in a list of approved users, but this user is not in that list.
+        user_disabled - The user has been disabled from logging in.
+        user_purge_data - The user has been flagged for data purge and all local data should be deleted.
+        device_disabled - The device has been disabled. No user or apps can log in from the requesting device.
+        device_purge_data - The device has been flagged for data purge and all local data should be deleted.
+    */
+if (errorMsg === "user_purge_data" || errorMsg === "device_purge_data") {
+  // User or device has been black listed from administration console and all local data should be wiped
+} else {
+  alert("Authentication failed - " + errorMsg);
+}
+});
+
+
+// OAuth 2.0 Example
+// OAuth does not require any params, instead the "authCallback" param should be set on the $fh.auth call.
+// This should be a function name that you have defined, and will be called after Auth has completed.
+$fh.auth({
+  "policyId": "My OAuth Policy",
+  "clientToken": "myAppId",
+  "authCallback": "authLoginCallback",
+  "endRedirectUrl": window.location.href
+}, function () {
+  //
+}, function () {
+  //
+});
+
+var authLoginCallback = function(err, res) {
+  if (!err) {
+    // Authentication successful - store sessionToken in variable
+    var sessionToken = res.sessionToken;
+  } else {
+    alert("Authentication failed - " + err.message);
+  }
+}
+----
+// java
+.Android (Java)
+If you want to use the built-in OAuth handler as described in the example below, you need to add the following configuration into the _application_ element of your application's _AndroidManifest.xml_ file
+[source, xml]
+----
+<application>
+  ...
+  <activity android:name="com.feedhenry.sdk.oauth.FHOAuthIntent" />
+</application>
+----
+
+NOTE: Before invoking the Auth code, first ensure that `FH.init` code is initialized. For an example, see link:{ClientAPI}#init-example[here].
+
+[source, java]
+----
+//Example code to authenticate a user with username and password that are defined in an auth policy called "MyFeedHenryPolicy"
+private void loginWithFh(){
+  EditText userField = (EditText) findViewById(R.id.fh_login_user);
+  EditText passField = (EditText) findViewById(R.id.fh_login_password);
+  String userName = userField.getText().toString();
+  String password = passField.getText().toString();
+if("".equals(userName)){
+  FhUtil.showMessage(this, "Error", "User name is empty");
+  return;
+}
+if("".equals(password)){
+  FhUtil.showMessage(this, "Error", "Password is empty");
+  return;
+}
+try{
+  FHAuthRequest authRequest = FH.buildAuthRequest("MyFeedHenryPolicy", userName, password);
+  authRequest.executeAsync(new FHActCallback() {
+
+
+    @Override
+    public void success(FHResponse resp) {
+      Log.d("FHLoginActivity", "Login success");
+    }
+
+    @Override
+    public void fail(FHResponse resp) {
+      Log.d("FHLoginActivity", "Login fail");
+    }
+  });
+}catch(Exception e){
+  e.printStackTrace();
+  }
+}
+----
+
+If the auth policy type is OAuth, an Intent will be invoked to load the OAuth provider's authentication page. It will know when the OAuth process is finished and will close itself automatically and pass the results back to your success or failure function. To enable this, all you have to do is to call the _setPresentingActivity_ method of the FHAuthRequest instance with your application's context.
+
+[source, java]
+----
+private void doOAuth(){
+try{
+FHAuthRequest authRequest = FH.buildAuthRequest();
+authRequest.setPresentingActivity(this);
+authRequest.setAuthPolicyId("MyGooglePolicy"); //"MyGooglePolicy" should be replaced with policy id you created
+authRequest.executeAsync(new FHActCallback() {
+
+
+    @Override
+    public void success(FHResponse resp) {
+      Log.d("FHAuthActivity", resp.getJson().toString());
+    }
+
+    @Override
+    public void fail(FHResponse resp) {
+      Log.d("FHAuthActivity", resp.getErrorMessage());
+    }
+  });
+} catch(Exception e){
+  Log.e("FHAuthActivity", e.getMessage(), e);
+  }
+}
+----
+
+If the `setPresentingActivity` method is not called, you will have the chance to handle this by your own code. For example:
+
+[source, java]
+----
+private void doOAuth(){
+try{
+  FHAuthRequest authRequest = FH.buildAuthRequest();
+  authRequest.setAuthPolicyId("MyGooglePolicy"); //"MyGooglePolicy" should be replaced with policy id you created
+  authRequest.executeAsync(new FHActCallback() {
+
+
+    @Override
+    public void success(FHResponse resp) {
+      Log.d("FHAuthActivity", resp.getJson().toString());
+      //because the setPresentingActivity method is not called, the reponse will contain a URL which should be used for user to login. Normally it should be loaded into a WebView
+      String url = resp.getJson().getString("url");
+      // load the url in a WebView, and then a seriers of redirects will happen
+      // the last url will contain a string "status=complete"
+      // and there will be a query parameter called "authResponse" in that url
+      // the value of that parameter is the data returned from the OAuth provided (JSON stringified and URL encoded)
+    }
+
+    @Override
+    public void fail(FHResponse resp) {
+      Log.d("FHAuthActivity", resp.getErrorMessage());
+    }
+  });
+} catch(Exception e){
+  Log.e("FHAuthActivity", e.getMessage(), e);
+  }
+}
+----
+
+// Objective-C snippet
+.iOS (Objective-C)
+[source,objectivec]
+----
+//Example to authenticate user using username and password
+NSString* userName = self.usernameField.text;
+if(!userName){
+  return [self showMessage:@"Error" message:@"User Name field is required"];
+}
+NSString* password = self.passwordField.text;
+if(!password){
+  return [self showMessage:@"Error" message:@"Password field is required"];
+}
+FHAuthReqeust* authRequest = [FH buildAuthRequest];
+[authRequest authWithPolicyId:@"MyFeedHenryPolicy" UserId:userName Password:password]; //"MyFeedHenryPolicy" should be replaced with policy id you created
+void (^success)(FHResponse *)=^(FHResponse * res){
+  NSLog(@"parsed response %@ type=%@",res.parsedResponse,[res.parsedResponse class]);
+  if ([[[res parsedResponse] valueForKey:@"status"] isEqualToString:@"error"]) {
+    [self showMessage:@"Failed" message:%5Bres.parsedResponse valueForKey:@"message"]];
+  } else {
+    [self showMessage:@"Success" message:res.rawResponseAsString];
+  }
+};
+void (^failure)(FHResponse *)=^(FHResponse* res){
+  NSLog(@"parsed response %@ type=%@",res.parsedResponse,[res.parsedResponse class]);
+  [self showMessage:@"Failed" message:res.rawResponseAsString];
+};
+[authRequest execAsyncWithSuccess:success AndFailure:failure];
+----
+
+If the auth policy type is OAuth, a UI component will be invoked to display the OAuth provider's authentication page. The component waits until the OAuth process is finished, gets closed automatically afterwards, and passes the authentication results back to your success or failure function. To enable this, set the `parentViewController` property of the `FHAuthRequest` instance with an instance of `UIViewController` of your application.
+
+[source,objectivec]
+----
+FHAuthReqeust * authRequest = [FH buildAuthRequest];
+[authRequest authWithPolicyId:@"MyOAuthPolicy"]; //"MyOAuthPolicy" should be replaced with policy id you created
+authRequest.parentViewController = viewController; //Important, this will enable the built-in OAuth hanlder
+void (^success)(FHResponse *)=^(FHResponse * res){
+  NSLog(@"parsed response %@ type=%@",res.parsedResponse,[res.parsedResponse class]);
+  if ([[[res parsedResponse] valueForKey:@"status"] isEqualToString:@"error"]) {
+    [self showMessage:@"Failed" message:%5Bres.parsedResponse valueForKey:@"message"]];
+  } else {
+    [self showMessage:@"Success" message:%5Bres.parsedResponse JSONString]];
+  }
+};
+void (^failure)(FHResponse *)=^(FHResponse* res){
+  NSLog(@"parsed response %@ type=%@",res.parsedResponse,[res.parsedResponse class]);
+[self showMessage:@"Failed" message:res.rawResponseAsString];
+};
+
+[authRequest execAsyncWithSuccess:success AndFailure:failure]
+----
+
+If the _parentViewController_ property is not set, you will have the chance to handle this by your own code. For example:
+
+[source,objectivec]
+----
+FHAuthReqeust* authRequest = [FH buildAuthRequest];
+[authRequest authWithPolicyId:@"MyOAuthPolicy"]; //"MyOAuthPolicy" should be replaced with policy id you created
+void (^success)(FHResponse *)=^(FHResponse * res){
+  NSLog(@"parsed response %@ type=%@",res.parsedResponse,[res.parsedResponse class]);
+  //because the parentViewController is not set, the reponse will contain a URL which should be used for user to login. Normally it should be loaded into a WebView
+  NSString* oauthUrl = [res.parsedResponse valueForKey:@"url"];
+  NSURL* request = [NSURL URLWithString:oauthUrl];
+  // load the url in a WebView, and then a seriers of redirects will happen
+  // the last url will contain a string "status=complete"
+  // and there will be a query parameter called "authResponse" in that url
+  // the value of that parameter is the data returned from the OAuth provided (JSON stringified and URL encoded)
+};
+void (^failure)(FHResponse *)=^(FHResponse* res){
+  NSLog(@"parsed response %@ type=%@",res.parsedResponse,[res.parsedResponse class]);
+  [self showMessage:@"Failed" message:res.rawResponseAsString];
+};
+
+[authRequest execAsyncWithSuccess:success AndFailure:failure];
+----
+
+.iOS (Swift)
+[source,swift]
+----
+//Example to authenticate user using username and password
+FH.auth("MyFeedHenryPolicy", userName: "me", password: "password", completionHandler: { (response: Response, error: NSError?) -> Void in
+  if let error = error {
+    print("Error \(error)")
+    return
+  }
+  if let response = response.parsedResponse as? [String: String]{
+    if let status = response["status"] where status == "ok" {
+      print("Response \(response)")
+    } else if let status = response["status"] where status == "error" {
+      let message = response["message"] ?? ""
+      print("OAuth failed \(message)")
+    }
+  }
+})
+----
+
+If the auth policy type is OAuth, a UI component will be invoked to load the OAuth provider's authentication page. The component waits until the OAuth process is finished, gets closed automatically afterwards, and passes the authentication results back to your success or failure function. To enable this, set the _parentViewController_ property of the `AuthRequest` instance with the instance of UIViewController for your application.
+
+[source,swift]
+----
+let request = FH.authRequest("MyOAuthPolicy") //"MyOAuthPolicy" should be replaced with policy id you created
+request.parentViewController = viewController //Important, this will enable the built-in OAuth handler
+request.exec({ (response: Response, error: NSError?) -> Void in
+  if let error = error {
+    print("Error connecting \(error)")
+    return
+  }
+  if let response = response.parsedResponse as? [String: String] {
+    if let status = response["status"] where status == "ok" {
+      print("Response \(response)")
+    } else if let status = response["status"] where status == "error" {
+      let message = response["message"] ?? ""
+      print("OAuth failed \(message)")
+    }
+  }
+})
+----
+
+If the `parentViewController` property is not set, you will have the chance to handle this by your own code. For example:
+
+[source,swift]
+----
+let request = FH.authRequest("MyOAuthPolicy") //"MyOAuthPolicy" should be replaced with policy id you created
+request.exec({ (response: Response, error: NSError?) -> Void in
+  if let error = error {
+    print("Error connecting \(error)")
+    return
+  }
+  if let response = response.parsedResponse as? [String: String] {
+    if let status = response["status"] where status == "ok" {
+      print("Response \(response)")
+      // because the parentViewController is not set, the response will contain a URL which
+      // should be used for user to login. Normally it should be loaded into a WebView
+      if let urlString = response["url"] {
+        let url = NSURL(string: urlString)
+        // load the url in a WebView, and then a series of redirects will happen
+        // the last url will contain a string "status=complete"
+        // and there will be a query parameter called "authResponse" in that url
+        // the value of that parameter is the data returned from the OAuth provided (JSON stringified and URL encoded).
+      }    } else if let status = response["status"] where status == "error" {
+let message = response["message"] ?? ""
+print("OAuth failed \(message)")
+}
+}
+})
+----
+// .NET(C#) - block title needs non-conflicting markup
+.{nbsp}.NET (C#)
+[source,csharp]
+----
+//Example to authenticate user using username and password
+string authPolicy = "MyFeedHenryPolicy"; //"MyFeedHenryPolicy" should be replaced with policy id you created
+string username = this.usernameField.Text;
+string password = this.passwordField.Text;
+
+FHResponse authRes = await FH.Auth(authPolicy, username, password);
+if (null == authRes.Error)
+{
+    //user successfully logged in
+}
+else
+{
+    //login failed, show error
+    ShowMessage(authRes.Error.Message);
+}
+----
+
+If the auth policy type is OAuth, a UI component will be invoked to load the OAuth provider's authentication page. It will know when the OAuth process is finished and will close itself automatically and pass the results back to your success or failure function.
+
+[source,csharp]
+----
+string authPolicy = "TestGooglePolicy"; //"TestGooglePolicy" should be replaced with policy id you created
+//When next line is executed, the user will be prompted with a new view to
+//allow them enter their credentials on the OAuth provider's login page,
+//and the result will be returned in FHResponse
+FHResponse res = await FH.Auth(authPolicy);
+if (null == res.Error)
+{
+    //user successfully logged in
+}
+else
+{
+    //login failed, show error
+    ShowMessage(res.Error.Message);
+}
+----
+
+If you don't want to use the default OAuth login handler provided by the SDK, you can provide your own implementation. All you have to do is to create an implementation for the `IOAuthClientHandlerService` interface, and use it like this:
+
+[source,csharp]
+----
+//create a new instance of the custom IOAuthClientHandlerService
+IOAuthClientHandlerService authHandler = new MyOAuthHandler();
+//create a new auth request
+FHAuthRequest authRequest = new FHAuthRequest();
+authRequest.SetAuthPolicyId(policyId);
+//set the request to use the custome oauth handler
+authRequest.SetOAuthHandler(authHandler);
+FHResponse res = await authRequest.execAsync();
+----
+
+[[validate-sessions]]
+== Validate Sessions
+
+[IMPORTANT]
+--
+To use this feature, you need to make sure the following versions of client and cloud SDKs are used:
+
+* fh-js-sdk: >= 2.6.0
+* fh-ios-sdk: >= 2.2.8
+* fh-android-sdk: >= 2.2.0
+* fh-dotnet-sdk: >= 1.2.0
+* fh-mbaas-api: >=4.10.0
+--
+
+The `sessionToken` returned by the auth API will be persisted on the device, and will be added to all the xref:fh-cloud[cloud API] calls afterwards automatically.
+
+On the client side, new APIs are added to support session operations:
+// JavaScript
+
+.JavaScript
+[source,javascript]
+----
+//To check if user is already authenticated
+$fh.auth.hasSession(function(err, exist){
+  if(err) {
+    console.log('Failed to check session');
+    return;
+  }
+  if(exist){
+    //user is already authenticated
+    //optionally we can also verify the session is actually valid from client. This requires network connection.
+    $fh.auth.verify(function(err, valid){
+      if(err){
+        console.log('failed to verify session');
+        return;
+      }
+      if(valid){
+        console.log('session is valid');
+      } else {
+        console.log('session is not valid');
+      }
+    });
+  } else {
+    //user is not authenticated
+  }
+});
+
+//When the user is logging out, the session should be cleared
+$fh.auth.clearSession(function(err){
+
+});
+----
+// Java
+.Java
+[source,java]
+----
+//To check if user is already authenticated
+boolean exists = FHAuthSession.exists();
+if (exists) {
+    //user is already authenticated
+    //optionally we can also verify the session is actually valid from client. This requires network connection.
+    FHAuthSession.verify(new FHAuthSession.Callback() {
+      @Override
+      public void handleSuccess(final boolean isValid) {
+        if (isValid) {
+            //The session is valid, notify the application
+            //You may now access the session token using FHAuthSession.getToken()
+        } else {
+            //The session is not valid. Clear the application's
+            //state and authenticate again
+          }
+}
+
+
+      @Override
+      public void handleError(FHResponse resp) {
+         //Something went wrong with the network call.
+      }
+  }, false);
+
+
+} else {
+    //Not logged in, notify the application.
+}
+----
+
+Use `FHAuthSession.clear(boolean synchronous)` to log the client out of the platform. Note that this method performs network access. If it is called from the main looper, set the `synchronous` argument to `false` to prevent the network operation from blocking the looper thread and causing Android to throw a `NetworkOnMainThreadException`.
+
+[source,java]
+----
+FHAuthSession.clear(false);
+----
+
+// iOS (Objective-C)
+[source,objectivec]
+----
+//To check if user is already authenticated
+BOOL hasSession = [FH hasAuthSession];
+if(hasSession) {
+//optionally we can also verify the session is acutally valid from client. This requires network connection.
+[FH verifyAuthSessionWithSuccess:nil AndFailure:nil];
+}
+//When the user is logging out, the session should be cleared
+[FH clearAuthSessionWithSuccess:nil AndFailure:nil];
+----
+// .NET C#
+.{nbsp}.NET (C#)
+[source,csharp]
+----
+//To check if user is already authenticated
+FHAuthSession session = FH.GetAuthSession();
+Boolean exists = session.Exists();
+//optionally we can also verify the session is actually valid from client. This requires network connection.
+if(exists) {
+  bool valid = await session.Verify();
+}
+
+//When the user is logging out, the session should be cleared
+session.Clear();
+----
+
+There is also a middleware provided in the fh-mbaas-api module to validate the `sessionToken` in the requests. This will make it a lot easier to see if a request is from an authenticated user. All you have to do is something like this:
+
+// middleware in mbaas-api
+[source,javascript]
+----
+var mbaasExpress = require('fh-mbaas-api').mbaasExpress();
+var express = require('express');
+var router = new express.Router();
+//This will protect the router and only accept requests from authenticated users.
+//If a sessionToken is valid, you can choose to cache it so that it doesn't need to be checked again.
+router.use(mbaasExpress.fhauth({cache: true, expire: 60*60}));
+----
+
+[[create-your-own-authentication-providers]]
+== Create your own authentication providers
+
+With the introduction of link:{ProductFeatures}#auth-policies[mBaaS auth policy type], you can now create your own authenticate providers.
+
+All you have to do is to create a link:{ProductFeatures}#mbaas-services[mBaaS service] that will:
+
+* perform the authentication
+* return a JSON response containing a `sessionToken` key
+
+As described above, the `sessionToken` will then be added to all the cloud calls by the client SDK (via a header called `X-FH-SESSIONTOKEN`). However, since the `sessionToken` is generated by the mBaaS service, the session valdiation middleware provided in fh-mbaas-api will not work anymore. You need to provide your own middleware to verify the value of `sessionToken`. But it also means you can add more information to the requests during the validation process, for example, populate user information into the request objects as well.

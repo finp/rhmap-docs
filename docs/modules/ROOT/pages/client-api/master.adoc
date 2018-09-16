@@ -1,0 +1,17 @@
+include::{partialsdir}/attributes.adoc[]
+
+= Client API
+
+include::{partialsdir}/api-table.adoc[leveloffset=+1]
+include::{partialsdir}/auth.adoc[leveloffset=+1]
+include::{partialsdir}/cloud.adoc[leveloffset=+1]
+include::{partialsdir}/cloud_app_url.adoc[leveloffset=+1]
+include::{partialsdir}/default_params.adoc[leveloffset=+1]
+include::{partialsdir}/forms.adoc[leveloffset=+1]
+include::{partialsdir}/hash.adoc[leveloffset=+1]
+include::{partialsdir}/init.adoc[leveloffset=+1]
+include::{partialsdir}/mbaas.adoc[leveloffset=+1]
+include::{partialsdir}/push.adoc[leveloffset=+1]
+include::{partialsdir}/sec.adoc[leveloffset=+1]
+include::{partialsdir}/sync.adoc[leveloffset=+1]
+include::{partialsdir}/act.adoc[leveloffset=+1]

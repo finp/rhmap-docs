@@ -1,0 +1,213 @@
+[[fh-sync-setconfig]]
+== $fh.sync.setConfig
+
+Configure the sync server.
+
+Call this API when the sync server is ready, but before initialising any of the datasets.
+Initialisation of a Dataset typically happens when the first Sync client connects, unless you have explicit calls to `sync.init`.
+Either way, a reasonable location to call `setConfig` is when the `sync:ready` event triggers.
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.setConfig(options)
+----
+
+=== Parameters
+
+==== options
+
+* Description: Configuration options for the sync server
+* Type: Object
+* Supported Keys
+
+** *pendingWorkerInterval*
+*** Description: Set the interval value for the pending workers, in milliseconds.
+For more details about the worker interval, see the link:{ServerSideDeveloperGuide}#sync_configuration_guide[Data Sync Configuration Guide].
+*** Type: Number
+*** Default: 1
+
+** *pendingWorkerBackoff*
+*** Description: Specify the backoff strategy for the pending workers.
+For more details about the worker backoff, see the link:{ServerSideDeveloperGuide}#sync_configuration_guide[Data Sync Configuration Guide].
+*** Type: Object
+*** Default: _{strategy: 'exp', max: 60000}_
+**** strategy
++
+Define the backoff strategy.
+Valid values are `exp` (exponential) and `fib` (fibonacci).
+Setting the value to anything else disables worker backoff.
+**** max
++
+The max delay time for the backoff strategy, in milliseconds.
+
+** *pendingWorkerConcurrency*
+*** Description: Set the number of concurrent pending workers.
+Set it to 0 will disable the pending workers.
+*** Type: Number
+*** Default: 1
+
+** *ackWorkerInterval*
+*** Description: Set the interval value for the ack workers, in milliseconds.
+For more details about the worker interval, see the link:{ServerSideDeveloperGuide}#sync_configuration_guide[Data Sync Configuration Guide].
+*** Type: Number
+*** Default: 1
+
+** *ackWorkerBackoff*
+*** Description: Specify the backoff strategy for the ack workers.
+For more details about the worker backoff, see the link:{ServerSideDeveloperGuide}#sync_configuration_guide[Data Sync Configuration Guide].
+*** Type: Object
+*** Default: _{strategy: 'exp', max: 60000}_
+**** strategy
++
+Define the backoff strategy.
+Valid values are `exp` (exponential) and `fib` (fibonacci).
+Setting it to anything else disables the backoff strategy for the ack workers.
+**** max
++
+The max delay time for the backoff strategy, in milliseconds.
+
+** *ackWorkerConcurrency*
+*** Description: Set the number of concurrent ack workers.
+Setting it to 0 disables the ack workers.
+*** Type: Number
+*** Default: 1
+
+** *syncWorkerInterval*
+*** Description: Set the interval value for the sync workers, in milliseconds.
+For more details about the worker interval, see the link:{ServerSideDeveloperGuide}#sync_configuration_guide[Data Sync Configuration Guide].
+*** Type: Number
+*** Default: 100
+
+** *syncWorkerBackoff*
+*** Description: Specify the backoff strategy for the sync workers.
+For more details about the worker backoff, see the link:{ServerSideDeveloperGuide}#sync_configuration_guide[Data Sync Configuration Guide].
+*** Type: Object
+*** Default: _{strategy: 'none'}_
+**** strategy
++
+Define the backoff strategy.
+Valid values are `exp` (exponential) and `fib` (fibonacci).
+Setting it to anything else disables the backoff strategy.
+**** max
++
+The max delay time for the backoff strategy, in milliseconds.
+
+** *syncWorkerConcurrency*
+*** Description: Set the number of concurrent sync workers.
+Setting it to 0 disables the sync workers.
+*** Type: Number
+*** Default: 1
+
+** *collectStats*
+*** Description: Determine if the sync server collects performance stats data.
++
+By default, the sync server collects some performance data, for example, db operation timing, API timing, queue size.
++
+The stats data is stored in Redis and has minimum performance overhead.
+*** Type: Boolean
+*** Default: true
+
+** *statsRecordsToKeep*
+*** Description: Determine how many stats data points to save for each metric series in Redis.
+*** Type: Number
+*** Default: 1000
+
+** *collectStatsInterval*
+*** Description: Determine how often the stats should be collected, in milliseconds.
+*** Type: Number
+*** Default: 5000
+
+** *metricsInfluxdbHost*
+*** Description: Specify the InfluxDB host to which the sync server sends performance data.
+*** Type: String
+*** Default: null
+
+** *metricsInfluxdbPort*
+*** Description: Specify the InfluxDB port. It must be a UDP port.
+*** Type: Number
+*** Default: null
+
+** *queueMessagesTTL*
+*** Description: The time to live value for the queue messages that are marked for deletion. The messages are removed from the database once TTL value is reached. In seconds.
+*** Type: Number
+*** Default: 86400 (1 day)
+
+** *datasetClientCleanerRetentionPeriod*
+*** Description: Specify how long an inactive datasetClient is kept in the database before it is deleted.
++
+To avoid unnessary deletion of datasetClients, consider overriding this configuration with a value that is appropriate for the app.
+For example, if there is no user using the app during the weekend, you could set this value to '96h'.
++
+*** Type: String
+*** Default: '24h'
+**** Other supported units including: _s_ (second), _m_ (minute), _h_ (hour), _d_ (day), _w_ (week), _y_ (year)
+
+** *datasetClientCleanerCheckFrequency*
+*** Description: Specify how often the datasetClient cleaner job runs.
+*** Type: String
+*** Default: '1h'
+
+** *useCache*
+*** Description: Specify if Redis is used to cache the records of a Dataset Client.
++
+When enabled, it should reduce the number of requests on the database, and reduce the time of the `syncRecords` API call.
++
+It is an experimental feature and may cause delay for changes to be visible to all clients.
+*** Type: Boolean
+*** Default: false
+
+** *schedulerInterval*
+*** Description: set the interval for the sync scheduler, in milliseconds.
++
+Typically, you do not need to change the value.
+*** Type: Number
+*** Default: 500
+
+** *schedulerLockName*
+*** Description:  A lock is used to make sure that only 1 sync scheduler can run at any given time.
+This field determines the name of that lock.
++
+Typically, you do not need to change the value.
+*** Type: String
+*** Default: _locks:sync:SyncScheduler_
+
+** *schedulerLockMaxTime*
+*** Description: A lock is used to make sure that only 1 sync scheduler can run at any given time.
+This field determines the maximum time the sync scheduler can hold the lock for.
+This is to prevent the sync scheduler from holding the lock forever (for example, if the process crashes).
++
+Typically, you do not need to change the value.
+*** Type: Number
+*** Default: 20000
+
+** *datasetClientUpdateConcurrency*
+*** Description: When there are a lot concurrent sync requests to the sync server, a lot of update operations to the Dataset Clients are generated.
+To avoid overloading the database, those operations are queued and then performed with the concurrency of this option.
++
+Typically, you do not need to change the value.
+*** Type: Number
+*** Default: 10
+
+=== Example
+
+[source,javascript]
+----
+$fh.events.on('sync:ready', function(){
+  var pendingWorkerInterval = process.env.PENDING_WORKER_INTERVAL || 500;
+  var syncWorkerInterval = process.env.SYNC_WORKER_INTERVAL || 500;
+  var ackWorkerInterval = process.env.ACK_WORKER_INTERVAL || 500;
+  var useCache = process.env.USE_CACHE === 'true';
+  var syncConfig = {
+    pendingWorkerInterval: parseInt(pendingWorkerInterval),
+    ackWorkerInterval: parseInt(ackWorkerInterval),
+    syncWorkerInterval: parseInt(syncWorkerInterval),
+    collectStatsInterval: 4000,
+    metricsInfluxdbHost: process.env.METRICS_HOST,
+    metricsInfluxdbPort: parseInt(process.env.METRICS_PORT),
+    useCache: useCache
+  };
+  $fh.sync.setConfig(syncConfig);
+});
+----

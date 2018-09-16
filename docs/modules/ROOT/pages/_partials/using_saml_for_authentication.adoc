@@ -1,0 +1,243 @@
+// include::shared/attributes.adoc[]
+
+[[using-saml-for-authentication]]
+= Using SAML for Authentication
+
+[[using-saml-for-authentication-overview]]
+== Overview
+
+This tutorial demonstrates an example of using SAML authentication in a mobile application. Even though SAML is
+currently not available as an authentication policy in {ProductName} ({ProductShortName}), we provide templates
+which can be used as a starting point for your own solution.
+
+The sample solution for SAML authentication consists of both the server-side logic and Client Apps:
+
+* https://github.com/feedhenry-templates/saml-service[SAML Service^] -- a Cloud Service which acts as the __Service
+Provider__, and uses http://passportjs.org/[Passport.js^] with
+https://github.com/bergie/passport-saml[passport-saml^] to perform SAML 2.0 authentication
+
+* https://github.com/feedhenry-templates/saml-cloud-app[SAML Cloud App^] -- a Cloud App which proxies requests from the
+Client Apps to the SAML Service
+
+Client Apps are provided for each platform:
+
+* https://github.com/feedhenry-templates/saml-client-app[Cordova^]
+* https://github.com/feedhenry-templates/saml-android-app[Android^]
+* https://github.com/feedhenry-templates/saml-ios-app[iOS^]
+
+[[introduction-to-saml]]
+== Introduction to SAML
+
+To explain the structure of the provided templates, let's first take a brief look at the concepts of SAML. There are
+three actors in a SAML authentication scenario:
+
+* *Principal* -- the user that is trying to access a protected resource provided by the Service Provider
+* *Service Provider* (SP) -- a web application which provides a service to the Principal
+* *Identity Provider* (IdP) -- a web service with the sole purpose of verifying the identity of the Principal and
+providing identity assertions to the Service Provider
+
+These actors interact in the process of authentication based on several assumptions:
+
+* The Principal never shares his password or any other secrets with the Service Provider.
+* The Identity Provider is trusted by both the Principal and the Service Provider.
+* The Identity Provider can supply identity assertions to many Service Providers, thus enabling _Single Sign-On_ (SSO).
+
+[[setting-up-the-templates]]
+== Setting Up the Templates
+
+First, you'll create the _SAML Service_ Cloud Service from the provided template. It's the core component of the
+solution, acting as the Service Provider. The actual service provided in this example is showing the user details at the
+endpoint `/session/valid`. There are several other endpoints to support the SAML authentication process:
+
+* `/login` -- Redirects to the login screen of the IdP.
+* `/session/login_host` -- Returns the URL of the login screen of the IdP.
+* `/login/callback` -- The IdP posts an identity assertion to this endpoint, indicating a login success or failure.
+* `/login/ok` -- The Client App gets redirected to this URL as an indication of login success.
+
+Although the service is configured to use _Active Directory Federation Services 2.0_ (ADFS) as the IdP, it can be
+configured to use any other SAML 2.0 compliant IdP with only minor adjustments.
+
+[[create-the-saml-service]]
+=== Create the SAML Service
+
+. In the Studio, navigate to _Services & APIs_ and click __Provision MBaaS Service/API__.
+. Find the _SAML Service_ template, click __Choose__, enter any name (for example, "SAML Service"), and click __Create__.
+. Fill in the configuration details as follows:
+* `SAML_ISSUER` -- Leave blank for now.
+* `SAML_CALLBACK_URL` -- Leave blank for now.
+* `SAML_ENTRY_POINT` -- Enter the URL to your ADFS endpoint.
+* `SAML_AUTHN_CONTEXT` -- Enter the value `urn:federation:authentication:windows`.
+* `SAML_CERT` -- For this demo, this can be left blank.
+. Click _Next_ and wait until the service gets created. Then click __Finish__.
+
+After the service is created and deployed, `SAML_ISSUER` and `SAML_CALLBACK_URL` need to be configured.
+
+. In the _Service Details_ page, look at the _Current Host_ field and note its value. We'll refer to it in this example as `<mbaas-host>`. Also, note the value of __Service ID__.
+. Click _Environment Variables_ in the menu on the left side.
+. In the _App Environment Variables_ section, set the following value for both variables -- `SAML_ISSUER` and
+`SAML_CALLBACK_URL` -- replacing `<mbaas-host>` with the value found in step 1:
++
+....
+<mbaas-host>/login/callback
+....
+
+[[set-up-the-project]]
+=== Set Up the Project
+
+First, create the project:
+
+. In the Studio, navigate to _Projects_ and click _New Project_.
+. Select the __SAML Example Project__, click __Choose__, enter any name (for example, "SAML Example"), and click _Create_.
+. After the project gets created, click _Finish_.
+
+Next, you have to associate the previously created SAML Service with the project:
+
+. In the _MBaas Services_ column of the _SAML Example_ project, click _+_ to add a new service.
+. Look for the previously created __SAML Service__, click it, and at the bottom of the screen, click _Associate Services_.
+
+The Cloud App needs to have a reference to the SAML Service. Create an environment variable to point to it:
+
+. Navigate to the _SAML Cloud_ Cloud App, and enter the _Environment Variables_ section on the left-hand side.
+. In the _App Environment Variables_ section, click __Add Variable__, enter the following values, and click __Create__:
+* Name: `SAML_SERVICE`
+* Value: the previously noted _Service ID_ of the SAML Service
+. Click _Push Environment Variables_ to propagate the environment variables to the runtime environment.
+
+Now the apps are ready to be built, deployed, and tested.
+
+[[how-it-works]]
+== How It Works
+
+Let's take a look at what happens during the authentication process.
+
+When you click the *Sign In* button, the Client App calls the `sso/session/login_host` endpoint to retrieve the URL
+of the login screen of the IdP. This URL is then opened in an in-app browser, to let you authenticate with the IdP.
+
+.JavaScript
+[source,javascript]
+----
+$('.sign-in-button').on('click', function(e) {
+  $fh.cloud({
+    path: 'sso/session/login_host',
+    method: "POST",
+    data: {
+      "token": $fh._getDeviceId()
+    }
+  },
+  function(res) {
+    console.log('sso host:' + res.sso);
+    var browser = cordova.InAppBrowser.open(res.sso, '_blank', 'location=yes');
+...
+----
+
+.Android
+[source,java]
+----
+JSONObject params = new JSONObject();
+params.put(TOKEN, Device.getDeviceId(getApplicationContext()));
+
+FHCloudRequest request = FH.buildCloudRequest(
+  "sso/session/login_host", "POST", null, params);
+request.executeAsync(new FHActCallback() {
+  @Override
+  public void success(FHResponse res) {
+    Log.d(TAG, "FHCloudRequest (login_host) - success");
+    String ssoStringURL = res.getJson().getString("sso");
+    Log.d(TAG, "SSO URL = " + ssoStringURL);
+    SAMLActivity.this.displayWebView(ssoStringURL);
+  }
+...
+----
+
+.iOS
+[source,objectivec]
+----
+NSString* deviceID = [[FHConfig getSharedInstance] uuid];
+NSMutableDictionary __params = [NSMutableDictionary dictionary];
+params[@"token"] = deviceID;
+FHCloudRequest __cloudReq = [FH buildCloudRequest:@"sso/session/login_host" WithMethod:@"POST" AndHeaders:nil AndArgs: params];
+
+// Initiate the SSO call to the cloud
+[cloudReq execWithSuccess:^(FHResponse _success) {
+  NSLog(@"EXEC SUCCESS =%@", success);
+  NSDictionary_ response = [success parsedResponse];
+  NSString* urlString = response[@"sso"];
+  NSURL* loginUrl = [[NSURL alloc] initWithString:urlString];
+  // Display WebView
+  FHSAMLViewController *controller = [[FHSAMLViewController alloc] initWithURL:loginUrl];
+  [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:controller animated:YES completion:nil];
+...
+----
+
+After you enter the credentials required by the IdP and submit the login form, the IdP will post an identity assertion
+back to the `/login/callback` endpoint of the SAML Service.
+
+The SAML Service then does the following:
+
+* associates the received SAML assertion with the users token, which is passed in the HTTP session
+* persists data from the SAML assertion
+* redirects the user to `/login/ok`, which signals an authentication success to the Client App
+
+Once the user is successfully logged in, the in-app browser is closed, and the Client App can use the service provided
+by the Service Provider -- call `sso/session/valid` to fetch the user details.
+
+.JavaScript
+[source,javascript]
+----
+$fh.cloud({
+  path: 'sso/session/valid',
+  method: "POST",
+  data: {
+    "token": $fh._getDeviceId()
+  }
+},
+function(details) {
+  $('.first_name').text(details.first_name);
+  $('.last_name').text(details.last_name);
+  $('.email').text(details.email);
+  $('.expires').text(details.expires);
+},
+...
+----
+
+.Android
+[source,java]
+----
+JSONObject params = new JSONObject();
+params.put(TOKEN, Device.getDeviceId(getApplicationContext()));
+
+FHCloudRequest request = FH.buildCloudRequest(
+  "sso/session/valid", "POST", null, params);
+  request.executeAsync(new FHActCallback() {
+    @Override
+    public void success(FHResponse res) {
+      Log.d(TAG, "FHCloudRequest (valid) - success");
+      User user = new User();
+      user.setFirstName(res.getJson().getString("first_name"));
+      user.setLastName(res.getJson().getString("last_name"));
+      user.setEmail(res.getJson().getString("email"));
+      user.setExpires(res.getJson().getString("expires"));
+
+      Log.d(TAG, user.toString());
+
+      SAMLActivity.this.displayUserData(user);
+...
+----
+
+.iOS
+[source,objectivec]
+----
+NSString* deviceID = [[FHConfig getSharedInstance] uuid];
+NSMutableDictionary __params = [NSMutableDictionary dictionary];
+params[@"token"] = deviceID;
+FHCloudRequest __cloudReq = [FH buildCloudRequest:@"sso/session/valid" WithMethod:@"POST" AndHeaders:nil AndArgs: params];
+
+// Initiate the SSO call to the cloud
+[cloudReq execWithSuccess:^(FHResponse _success) {
+  NSDictionary_ response = [success parsedResponse];
+  // Manage next UI view controller
+  [ self performSegueWithIdentifier: @"showLoggedIn" sender: response];
+} AndFailure:^(FHResponse *failed) {
+  NSLog(@"Request name failure =%@", failed);
+}];
+----

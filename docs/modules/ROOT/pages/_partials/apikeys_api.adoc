@@ -1,0 +1,376 @@
+// include::shared/attributes.adoc[]
+
+[[api-keys-api]]
+= API Keys API
+
+Manage the various API keys for a User account and Apps.
+
+NOTE: `X-FH-AUTH-USER` should be in every header of every request. See link:{ProductFeatures}#api-key-management[API Key Management] for more information.
+
+[[api-keys-api-list-api-keys]]
+== List API keys
+
+[[api-keys-api-description]]
+=== Description
+
+List User or App API keys.
+
+[[api-keys-api-endpoint]]
+=== Endpoint
+
+* uri - /box/srv/1.1/ide/<domain>/api/list
+
+* method - POST
+
+[[api-keys-api-request-body]]
+=== Request Body
+
+[[api-keys-api-list-keys-for-currently-logged-in-user]]
+==== List keys for currently logged in user
+
+[source,javascript]
+----
+{
+  "type": "user"
+}
+----
+
+[[api-keys-api-list-keys-belonging-to-given-app-id]]
+==== List keys belonging to given app id
+
+[source,javascript]
+----
+{
+  "type": "app",
+  "appId": "<app_instance_id>"
+}
+----
+
+[[api-keys-api-response-body]]
+=== Response Body
+
+[[api-keys-api-success]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "list": [{
+    "label": "<user_friendly_id>",
+    "keyType": "<key_type>",
+    "key": "<public_api_key>",
+    "keyReference": "<reference_id>", // for example, user/app id
+    "secret": "<api_secret_key>",  // only for 'admin' group
+    "revoked": "<revoked_timestamp>",
+    "revokedBy": "<revoked_by_ref_id>", // for example, user id
+    "revokedEmail": "<revoked_by_user_email>"
+  },
+  /* ... */
+  ]
+}
+----
+
+[[api-keys-api-error]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[api-keys-api-create-new-api-keys]]
+== Create new API keys
+
+[[api-keys-api-description-1]]
+=== Description
+
+Create a new User or App API key. While users can have multiple API keys associated with them, Apps can only have one active API key at any time - when an app API key is created, any pre-existing keys for that app will be automatically revoked.
+
+[[api-keys-api-endpoint-1]]
+=== Endpoint
+
+* uri - /box/srv/1.1/ide/<domain>/api/create
+
+* method - POST
+
+[[api-keys-api-request-body-1]]
+=== Request Body
+
+[[api-keys-api-create-api-keys-for-the-current-logged-in-user]]
+==== Create API Keys for the current logged in user
+
+[source,javascript]
+----
+{
+  "type": "user",
+  "label": "<user_friendly_id>"
+}
+----
+
+[[api-keys-api-create-new-api-keys-belonging-to-given-app-id]]
+==== Create new API keys belonging to given app id
+
+Any existing keys for this app will be automatically revoked.
+
+[source,javascript]
+----
+{
+  "type": "app",
+  "label": "<user_friendly_id>",
+  "appId": "<app_instance_id>"
+}
+----
+
+[[api-keys-api-success-1]]
+=== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "apiKey": {
+    "label": "<user_friendly_id>",
+    "keyType": "<key_type>",
+    "key": "<public_api_key>",
+    "keyReference": "<reference_id>", // for example, user/app id
+    "secret": "<api_secret_key>",  // only for 'admin' group
+    "revoked": "<revoked_timestamp>",
+    "revokedBy": "<revoked_by_ref_id>", // for example, user id
+    "revokedEmail": "<revoked_by_user_email>"
+  }
+}
+----
+
+[[api-keys-api-error-1]]
+=== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[api-keys-api-revoke-existing-api-keys]]
+== Revoke existing API keys
+
+[[api-keys-api-description-2]]
+=== Description
+
+Revoke existing User or App API keys.
+
+[[api-keys-api-endpoint-2]]
+=== Endpoint
+
+* uri - /box/srv/1.1/ide/<domain>/api/revoke
+
+* method - POST
+
+[[api-keys-api-request-body-2]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "key": "<public_api_key>"
+}
+----
+
+[[api-keys-api-success-2]]
+=== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "apiKey": {
+    "label": "<user_friendly_id>",
+    "keyType": "<key_type>",
+    "key": "<public_api_key>",
+    "keyReference": "<reference_id>", // for example, user/app id
+    "secret": "<api_secret_key>",  // only for 'admin' group
+    "revoked": "<revoked_timestamp>",
+    "revokedBy": "<revoked_by_ref_id>", // for example, user id
+    "revokedEmail": "<revoked_by_user_email>"
+  }
+}
+----
+
+[[api-keys-api-error-2]]
+=== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[api-keys-api-delete-existing-api-keys]]
+== Delete existing API keys
+
+[[api-keys-api-description-3]]
+=== Description
+
+Permanently delete an existing User or App API key.
+
+[[api-keys-api-endpoint-3]]
+=== Endpoint
+
+* uri - /box/srv/1.1/ide/<domain>/api/delete
+
+* method - POST
+
+[[api-keys-api-request-body-3]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "key": "<public_api_key>"
+}
+----
+
+[[api-keys-api-success-3]]
+=== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "apiKey": {
+    "label": "<user_friendly_id>",
+    "keyType": "<key_type>",
+    "key": "<public_api_key>",
+    "keyReference": "<reference_id>", // for example, user/app id
+    "secret": "<api_secret_key>",  // only for 'admin' group
+    "revoked": "<revoked_timestamp>",
+    "revokedBy": "<revoked_by_ref_id>", // for example, user id
+    "revokedEmail": "<revoked_by_user_email>"
+  }
+}
+----
+
+[[api-keys-api-error-3]]
+=== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[api-keys-api-update-an-existing-api-key]]
+== Update an existing API Key
+
+[[api-keys-api-description-4]]
+=== Description
+
+Update an existing App or User API Key.
+
+[[api-keys-api-endpoint-4]]
+=== Endpoint
+
+* uri - /box/srv/1.1/ide/<domain>/api/update
+
+* method - POST
+
+[[api-keys-api-request-body-4]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "key": "<public_api_key>",
+  "fields": {
+    "label": "<new_user_friendly_id>"
+  }
+}
+----
+
+[[api-keys-api-success-4]]
+=== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "apiKey": {
+    "label": "<user_friendly_id>",
+    "keyType": "<key_type>",
+    "key": "<public_api_key>",
+    "keyReference": "<reference_id>", // for example, user/app id
+    "secret": "<api_secret_key>",  // only for 'admin' group
+    "revoked": "<revoked_timestamp>",
+    "revokedBy": "<revoked_by_ref_id>", // for example, user id
+    "revokedEmail": "<revoked_by_user_email>"
+  }
+}
+----
+
+[[api-keys-api-error-4]]
+=== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[api-keys-api-validate-an-api-key]]
+== Validate an API Key
+
+[[api-keys-api-description-5]]
+=== Description
+
+Check if an API key is valid
+
+[[api-keys-api-endpoint-5]]
+=== Endpoint
+
+* uri - /box/srv/1.1/ide/<domain>/api/validate
+
+* method - POST
+
+[[api-keys-api-request-body-5]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "type" : "<key_type>"
+  "key" : "<key_value>",
+}
+----
+
+[[api-keys-api-success-5]]
+=== Success
+
+[source,javascript]
+----
+{
+  "status" : "ok",
+  "valid" : true | false
+}
+----
+
+[[api-keys-api-error-5]]
+=== Error
+
+[source,javascript]
+----
+{
+  "status" : "error",
+  "message" : "<error_message>"
+}
+----

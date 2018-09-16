@@ -1,0 +1,94 @@
+// include::shared/attributes.adoc[]
+
+[[using-node-js-modules-in-cloud-apps]]
+= Using Node.js Modules in Cloud Apps
+
+[[using-nodejs-modules-overview]]
+== Overview
+
+This guide shows you how to include and use Node.js modules in your Cloud Apps. In the Red Hat Mobile Application
+Platform ({ProductShortName}), you can use the modules of any Node.js package available in the registry to develop your Cloud Apps.
+In the public registry - https://www.npmjs.com/[npmjs.com^] - you can find thousands of packages - frameworks,
+connectors, and various tools.
+
+image:npm.png[NPM website]
+
+Parts of functionality of {ProductShortName} itself are exposed as node modules. For example, when you create a new Cloud App on
+the Platform, by default the _package.json_ will include a node module called __fh-mbaas-api__, which is the cornerstone
+of the Mobile Backend As A Service (MBaaS) in {ProductShortName}.
+
+[[getting-started-with-node-js-modules]]
+== Getting Started with Node.js Modules
+
+If you need a piece of functionality in your app and you don't want to reinvent the wheel, it's worth searching for
+existing modules on npmjs.com.
+
+For example, if you want to use the _Mongoose_ ODM framework, you can try looking at the official page of the
+`mongoose` package in the registry - https://www.npmjs.com/package/mongoose[npmjs.com/package/mongoose^].
+
+image:npm_package_detail.png[npmjs.com Mongoose package detail]
+
+To use the latest version of the package in your project, running the following command in your Cloud App's directory
+will install the package locally and add it as a dependency to the `package.json` file of your Cloud App:
+
+[source,bash]
+----
+npm install --save mongoose
+----
+
+Alternatively, you can add the dependency to `package.json` manually, by appending it at the end of the `dependencies`
+object, as in the following example:
+
+[source,javascript]
+----
+{
+    "name": "my-fh-app",
+    "version": "0.2.0",
+    "dependencies": {
+        "body-parser": "~1.0.2",
+        "cors": "~2.2.0",
+        "express": "~4.0.0",
+        "fh-mbaas-api": "~4.9.0",
+        "mocha": "^2.1.0",
+        "request": "~2.40.0",
+        "mongoose": "~4.1.12" // added mongoose dependency
+    }
+}
+----
+
+At this point, you can start using the modules provided by the package. Often, the package page on npmjs.com contains
+instructions for usage and links to documentation. The next step common to all modules is _requiring_ the module in your
+code to be able to use it:
+
+[source,javascript]
+----
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/my_database');
+...
+----
+
+In this example, the database URL is hard-coded in the source. A more common scenario, however, is using different
+databases for different stages of development life cycle - development, testing, production. This can be resolved by
+defining configuration values through environment variables.
+
+[[environment-variables]]
+== Environment Variables
+
+If any part of the configuration of your Cloud App - such as hostnames, usernames, or passwords - varies between life
+cycle stages, you can set such configuration values using environment variables. That allows you to make configuration
+changes without changing the code. Every Cloud App has an _Environment Variables_ section in the Studio where you can
+create or remove variables, set values, or push the variables to a running instance of the app.
+
+image:nodejs_modules_env_vars.png[Environment variables]
+
+Environment variables are especially useful in combination with the ability to _push_ different values to different
+environments. For example, you could be using a different database host for testing and for production. Another benefit
+is that sensitive configuration information can be stored outside of the code base of your application.
+
+In a Cloud App, environment variables can be accessed through the `process.env` object. The previous example of a
+Mongoose connect call changed to use environment variables would look this way:
+
+[source,javascript]
+----
+mongoose.connect('mongodb://' + process.env.MONGO_HOST + '/' + process.env.MONGO_DB);
+----

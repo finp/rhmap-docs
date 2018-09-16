@@ -1,0 +1,53 @@
+[[fh-sync-setrecordhashfn]]
+== $fh.sync.setRecordHashFn
+
+Define a function that will generate the hash value of a single record.
+A record hash is used when comparing a cached record with the latest from the Dataset Backend.
+
+If the hash matches, the records are assumed to be the same (so no need to update the cache or clients).
+The default implementation takes a conservative approach by doing a sorted stringification of the record, and calculates a sha-1 of it.
+
+However, you may want to override this to save on CPU time.
+
+*IMPORTANT* Avoid using fields that are updated server-side in your hash calculation.
+For example, if a Dataset has a lastModified field that is updated at save time on the Dataset Backend, this should be omitted from the hash calculation.
+Otherwise, a collision is likely to happen with any subsequent update as clients will be unaware of the new value for that field until the data has synced back with the clients.
+
+This function will allow you to override the default implementation.
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.setRecordHashFn(dataset_id, function generateHash(dataset_id, record){});
+----
+
+=== Parameters
+
+==== dataset_id
+* Description: the id of the dataset
+* Type: String
+
+==== generateHash
+* Description: The function that will be used to generate the hash of a dataset.
+* Type: Function
+* Invoked Parameters:
+** *dataset_id*
+*** Description: the id of the dataset
+*** Type: String
+** *record*
+*** Description: the record
+*** Type: Object
+
+=== Returns
+
+The hash value of the record.
+
+=== Example
+
+[source,javascript]
+----
+$fh.sync.setRecordHashFn("todo", function(dataset_id, record){
+  return record.lastModified;
+});
+----

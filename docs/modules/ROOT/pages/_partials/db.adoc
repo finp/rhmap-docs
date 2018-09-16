@@ -1,0 +1,490 @@
+// include::shared/attributes.adoc[]
+
+[[fh-db]]
+= $fh.db
+
+[source,javascript]
+----
+$fh.db(options, callback);
+----
+
+Access to hosted data storage. It supports CRUDL (create, read, update, delete, list) and index operations. It also supports deleteall, which deletes all the records in the specified entity.
+
+[[example]]
+== Example
+
+.Create a single entry (row)
+[source,javascript]
+----
+var options = {
+  "act": "create",
+  "type": "myFirstEntity", // Entity/Collection name
+  "fields": { // The structure of the entry/row data. A data is analogous to "Row" in MySql or "Documents" in MongoDB
+    "firstName": "Joe",
+    "lastName": "Bloggs",
+    "address1": "22 Blogger Lane",
+    "address2": "Bloggsville",
+    "country": "Bloggland",
+    "phone": "555-123456"
+  }
+};
+$fh.db(options, function (err, data) {
+  if (err) {
+    console.error("Error " + err);
+  } else {
+    console.log(JSON.stringify(data));
+    /*
+       The output will be something similar to this
+       {
+        "fields": {
+          "address1": "22 Blogger Lane",
+          "address2": "Bloggsville",
+          "country": "Bloggland",
+          "fistName": "Joe",
+          "lastName": "Bloggs",
+          "phone": "555-123456"
+        },
+        "guid": "4e563ea44fe8e7fc19000002", // unique id for this data entry
+        "type": "myFirstEntity"
+      }
+    */
+  }
+});
+----
+
+.Create multiple records in one call
+[source,javascript]
+----
+var options = {
+  "act": "create",
+  "type": "myCollectionType", // Entity/Collection name
+  "fields": [{ // Notice 'fields' is an array of data entries
+    "id": 1,
+    "name": "Joe"
+  }, {
+    "id": 2,
+    "name": "John"
+  }]
+};
+$fh.db(options, function (err, data) {
+  if (err) {
+    console.error("Error " + err);
+  } else {
+    console.log(JSON.stringify(data));
+    /*
+       The output will be something similar to this
+       {
+          "status":"ok",
+          "count": 2
+       }
+    */
+  }
+});
+----
+
+.Read a single entry
+[source,javascript]
+----
+var options = {
+  "act": "read",
+  "type": "myFirstEntity", // Entity/Collection name
+  "guid": "4e563ea44fe8e7fc19000002" // Row/Entry ID
+};
+$fh.db(options, function (err, data) {
+  if (err) {
+    console.error("Error " + err);
+  } else {
+    console.log(JSON.stringify(data));
+    /* Sample output
+      {
+        "fields": {
+          "address1": "22 Blogger Lane",
+          "address2": "Bloggsville",
+          "country": "Bloggland",
+          "fistName": "Joe",
+          "lastName": "Bloggs",
+          "phone": "555-123456"
+        },
+        "guid": "4e563ea44fe8e7fc19000002",
+        "type": "myFirstEntity"
+      }
+    */
+  }
+});
+----
+
+.Update an entire entry
+[source,javascript]
+----
+// The update call updates the entire entity.
+// It will replace all the existing fields with the new fields passed in.
+var options = {
+  "act": "update",
+  "type": "myFirstEntity", // Entity/Collection name
+  "guid": "4e563ea44fe8e7fc19000002", // Row/Entry ID
+  "fields": {
+    "fistName": "Jane"
+  }
+};
+$fh.db(options, function (err, data) {
+  if (err) {
+    console.error("Error " + err);
+  } else {
+    console.log(JSON.stringify(data));
+    /* Output:
+      {
+        "fields": {
+          "fistName": "Jane"   //only one field now
+        },
+        "guid": "4e563ea44fe8e7fc19000002",
+        "type": "myFirstEntity"
+      }
+    */
+  }
+});
+----
+
+.Update a single field
+[source,javascript]
+----
+var options = {
+  "act": "read",
+  "type": "myFirstEntity", // Entity/Collection name
+  "guid": "4e563ea44fe8e7fc19000002" // Row/Entry ID
+};
+$fh.db(options, function (err, entity) {
+  var entFields = entity.fields;
+  entFields.firstName = 'Jane';
+
+  options = {
+    "act": "update",
+    "type": "myFirstEntity",
+    "guid": "4e563ea44fe8e7fc19000002",
+    "fields": entFields
+  };
+  $fh.db(options, function (err, data) {
+    if (err) {
+      console.error("Error " + err);
+    } else {
+      console.log(JSON.stringify(data));
+      /*output
+        {
+          "fields": {
+            "address1": "22 Blogger Lane",
+            "address2": "Bloggsville",
+            "country": "Bloggland",
+            "firstName": "Jane",
+            "lastName": "Bloggs",
+            "phone": "555-123456"
+          },
+          "guid": "4e563ea44fe8e7fc19000002",
+          "type": "myFirstEntity"
+        }
+      */
+    }
+  });
+});
+----
+
+.Delete an entry (row)
+[source,javascript]
+----
+var options = {
+  "act": "delete",
+  "type": "myFirstEntity", // Entity/Collection name
+  "guid": "4e563ea44fe8e7fc19000002" // Row/Entry ID to delete
+};
+$fh.db(, function (err, data) {
+  if (err) {
+    console.error("Error " + err);
+  } else {
+    console.log(JSON.stringify(data));
+    /* output
+      {
+        "fields": {
+          "address1": "22 Blogger Lane",
+          "address2": "Bloggsville",
+          "country": "Bloggland",
+          "fistName": "Jane",
+          "lastName": "Bloggs",
+          "phone": "555-123456"
+        },
+        "guid": "4e563ea44fe8e7fc19000002",
+        "type": "myFirstEntity"
+      }
+    */
+  }
+});
+----
+
+.Delete all entity (collection) entries
+[source,javascript]
+----
+var options = {
+  "act": "deleteall",
+  "type": "myFirstEntity" // Entity/Collection name
+};
+$fh.db(options, function (err, data) {
+  if (err) {
+    console.error("Error " + err);
+  } else {
+    console.log(JSON.stringify(data));
+    /* output
+      {
+        status: "ok",
+        count: 5
+      }
+    */
+  }
+});
+----
+
+.List
+[source,javascript]
+----
+var options = {
+  "act": "list",
+  "type": "myFirstEntity", // Entity/Collection name
+};
+$fh.db(options, function (err, data) {
+  if (err) {
+    console.error("Error " + err);
+  } else {
+    console.log(JSON.stringify(data));
+  /* output
+    {
+      "count": 1,
+      "list": [{
+        "fields": {
+          "address1": "22 Blogger Lane",
+          "address2": "Bloggsville",
+          "country": "Bloggland",
+          "fistName": "Joe",
+          "lastName": "Bloggs",
+          "phone": "555-123456"
+        },
+        "guid": "4e563ea44fe8e7fc19000002",
+        "type": "myFirstEntity"
+      }]
+    }
+    */
+  }
+});
+----
+
+.List with sorting
+[source,javascript]
+----
+var sort_ascending = {
+  "act": "list",
+  "type": "myFirstEntity", // Entity/Collection name
+  "sort": {
+    "username": 1 // Sort by the 'username' field ascending a-z
+  }
+};
+
+var sort_descending = {
+  "act": "list",
+  "type": "myFirstEntity", // Entity/Collection name
+  "sort": {
+    "username": -1 // Sort by the 'username' field descending z-a
+  }
+};
+----
+
+.List with pagination
+[source,javascript]
+----
+var options = {
+  "act": "list",
+  "type": "myFirstEntity", // Entity/Collection name
+  "skip": 20,   //<1>
+  "limit": 10   //<2>
+};
+$fh.db(options, function (err, data) {
+  if (err) {
+    console.error("Error " + err);
+  } else {
+    console.log(JSON.stringify(data));
+    /* output
+    {
+      "count": 10,
+      "list": [{
+        "fields": {
+          "address1": "22 Blogger Lane",
+          "address2": "Bloggsville",
+          "country": "Bloggland",
+          "fistName": "Joe",
+          "lastName": "Bloggs",
+          "phone": "555-123456"
+        },
+        "guid": "4e563ea44fe8e7fc19000002",
+        "type": "myFirstEntity"
+      }, ...
+      ]
+    }
+    */
+  }
+});
+----
+<1> returns the third page of results
+<2> the size of the returned page is 10
+
+.List with Geo search
+[source,javascript]
+----
+var options = {
+  act: "list",
+  type: "collectionName", // Entity/Collection name
+  "geo": {
+    "employeeLocation": { //emplyeeLocation has been indexed as "2D"
+      center: [-83.028965, 42.542144],
+      radius: 5 //km
+    }
+  }
+};
+$fh.db(options, function (err, data) {
+  if (err) {
+    console.error("Error " + err);
+  } else {
+    console.log(JSON.stringify(data));
+  /* output
+    {
+      "count": 1,
+      "list": [{
+        "fields": {
+          "address1": "22 Blogger Lane",
+          "address2": "Bloggsville",
+          "country": "Bloggland",
+          "fistName": "Joe",
+          "lastName": "Bloggs",
+          "phone": "555-123456"
+        },
+        "guid": "4e563ea44fe8e7fc19000002",
+        "type": "myFirstEntity"
+      }]
+    }
+    */
+  }
+});
+----
+
+.List with multiple restrictions
+[source,javascript]
+----
+/* Possible query restriction types:
+  "eq" - is equal to
+  "ne" - not equal to
+  "lt" - less than
+  "le" - less than or equal
+  "gt" - greater than
+  "ge" - greater than or equal
+  "like" Match some part of the field. Based on [Mongo regex matching logic](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-RegularExpressions)
+  "in" - The same as $in operator in MongoDB, to select documents where the field (specified by the _key_) equals any value in an array (specified by the _value_)
+*/
+var options = {
+  "act": "list",
+  "type": "myFirstEntity", // Entity/Collection name
+  "eq": {
+    "lastName": "Bloggs"
+  },
+  "ne": {
+    "firstName": "Jane"
+  },
+  "in": {
+    "country": ["Bloggland", "Janeland"]
+  }
+};
+$fh.db(options, function (err, data) {
+  if (err) {
+    console.error("Error " + err);
+  } else {
+    console.log(JSON.stringify(data));
+  /* output
+    {
+      "count": 1,
+      "list": [{
+        "fields": {
+          "address1": "22 Blogger Lane",
+          "address2": "Bloggsville",
+          "country": "Bloggland",
+          "fistName": "Joe",
+          "lastName": "Bloggs",
+          "phone": "555-123456"
+        },
+        "guid": "4e563ea44fe8e7fc19000002",
+        "type": "myFirstEntity"
+      }]
+    }
+    */
+  }
+});
+----
+
+.List with restricted fields returned
+[source,javascript]
+----
+var options = {
+  "act": "list",
+  "type": "myFirstEntity",
+  "eq": {
+    "lastName": "Bloggs",
+    "country": "Bloggland"
+  },
+  "ne": {
+    "firstName": "Jane"
+  },
+  "fields": ["address1", "address2"]
+};
+$fh.db(options, function (err, data) {
+  if (err) {
+    console.error("Error " + err);
+  } else {
+    console.log(JSON.stringify(data));
+  /* output
+    {
+      "count": 1,
+      "list": [{
+        "fields": {
+          "address1": "22 Blogger Lane",
+          "address2": "Bloggsville"
+        },
+        "guid": "4e563ea44fe8e7fc19000002",
+        "type": "myFirstEntity"
+      }]
+    }
+    */
+  }
+});
+----
+
+.Adding an index
+[source,javascript]
+----
+var options = {
+  "act": "index",
+  "type": "employee",
+  "index": {
+    "employeeName": "ASC" // Index type: ASC - ascending, DESC - descending, 2D - geo indexation
+    "location": "2D"
+    // For 2D indexing, the field must satisfy the following:
+    //  It is a [Longitude, Latitude] array
+    //  Longitude should be between [-180, 180]
+    //  Latitude should be between [-90, 90]
+    //  Latitude or longitude should **NOT** be null
+  }
+};
+$fh.db(options, function (err, data) {
+  if (err) {
+    console.error("Error " + err);
+  } else {
+    console.log(JSON.stringify(data));
+    /* output
+      {
+        "status":"ok",
+        "indexName":"employeeName_1_location_2d"
+      }
+    */
+  }
+});
+----

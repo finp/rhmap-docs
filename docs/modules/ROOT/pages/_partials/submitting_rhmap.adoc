@@ -1,0 +1,24 @@
+// include::shared/attributes.adoc[]
+
+[[submitting-an-app-to-the-rhmap-store]]
+= Submitting an App to the RHMAP App Store
+
+.Prerequisites
+This guide assumes that a number of things have already been done by the developer. They are:
+
+* A 'Release' App has been built for each target platform
+* A screenshot (optional)
+* Review the steps required to build an app for other stores, some steps are also required for the RHMAP, for example, keys and certs for Android apps, or credential bundles for iOS apps.
+
+[[creating-a-new-appstore-application]]
+== Creating a new App Store App
+
+. Log into Studio with Domain Administrator permissions.
+. Navigate to *Mobile App Management* from the *Admin* menu.
+. Click *App Store Apps* in the left hand menu.
+. Click *Create a new App* button.
+. Enter a name for the app, and click *Create App*.
+. Upload an appropriate binary app file for each platform you support.
+. Set the appropriate Auth tokens and policies for your app.
+
+NOTE: In addition to creating an app, you can restrict the availability of the app to user groups. 

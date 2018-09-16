@@ -1,0 +1,134 @@
+// include::shared/attributes.adoc[]
+
+[[developing-an-angular-app-using-rhmap]]
+= Developing An Angular App Using {ProductShortName}
+
+.Overview
+This guide will introduce you to using the {ProductShortName} Javascript SDK within a HTML5 AngularJS Cordova App.
+
+This guide includes the steps necessary to create a new AngularJS Hello World Project and highlights the code necessary to interact with a Cloud Code App.
+
+.Requirements
+* {ProductShortName} Account
+* Knowledge of HTML, JavaScript, https://angularjs.org/[AngularJS^] and Node.js
+* GitHub User Account
+* link:{LocalDevelopmentGuide}#installing-fhc[FHC].
+
+A useful https://docs.angularjs.org/tutorial[AngularJS Tutorial^] is available for users wishing to start with AngularJS.
+
+[[angular-sample-project-overview]]
+== Sample Project Overview
+
+The example project is a simple project containing one Client App and one Cloud App.
+
+[[angular-client-app]]
+=== Client App
+
+The Client App is a simple AngularJS App that includes the {ProductShortName} Javascript SDK. The Client App asks the user to enter their name into a text box and click a `Say Hello From The Cloud` button. The Client App then uses the $fh.cloud function to send the text entered to the Cloud Code App.
+
+[[angular-cloud-code-app]]
+=== Cloud Code App
+
+The Cloud Code App exposes a `hello` endpoint to recieve a request from the Client App, change the text sent to add `Hello` and return the response to the client.
+
+[[create-a-new-angularjs-hello-world-project]]
+== Create A New AngularJS Hello World Project
+
+Use the following steps to create a new AngularJS Hello World Project.
+
+. Log into the Studio.
+. Select the `Projects` tab located at top-left of the screen.
+. Select the `+ New Project` button located at the top of the screen. You will then see a list of Project Templates.
+. Select the `AngularJS Hello World Project` Template and give the new project a name.
+. Select the `Next` button. The new project will now be created.
+. When the project has been created, select the `Finish` button.
+
+You now have a new Project containing an AngularJS Client App and a Cloud Code App that it will communicate with.
+
+To Preview the app:
+
+. Select the `Apps, Cloud Apps & Services` tab.
+. Select the `Client App` under the `Apps` section. This will take you to the Details Screen.
+. The `App Preview` contains a working version of the AngularJS Client App that will communicate with the Cloud Code App.
+
+[[angular-building-the-client-app-for-an-android-device]]
+== Build The Client App For An Android Device
+
+Now that you have tested your app and are happy that it is working correctly, you can now build the Client App using the {ProductShortName} Studio.
+
+Use the following steps to build the Client App for an Android device:
+
+. From the Client App interface selected the `Build` tab.
+. Select `Android`, the `master` branch, a `Debug` build type, the `Dev` Cloud Code App and then click the `Build` button. An Android build of the Client App will now be built.
+. When the Android build has completed, you will be presented with a QR Code, simply open a QR Code Scanner app on your Android device and install the build. Alternatively, type the short URL into your phone's browser.
+
+NOTE: You can build Android debug binaries without any certificates but you will need the requisite credentials to build any type of iOS Phone binaries.
+
+NOTE: The *branch* selector allows you to select which branch of the Client App you wish to build. In this case, the default *master* branch is the correct branch.
+
+Congratulations. You have just created an AngularJS HTML5 Cordova App using {ProductShortName}.
+
+[[angular-development-overview]]
+== Development Overview
+
+This section will highlight the code necessary for the example solution to work correctly.
+
+[[angular-overview-cloud-code-app]]
+=== Cloud Code App
+
+First, let's consider the Cloud Code App. In this example, we want the Cloud Code App to recieve a request from the Client App, change the `hello` parameter and respond to the Client App using a JSON object containing the following parameters:
+
+[source,javascript]
+----
+{
+    msg: "Hello <<hello parameter sent by the client app>>"
+}
+----
+
+To implement this functionality in the Cloud Code App:
+
+. In the https://github.com/feedhenry-templates/helloworld-cloud/blob/master/application.js[application.js^] file, a new `/hello` route is added which requires a `hello.js` file located in the `lib` directory.
+
+. The https://github.com/feedhenry-templates/helloworld-cloud/blob/master/lib/hello.js[hello.js^] file creates two routes. Both routes perform the same operation of changing the `hello` parameter.
+* A `GET` request where the `hello` parameter is appended as a query string.
+* A `POST` request where the `hello` parameter is sent in the body of a POST request.
+
+NOTE: This Cloud Code App is completely independent of the AngularJS Client App. The Cloud Code App can be shared between any number of Client Apps within a project.
+
+[[angularjs-client-app]]
+=== AngularJS Client App
+
+Having created the `/hello` endpoint in the Cloud Code App, we now proceed to examine the functionality added to the AngularJS Client App to allow it to send requests to the `/hello` endpoint exposed in the Cloud Code App.
+
+The Client App is a simple AngularJS App with a single input that accepts some text and a single button that sends the input to the cloud and displays the result to the user.
+
+[[angular-rhmap-sdk]]
+==== {ProductShortName} SDK
+
+Firstly, as in all HTML5 Cordova Apps, the {ProductShortName} Javascript SDK (`feedhenry.js`) is included in the https://github.com/feedhenry-templates/quickstart-angular-app/blob/master/www/index.html[index.html^] file. This allows access to all of the link:{ClientAPI}[$fh Client API] functions.
+
+NOTE: You will notice that the https://github.com/feedhenry-templates/quickstart-angular-app/blob/master/www/feedhenry.js[feedhenry.js^] file is empty in the template repository. When a Client App is created, if the `feedhenry.js` file is present in the `www` directory, the latest {ProductShortName} Javascript SDK will be added to the file automatically.
+
+[[angular-fhconfig-json]]
+==== fhconfig.json
+
+The Client App also contains a https://github.com/feedhenry-templates/quickstart-angular-app/blob/master/www/fhconfig.json[fhconfig.json^] file. This file contains the information needed for the {ProductShortName} Javascript SDK to communicate with the Cloud App.
+
+NOTE: All HTML5 Client Apps must contain a `fhconfig.json` file to use the $fh Client API functions. This file is automatically populated with the required information when the app is created in the Studio.
+
+[[angular-fh-cloud]]
+==== $fh.cloud
+
+In this example, the $fh.cloud Client API function is used to send requests to the `hello` endpoint in the Cloud Code App.
+
+The `$fh.cloud` function is located in the https://github.com/feedhenry-templates/quickstart-angular-app/blob/master/www/app/modules/cloud.js[cloud.js^] file. Here, the $fh.cloud function is exposed as a reusable service for the `MainCtrl` Controller to use.
+
+There is a single controller in the AngularJS App called https://github.com/feedhenry-templates/quickstart-angular-app/blob/master/www/app/controllers.js[MainCtrl^]. This controller is responsible for
+
+. Accepting the input from the user from the https://github.com/feedhenry-templates/quickstart-angular-app/blob/master/www/views/example.html[example.html^] view.
+
+. Using the `fhcloud` service to call the `hello` endpoint in the Cloud Code App.
+
+. Processing the response from the Cloud Code App using the `success` or `error` functions, depending on whether the $fh.cloud call was successful.
+
+NOTE: In this case, the Client App is using a `GET` request type. As the Cloud Code App exposes both a `GET` and `POST` version of the `hello` endpoint, a `POST` request type will also work. This is especially useful when dealing with RESTful applications.

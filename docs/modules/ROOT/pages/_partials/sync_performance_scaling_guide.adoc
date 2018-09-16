@@ -1,0 +1,136 @@
+[[sync-performance-scaling]]
+= Sync Server Performance and Scaling
+
+== Overview
+
+The sync server is designed to be scalable.
+
+This section helps you understand the performance of the sync server, and the options for scaling.
+
+NOTE: If you are using a 1 CPU core with the sync server included with `fh-mbaas-api` version 7.0.0 or later, the performance could decrease compared to previous versions with default configurations. To improve performance of the sync server on a single core, consider adjusting the configuration as described in the xref:sync_configuration_guide[]
+
+== Inspecting Performance
+
+There are 2 options to inspect the performance of the sync server:
+
+1. Query the `/mbaas/sync/stats` endpoint.
++
+By default, the Sync framework saves metrics data into Redis while it is running. 
+You can then send a HTTP GET request to the `/mbaas/sync/stats` endpoint to view the summary of those metrics data. 
++
+The following information is available from this endpoint:
++
+* CPU and Memory Usage of all the workers
+* The time taken to process various jobs
+* The number of the remaining jobs in various job queues
+* The time taken for various API calls
+* The time taken for various MongoDB operations
++
+For each of those metrics, you are able to see the total number of samples, the current, maximum, minimum and average values. 
++
+By default, it collects the last 1000 samples for each metric, but you can control that using the `statsRecordsToKeep` configuration option.
++
+This endpoint is easy to use and provides enough information for you to understand the current performance of the sync server. 
+
+2. Visualize the metrics data with InfluxDB and Grafana
++
+If you want to visualize the current and historical metrics data, you can instruct the sync server to send the metrics data to InfluxDB, and view the graphs in Grafana.
++
+There are plenty of tutorials online to help setup InfluxDB and Grafana. For example:
++
+* https://github.com/feedhenry/sync-metrics-openshift[How to setup InfluxDB and Grafana on OpenShift]
++
+Once you have InfluxDB running, you just need to update the following configurations to instruct the sync server to send metrics data:
++
+* metricsInfluxdbHost
+* metricsInfluxdbPort
++
+[NOTE]
+====
+Make sure `metricsInfluxdbPort` is a UDP port
+====
++
+To see the metrics data graph in Grafana, you need to create a new dashboard with graphs. 
+The quickest way is to import https://github.com/feedhenry/sync-metrics-openshift/blob/master/dashboards/sync-stats.json[this Grafana databoard file].
+Once the app is running, you can view metrics data in the Grafana dashboard.
++
+For more details about how to configure the Grafana graphs, please refer to the http://docs.grafana.org/[Grafana Documentation].
+
+== Understanding Performance
+
+To understand the performance of the sync server, here are some of the key metrics you need to look at:
+
+=== CPU Usage
+
+This is the most important metric. 
+On one hand, if CPU is over loaded, then the sync server cannot respond to the client requests.
+On the other hand, we want to utilize the CPU usage as much as possible.
+
+To balance that, establish a threshold to determine when to scale the sync server. The recommended value is 80%.
+
+If CPU utilization is below that, it is not necessary to scale the sync server, and you can probably reduce a few worker interval configurations to increase the CPU usages.
+However, if CPU usage is above that threshold, consider the following adjustments to improve performance:
+
+* Scaling the sync server
+* Increase some of the worker intervals to reduce the load on CPU as described in xref:configuring_the_workers[]
+
+=== Remaining Jobs in Queues
+
+The sync server saves various jobs in queues to process them later. 
+
+If the number of jobs in queues keeps growing, and the CPU utilization is relatively low, reduce worker interval configurations to process the jobs quicker.
+
+If the sync server is already under heavy load, consider scaling the sync server to allow new workers to be created to process the jobs.
+
+=== API response time
+
+If you observe increases in the response time for various sync APIs, and the CPU usage is going up, it means the sync server is under load, consider scaling the sync server.
+
+However, if the CPU usage does not change much, that typically means something else is causing the slow down, and you need to investigate the problem.
+
+=== MongoDB operation time
+
+In a production environment, the time for various MongoDB operations should be relatively low and consistent.
+If you start observing increases of time for those operations, it could mean the sync server is generating too many operations on the MongoDB and starts to reach the limit of MongoDB.
+
+In this case, scaling the sync server does not help, because the bottleneck is in MongoDB. There are a few options you can consider:
+
+* Turn on caching by setting the `useCache` flag to true. This reduces the number of database requests to read dataset records.
+* Increase the various worker intervals and sync frequencies.
+* If possible, scale MongoDB.
+
+== Scaling the Sync Server
+
+If you decide to scale the sync server, here are some of the options you can consider:
+
+=== Scaling on an Hosted MBaaS
+
+There are 2 options to scale the sync server on the RHAMP SaaS platform:
+
+==== Use the Node.js Cluster Module
+
+To scale inside a single app, you can use https://nodejs.org/docs/latest-v4.x/api/cluster.html[Nodejs Clustering] to create more workers.
+
+==== Deploy More Apps
+
+Another option is to deploy more apps but point them to the same MongoDB as the existing app. 
+This allows you to scale the sync server even further.
+
+To deploy more apps:
+
+* Deploy a few more apps with the same code as the existing app.
+* Find out the MongoDB connection string of the existing app.
++
+It is listed on the *Environment Varaible* screen in the App Studio, look for a System Environment Variable called _FH_MONGODB_CONN_URL_
+* Copy the value, and create a new environment variable called _SYNC_MONGODB_URL_ in the newly created apps, and paste the MongoDB url as the value.
+* Redeploy the apps.
+
+With this approach, you can separate the HTTP request handling and sync data processing completely.
+
+For example, if there are 2 apps setup like this, App 1 and App 2, and App 1 is the cloud app that accepts HTTP requests. 
+You can then:
+
+* Set the worker concurrencies to 0 to disable all the sync workers in App 1. It is then dedicated to handle HTTP requests.
+* Increase the concurrencies of sync workers in App 2, and reduce the sync interval values. 
+
+Please check link:{CloudAPI}#fh-set-config[$fh.sync.setConfig] for more information about how to configure the worker concurrencies.

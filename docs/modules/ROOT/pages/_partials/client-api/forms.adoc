@@ -1,0 +1,2052 @@
+// include::shared/attributes.adoc[]
+
+[[fh-forms]]
+= $fh.forms
+
+To use `$fh.forms`, you must initialize it using `$fh.forms.init`.
+However, to use `$fh.forms.init`, you must call `$fh.init`.
+
+IMPORTANT: `$fh.init` must complete before using `$fh.forms.init`. For more information, see xref:fh-init[fh-init].
+
+[[forms-supported-platforms]]
+.Supported Platforms
+
+* JavaScript SDK
+** Cordova
+** Web Apps
+
+For detailed version information, see link:https://access.redhat.com/node/2357761[Supported Configurations^].
+
+[[sdk-structure]]
+== SDK Structure
+
+[[core]]
+=== Core
+
+image:forms_core_structure.png[Core Structure]
+
+[[fh-forms-init]]
+== $fh.forms.init
+
+[source,javascript]
+----
+$fh.forms.init(params, callback);
+----
+
+[[forms-details]]
+=== Details
+
+Initialise appForm SDK. Currently the params is not used so pass in empty JSON object. callback will be called when initialisation finished.
+
+[[forms-example]]
+=== Example
+
+[source,javascript]
+----
+var params = {};
+$fh.forms.init(params, function(err) {
+  if (err) console.error(err);
+
+  // Forms initialised ok if no error
+});
+----
+
+[[fh-forms-getforms]]
+== $fh.forms.getForms
+
+[source,javascript]
+----
+$fh.forms.getForms(params, callback);
+----
+
+[[forms-details-1]]
+=== Details
+
+Retrieves an array of Form models. Can be loaded from the server if the 'fromRemote' parameter is set to true, or from local storage if set to false.
+
+[[forms-example-1]]
+=== Example
+
+[source,javascript]
+----
+var params = {
+ "fromRemote": true
+};
+
+$fh.forms.getForms(params, function(err, forms){
+  if(err) console.error(err);
+
+  // forms is an instance of $fh.forms.models.forms
+  // See Models section for details of its API
+  // for example, getFormsList() returns an array of Forms models
+
+  var formsList = forms.getFormsList();
+  console.log(formsList);
+});
+----
+
+[[fh-forms-getform]]
+== $fh.forms.getForm
+
+[source,javascript]
+----
+$fh.forms.getForm(params, callback);
+----
+
+[[forms-details-2]]
+=== Details
+
+Retrieves a form based on a specified ID.
+
+[[forms-example-2]]
+=== Example
+
+[source,javascript]
+----
+var params = {
+ "fromRemote" : true,
+ "formId" : "1234"
+};
+
+$fh.forms.getForm(params, function(err, form){
+if(err) console.error(err);
+
+var formName = form.getName();
+var formDesc = form.getDescription();
+console.log('Form Name: ', formName, 'Form Desc: ', formDesc);
+});
+----
+
+[[fh-forms-gettheme]]
+== $fh.forms.getTheme
+
+[source,javascript]
+----
+$fh.forms.getTheme(params, callback);
+----
+
+[[forms-details-3]]
+=== Details
+
+Retrieves a theme. If the 'css' parameter is set to true, css is returned. If it is set to false, a Theme object is returned.
+
+[[forms-example-3]]
+=== Example
+
+[source,javascript]
+----
+var params = {
+ "css" : true //if set to true, returns css.
+};
+
+$fh.forms.getTheme(params, function(err, theme){
+if(err) console.error(err);
+
+console.log(theme);
+});
+----
+
+[[fh-forms-getsubmissions]]
+== $fh.forms.getSubmissions
+
+[source,javascript]
+----
+$fh.forms.getSubmissions(options, callback);
+----
+
+[[forms-details-4]]
+=== Details
+
+Returns a list of submissions that have been successfully completed.
+
+[[forms-example-4]]
+=== Example
+
+[source,javascript]
+----
+var params = {};
+
+$fh.forms.getSubmissions(params, function (err, submissions) {
+  if (err) console.error(err);
+
+  console.log('Array of completed submissions', submissions);
+});
+----
+
+[[fh-forms-downloadsubmission]]
+== $fh.forms.downloadSubmission
+
+[[forms-details-5]]
+=== Details
+
+Triggers the download of a submission.
+
+There are two forms of this API.
+
+[[example-callback-passed]]
+=== Example: Callback Passed
+
+In this example, passing a callback to the _$fh.forms.downloadSubmission_ function means that the callback will only be called when the submission, including all files, has fully completed downloading.
+
+[source,javascript]
+----
+var params = {
+  'submissionId': "<< ID of the submission stored in the cloud >>"
+};
+
+//Downloading the submission.
+//If the submission has already been downloaded to local memory, it will be loaded from there instead of downloading from the cloud.
+$fh.forms.downloadSubmission(params, function(err, downloadedSubmission){
+  if(err){
+    return console.error(err);
+  }
+
+  //The form that the submission was submitted against is sent back with the submission from the cloud.
+  var formSubmittedAgainst = downloadedSubmission.getFormSubmittedAgainst();
+  var formId = downloadedSubmission.getFormId();
+});
+----
+
+[[example-callback-not-passed]]
+=== Example: Callback Not Passed
+
+In this example, not passing a callback will queue the submission for download. Global event listeners can then be used to monitor the download progress.
+
+[source,javascript]
+----
+var params = {
+  'submissionId': "<< ID of the submission stored in the cloud >>"
+};
+
+//A global event listener for all submission 'downloaded' events
+$fh.forms.on('submission:downloaded', function(remoteSubmissionId){
+  //The form that the submission was submitted against is sent back with the submission from the cloud.
+  var formSubmittedAgainst = this.getFormSubmittedAgainst();
+  var formId = this.getFormId();
+});
+
+//A global event listener for all submission 'error' events
+$fh.forms.on('submission:error', function(errorMessage){
+  var localId = this.getLocalId();
+
+  console.error(errorMessage + " for submission with local ID " + localId);
+});
+
+//Downloading the submission.
+//If the submission has already been downloaded to local memory, it will be loaded from there instead of downloading from the cloud.
+$fh.forms.downloadSubmission(params);
+----
+
+[[fh-forms-log]]
+== $fh.forms.log
+
+[source,javascript]
+----
+$fh.forms.log.e(message); //logs an error
+$fh.forms.log.w(message); //logs a warning
+$fh.forms.log.d(message); //logs a debug message
+$fh.forms.log.l(message); //logs success
+----
+
+[[forms-details-6]]
+=== Details
+
+There are 4 types of logs:
+
+* Error: $fh.forms.log.e('error');
+* Warning: $fh.forms.log.w('warning');
+* Debug: $fh.forms.log.d('debug');
+* Log: $fh.forms.log.l('successful log');
+
+[[forms-example-5]]
+=== Example
+
+[source,javascript]
+----
+var params = {
+ 'fromRemote' : true
+};
+
+$fh.forms.getForms(params, function(err, formsList){
+if(error) $fh.forms.log.e(err); //log error
+
+console.log('Lit of forms: ', formsList.getFormsList());
+  $fh.forms.log.l('Forms loaded successfully'); //log successfuly loading of forms
+});
+----
+
+[[fh-forms-getlogs]]
+== $fh.forms.getLogs
+
+[source,javascript]
+----
+$fh.forms.log.getLogs();
+----
+
+[[forms-details-7]]
+=== Details
+
+Returns log information.
+
+[source,javascript]
+----
+$fh.forms.getSubmissions({}, function (err, submissions) {
+  if (err) {
+    console.log('Error loading submissions', err);
+  } else {
+    $fh.forms.log.l('Array loaded successfully') //Recorded log
+    console.log('Array of completed submissions', submissions);
+
+
+    var logRecords = $fh.forms.log.getLogs();
+    console.log('Log Record', logRecords); //Prints out an array of all logs
+  }
+});
+----
+
+[[global-events]]
+== Global Events
+
+[[forms-details-8]]
+=== Details
+
+The $fh.forms API provides a global event emitter for all events that occur in the $fh.forms API.
+
+The event name is defined in the format `model:eventname`. For example, if the `Submission` model emits the `submitted` event, the global event name would be `submission:submitted`. This event would fire whenever any submissions has been submitted and uploaded.
+
+[[fh-forms-on]]
+=== $fh.forms.on
+
+[source,javascript]
+----
+$fh.forms.on("submission:progress", function(progressJSON) {
+    //See Submission Model Progress For progressJSON Definition
+});
+----
+
+[[fh-forms-once]]
+=== $fh.forms.once
+
+[source,javascript]
+----
+$fh.forms.once("submission:submitted", function(submissionId) {
+    //Note: this refers to the individual submission that emitted the submitted event.
+    assert.equal(this.getRemoteSubmissionId(), submissionId);
+});
+----
+
+[[fh-forms-models-forms]]
+== $fh.forms.models.forms
+
+[[forms-details-9]]
+=== Details
+
+This is a list of Form models returned by $fh.forms.getForms(). The functions listed below can be called on the returned Form Models array.
+
+[[fh-forms-models-forms-clearallforms]]
+=== $fh.forms.models.forms.clearAllForms
+
+[source,javascript]
+----
+$fh.forms.models.forms.clearAllForms(cb);
+----
+
+[[forms-details-10]]
+==== Details
+
+Clear all local forms.
+
+NOTE: This function is currently being implemented
+
+[[forms-example-6]]
+==== Example
+
+[source,javascript]
+----
+formsList.clearAllForms(function(err) {
+    if (err) {
+        console.log('Error deleting forms', err);
+    } else {
+        console.log('Reloading forms list', formsList.getFormsList()); //will return empty list
+    }
+});
+----
+
+[[fh-forms-models-forms-isformupdated]]
+=== $fh.forms.models.forms.isFormUpdated
+
+[source,javascript]
+----
+$fh.forms.models.forms.isFormUpdated(formModel);
+----
+
+[[forms-details-11]]
+==== Details
+
+Check if a specific form model is up to date.
+
+[[forms-example-7]]
+==== Example
+
+[source,javascript]
+----
+var model = new $fh.forms.models.Form();
+var updated = $fh.forms.models.forms.isFormUpdated(model);
+console.log(updated);
+----
+
+[[fh-forms-models-forms-getformmetabyid]]
+=== $fh.forms.models.forms.getFormMetaById
+
+[source,javascript]
+----
+$fh.forms.models.forms.getFormMetaById(formId)
+----
+
+[[forms-details-12]]
+==== Details
+
+Get form meta object by formId.
+
+[[forms-example-8]]
+==== Example
+
+[source,javascript]
+----
+
+var exampleFormId = '1234';
+
+var params = {
+ 'fromRemote' : true
+};
+
+$fh.forms.getForms(params, function(err, formsList){
+if(err) console.error(err);
+
+var formDetails = formsList.getFormMetaById(exampleFormId); //gets meta object from forms list based on id
+console.log(formDetails);
+});
+----
+
+[[fh-forms-models-forms-refresh]]
+=== $fh.forms.models.forms.refresh
+
+[source,javascript]
+----
+$fh.forms.models.forms.refresh(fromRemote, cb);
+----
+
+[[forms-details-13]]
+==== Details
+
+Read form list model from local or remote forcely. It will store to local storage automatically if it does not exist.
+
+[[forms-example-9]]
+==== Example
+
+[source,javascript]
+----
+formsList.refresh(true, function (err) { //if fromRemote == true, forms are read from server.
+// If false, reads from local storage
+  if (err) {
+    console.log('Error refreshing form', err);
+  } else {
+    console.log('Refreshed form list', formsList); //prints newly refrehsed list
+  }
+});
+----
+
+[[fh-forms-models-forms-clearlocal]]
+=== $fh.forms.models.forms.clearLocal
+
+[source,javascript]
+----
+$fh.forms.models.forms.clearLocal(cb);
+----
+
+[[forms-details-14]]
+==== Details
+
+Removes model from local storage but not from RAM.
+
+[[forms-example-10]]
+==== Example
+
+[source,javascript]
+----
+formsList.clearLocal(function (err) {
+  if (err) {
+    console.log('Error occurred clearing forms from local storage', err);
+  } else {
+    console.log('Reloading forms', formsList.getFormsList());
+  }
+});
+----
+
+[[fh-forms-models-forms-getformslist]]
+=== $fh.forms.models.forms.getFormsList
+
+[source,javascript]
+----
+$fh.forms.models.forms.getFormsList();
+----
+
+[[forms-details-15]]
+==== Details
+
+Retrieve an array containing forms meta data.
+
+[[forms-example-11]]
+==== Example
+
+[source,javascript]
+----
+var params = {
+  'fromRemote': true
+};
+
+$fh.forms.getForms(params, function (err, formsList) {
+  if (err) console.error(err);
+
+  var forms = formsList.getFormsList();
+  console.log(forms);
+});
+----
+
+[[fh-forms-models-forms-size]]
+=== $fh.forms.models.forms.size
+
+[source,javascript]
+----
+$fh.forms.models.forms.size();
+----
+
+[[forms-details-16]]
+==== Details
+
+Retrieve the number of forms stored.
+
+[[forms-example-12]]
+==== Example
+
+[source,javascript]
+----
+var params = {
+  "fromRemote": true
+};
+
+$fh.forms.getForms(params, function (err, formsList) {
+  if (err) console.error.(err);
+
+  var numOfForms = formsList.size();
+  console.log(numOfForms);
+});
+----
+
+[[fh-forms-models-form]]
+== $fh.forms.models.Form
+
+[[forms-details-17]]
+=== Details
+
+This is a Form model. A list of Form models is returned by calling forms.getFormsList().
+
+[[fh-forms-models-form-constructor]]
+=== $fh.forms.models.Form.constructor()
+
+[source,javascript]
+----
+$fh.forms.models.Form(params,cb);
+----
+
+[[forms-details-18]]
+==== Details
+
+Construct a Form object. Callback when form definition is loaded.
+
+[[forms-example-13]]
+==== Example
+
+[source,javascript]
+----
+var params = {
+  "formId": ”1234”,
+  "fromRemote": true
+};
+
+$fh.forms.getForm(params, function (err, form) {
+  if (err) console.error(err);
+
+  // new form model
+  console.log(form);
+});
+----
+
+[[fh-forms-models-form-getlastupdate]]
+=== $fh.forms.models.Form.getLastUpdate()
+
+[source,javascript]
+----
+form.getLastUpdate();
+----
+
+[[forms-details-19]]
+==== Details
+
+Retrieve last updated timestamp on server.
+
+[[forms-example-14]]
+==== Example
+
+[source,javascript]
+----
+var params = {
+  "formId": ”1234”,
+  "fromRemote": true
+};
+
+$fh.forms.getForm(params, function (err, form) {
+  if (err) console.error(err);
+
+  var lastUpdate = form.getLastUpdate();
+  console.log(lastUpdate);
+});
+----
+
+[[fh-forms-models-form-getpagemodellist]]
+=== $fh.forms.models.Form.getPageModelList()
+
+[source,javascript]
+----
+form.getPageModelList();
+----
+
+[[forms-details-20]]
+==== Details
+
+Retrieve an array of page models associated to this form.
+
+[[forms-example-15]]
+==== Example
+
+[source,javascript]
+----
+var params = {
+  "formId": "1234",
+  "fromRemote": true
+};
+
+$fh.forms.getForm(params, function (err, form) {
+  if (err) console.error(err);
+
+  var pageList = form.getPageModelList();
+  console.log('Array of pages associated with this form', pageList);
+});
+----
+
+[[fh-forms-models-form-getruleengine]]
+==== fh.forms.models.Form.getRuleEngine()
+
+[source,javascript]
+----
+form.getRuleEngine();
+----
+
+[[forms-details-21]]
+==== Details
+
+Retrieve rule engine attached to the form().
+
+[[forms-example-16]]
+==== Example
+
+[source,javascript]
+----
+var params = {
+  "formId": 1234,
+  "fromRemote": true
+};
+
+$fh.forms.getForm(params, function (err, form) {
+  if (err) console.error(err);
+
+  var ruleEngine = form.getRuleEngine();
+  console.log(ruleEngine);
+});
+----
+
+[[fh-forms-models-form-getname]]
+=== $fh.forms.models.Form.getName()
+
+[source,javascript]
+----
+form.getName();
+----
+
+[[forms-details-22]]
+==== Details
+
+Retrieve form name.
+
+[[forms-example-17]]
+==== Example
+
+[source,javascript]
+----
+var params = {
+  "formId": "1234",
+  "fromRemote": true
+};
+
+$fh.forms.getForm(params, function (err, form) {
+  if (err) console.error(err);
+
+  var formName = form.getName();
+  console.log(formName);
+});
+----
+
+[[fh-forms-models-form-getdescription]]
+=== $fh.forms.models.Form.getDescription()
+
+[source,javascript]
+----
+form.getDescription();
+----
+
+[[forms-details-23]]
+==== Details
+
+Retrieve form description.
+
+[[forms-example-18]]
+==== Example
+
+[source,javascript]
+----
+var params = {
+  "formId": "1234",
+  "fromRemote": true
+};
+
+$fh.forms.getForm(params, function (err, form) {
+  if (err) console.error(err);
+
+  var formDescription = form.getDescription();
+  console.log(formDescription);
+});
+----
+
+[[fh-forms-models-form-getformid]]
+=== $fh.forms.models.Form.getFormId()
+
+[source,javascript]
+----
+form.getFormId();
+----
+
+[[forms-details-24]]
+==== Details
+
+Retrieve form Id.
+
+[[forms-example-19]]
+==== Example
+
+[source,javascript]
+----
+var params = {
+  "formId": "1234",
+  "fromRemote": true
+};
+
+$fh.forms.getForm(params, function (err, form) {
+  if (err) console.error(err);
+
+  var formId = form.getId();
+  console.log(formId);
+});
+----
+
+[[fh-forms-models-form-getfieldmodelbyid]]
+=== $fh.forms.models.Form.getFieldModelById()
+
+[source,javascript]
+----
+form.getFieldModelById(fieldId);
+----
+
+[[forms-details-25]]
+==== Details
+
+Retrieve field model by field id.
+
+[[forms-example-20]]
+==== Example
+
+[source,javascript]
+----
+var params = {
+  "formId": "1234",
+  "fromRemote": true,
+  "fieldId": "123"
+};
+
+$fh.forms.getForm(params, function (err, form) {
+  if (err) console.error(err);
+
+  var fieldModel = form.getFieldModelById(fieldId);
+  console.log(fieldModel);
+});
+----
+
+[[fh-forms-models-form-newsubmission]]
+=== $fh.forms.models.Form.newSubmission()
+
+[source,javascript]
+----
+form.newSubmission();
+----
+
+[[forms-details-26]]
+==== Details
+
+Initialise a new submission model for this form.
+
+[[forms-example-21]]
+==== Example
+
+[source,javascript]
+----
+form.newSubmission(); //creates a new submission
+----
+
+[[fh-forms-models-form-removefromcache]]
+=== $fh.forms.models.Form.removeFromCache()
+
+[source,javascript]
+----
+form.removeFromCache();
+----
+
+[[forms-details-27]]
+==== Details
+
+Remove current form model from memory cache (singleton).
+
+[[forms-example-22]]
+==== Example
+
+[source,javascript]
+----
+form.removeFromCache();
+----
+
+[[fh-forms-models-form-refresh]]
+=== $fh.forms.models.Form.refresh()
+
+[source,javascript]
+----
+form.refresh([fromRemote], cb);
+----
+
+[[forms-details-28]]
+==== Details
+
+Read form model from local memory or remote forcely. It will sotre to local storage automatically if it does not exist.
+
+[[forms-example-23]]
+==== Example
+
+[source,javascript]
+----
+form.refresh(true, function (err) {
+  if (err) {
+    console.log('Error refreshing', err);
+  } else {
+    console.log('Refreshed page');
+    //refresh successful
+  }
+});
+----
+
+[[fh-forms-models-form-clearlocal]]
+=== $fh.forms.models.Form.clearLocal()
+
+[source,javascript]
+----
+form.clearLocal(cb)
+----
+
+[[forms-details-29]]
+==== Details
+
+Remove locally stored Form.
+
+[[forms-example-24]]
+==== Example
+
+[source,javascript]
+----
+foundForm.clearLocal(function (err) {
+  if (err) {
+   console.log('Error removing form');
+  } else {
+   //form cleared successfully
+  }
+});
+----
+
+[[fh-forms-models-page]]
+== $fh.forms.models.Page
+
+[[forms-details-30]]
+=== Details
+
+Listed below are the functions that can be called on a Page model.
+
+[[fh-forms-models-page-setvisible]]
+=== $fh.forms.models.Page.setVisible()
+
+[source,javascript]
+----
+page.setVisible(isVisible);
+----
+
+[[forms-details-31]]
+==== Details
+
+Set if this page model should be visible or not. Will emit ‘visible’ or ‘hidden’ based on whether the boolean value 'isVisible'
+is set to true or false.
+
+[[forms-example-25]]
+==== Example
+
+[source,javascript]
+----
+page.setVisible(true) //Boolean value to determine whether page is set to visible or not.
+----
+
+[[fh-forms-models-page-getname]]
+=== $fh.forms.models.Page.getName()
+
+[source,javascript]
+----
+page.getName();
+----
+
+[[forms-details-32]]
+==== Details
+
+Retrieves page name.
+
+[[forms-example-26]]
+==== Example
+
+[source,javascript]
+----
+ var pageList = foundForm.getPageModelList(); //Iterates through all pages of a returned form and prints out page names
+ for (var page = 0; page < pageList.length; page++) {
+   var currentPage = pageList[page];
+   console.log('Name of current page is: ', currentPage.getName());
+ }
+----
+
+[[fh-forms-models-page-getdescription]]
+=== $fh.forms.models.Page.getDescription()
+
+[source,javascript]
+----
+page.getDescription();
+----
+
+[[description]]
+==== Description
+
+Retrieve page description.
+
+[[forms-example-27]]
+==== Example
+
+[source,javascript]
+----
+page.getDescription();
+----
+
+[[fh-forms-models-page-getfieldmodellist]]
+=== $fh.forms.models.Page.getFieldModelList()
+
+[source,javascript]
+----
+page.getFieldModelList();
+----
+
+[[forms-details-33]]
+==== Details
+
+Retrieve field models associated to this page.
+
+[[forms-example-28]]
+==== Example
+
+[source,javascript]
+----
+var pageList = form.getPageModelList(); //Retrieves all pages of a form
+
+for (var page = 0; page < pageList.length; page++) { //Iterates through all pages
+  var currentPage = pageList[page];
+  var pageFields = currentPage.getFieldModelList(); //Retrieves all fields on a page
+  console.log(pageFields); //Lists all fields
+}
+----
+
+[[fh-forms-models-page-getfieldmodelbyid]]
+=== $fh.forms.models.Page.getFieldModelById()
+
+[source,javascript]
+----
+page.getFieldModelById(fieldId);
+----
+
+[[forms-details-34]]
+==== Details
+
+Retrieve a specific field model. The field model does not need to be in this page. Alias of Form.getFieldModelById(fieldId).
+
+[[forms-example-29]]
+==== Example
+
+[source,javascript]
+----
+var fieldId = '1234';
+
+page.getFieldModelById(fieldId); //Returns Field model
+----
+
+[[fh-forms-models-field]]
+== $fh.forms.models.Field
+
+[[forms-details-35]]
+=== Details
+
+A list of Field objects can be returned by calling the getFieldModelList() function on a Page model.
+
+[source,javascript]
+----
+pageOne.getFieldModelList();
+----
+
+Listed below are a set of functions that can be called to access various attributes of a Field model.
+
+[[fh-forms-models-field-isrequired]]
+=== $fh.forms.models.Field.isRequired()
+
+[source,javascript]
+----
+currentField.isRequired();
+----
+
+[[forms-details-36]]
+==== Details
+
+Returns true if the field is a required field.
+
+[[forms-example-30]]
+==== Example
+
+[source,javascript]
+----
+currentField.isRequired(); //will return true if the field is required
+----
+
+[[fh-forms-models-field-isrepeating]]
+=== $fh.forms.models.Field.isRepeating()
+
+[source,javascript]
+----
+field.isRepeating();
+----
+
+[[forms-details-37]]
+==== Details
+
+Returns true if the field is a repeating field, or false if the field is not a repeating field.
+
+[[forms-example-31]]
+==== Example
+
+[source,javascript]
+----
+field.isRepeating();
+----
+
+[[fh-forms-models-field-gettype]]
+=== $fh.forms.models.Field.getType()
+
+[source,javascript]
+----
+field.getType();
+----
+
+[[forms-details-38]]
+==== Details
+
+Returns the type of the field.
+
+[[forms-example-32]]
+==== Example
+
+[source,javascript]
+----
+field.getType();
+----
+
+[[fh-forms-models-field-getname]]
+=== $fh.forms.models.Field.getName()
+
+[source,javascript]
+----
+field.getName();
+----
+
+[[forms-details-39]]
+==== Details
+
+Returns the name of the field.
+
+[source,javascript]
+----
+console.log(field.getName()); //pritns name of field
+----
+
+[[fh-forms-models-field-getcode]]
+=== $fh.forms.models.Field.getCode()
+
+[source,javascript]
+----
+field.getCode();
+----
+
+[[forms-details-40]]
+==== Details
+
+Returns the Field Code for a field if it exists. If the field was not assigned a field code in the Studio `null` is returned.
+
+[[fh-forms-models-field-gethelptext]]
+=== $fh.forms.models.Field.getHelpText()
+
+[source,javascript]
+----
+field.getHelpText();
+----
+
+[[forms-details-41]]
+==== Details
+
+Returns field instruction text.
+
+[[forms-example-33]]
+==== Example
+
+[source,javascript]
+----
+field.getHelpText();
+----
+
+[[fh-forms-models-field-validateinputvalue]]
+=== $fh.forms.models.Field.validate(inputValue)
+
+[source,javascript]
+----
+field.validate(inputValue, callback(err,res))
+----
+
+[[forms-details-42]]
+==== Details
+
+Returns the inputValue object if validation is successful, or an error message if validation fails.
+
+[[forms-example-34]]
+==== Example
+
+[source,javascript]
+----
+var field = form.getFieldModelById(fieldId);
+var inputValue = elem.value; //Value of an element such as text field, numberfield etc
+
+field.validate(inputValue, function (err, res) {
+  if (err) {
+    console.log('Validation Error', err);
+  } else {
+    console.log('Validation Successful', res);
+  }
+});
+----
+
+[[fh-forms-models-field-getrules]]
+=== $fh.forms.models.Field.getRules()
+
+[source,javascript]
+----
+field.getRules();
+----
+
+[[forms-details-43]]
+==== Details
+
+Returns an array of rule objects that are associated with the field.
+
+[[forms-example-35]]
+==== Example
+
+[source,javascript]
+----
+field.getRules();
+----
+
+[[fh-forms-models-field-getcheckboxoptions]]
+=== $fh.forms.models.Field.getCheckboxOptions()
+
+[source,javascript]
+----
+field.getCheckboxOptions();
+----
+
+[[forms-details-44]]
+==== Details
+
+Retuns an array of check box choices.
+
+NOTE: Only valid for check boxes field
+
+[[forms-example-36]]
+==== Example
+
+[source,javascript]
+----
+if (field.getType() == 'checkboxes') {
+  console.log('Checkbox options: ', field.getCheckBoxOptions());
+}
+----
+
+[[fh-forms-models-field-getradiooption]]
+=== $fh.forms.models.Field.getRadioOption()
+
+[source,javascript]
+----
+field.getRadioOption();
+----
+
+[[forms-details-45]]
+==== Details
+
+Returns radio box options.
+
+NOTE: Only valid for radio field
+
+[[forms-example-37]]
+==== Example
+
+[source,javascript]
+----
+if (field.getType() == 'radio') {
+  console.log('Radio options: ', field.getRadioOption());
+}
+----
+
+[[fh-forms-models-submissions]]
+== $fh.forms.models.submissions
+
+[[fh-forms-models-submissions-getsubmissions]]
+=== $fh.forms.models.submissions.getSubmissions()
+
+[source,javascript]
+----
+$fh.forms.models.submissions.getSubmissions();
+----
+
+[[forms-details-46]]
+==== Details
+
+Returns a list of submission meta data.
+
+[[forms-example-38]]
+==== Example
+
+[source,javascript]
+----
+submissions.getSubmissions();
+----
+
+[[fh-forms-models-submissions-getsubmissionmetalist]]
+=== $fh.forms.models.submissions.getSubmissionMetaList()
+
+[source,javascript]
+----
+submissions.getSubmissionMetaList();
+----
+
+[[forms-details-47]]
+==== Details
+
+Returns a list of submission meta data
+
+[[forms-example-39]]
+==== Example
+
+submissions.getSubmissionMetaList();
+
+[[fh-forms-models-submissions-findbyformidformid]]
+=== $fh.forms.models.submissions.findByFormId(formId)
+
+[source,javascript]
+----
+submissions.findByFormId(formId);
+----
+
+[[forms-details-48]]
+==== Details
+
+Retrieves the meta data for specified form.
+
+[[forms-example-40]]
+==== Example
+
+[source,javascript]
+----
+var formId = '53146bf95a133733451cd35b';
+
+$fh.forms.getSubmissions({}, function (err, submissions) {
+  if (err) {
+    console.log('Error loading submissions', err);
+  } else {
+    console.log('Array of completed submissions', submissions);
+    var foundSubmissions = submissions.findByFormId(formId);
+    console.log('Array of submissions for specified form: ', foundSubmissions);
+
+  }
+});
+----
+
+[[fh-forms-models-submissions-clearcb]]
+=== $fh.forms.models.submissions.clear(cb)
+
+[source,javascript]
+----
+sumissions.clear(function(err))
+----
+
+[[forms-details-49]]
+==== Details
+
+Clear submission meta list from this model and local storage.
+
+[[forms-example-41]]
+==== Example
+
+[source,javascript]
+----
+$fh.forms.getSubmissions({}, function(err, submissions) {
+    if (err) {
+        console.log('Error loading submissions', err);
+    } else {
+        console.log('Array of completed submissions', submissions);
+        submissions.clear(function(err) {
+            if (err) console.err(err);
+        });
+    }
+});
+----
+
+[[fh-forms-models-submissions-getdrafts]]
+=== $fh.forms.models.submissions.getDrafts()
+
+[source,javascript]
+----
+submissions.getDrafts()
+----
+
+[[forms-details-50]]
+==== Details
+
+Return submission drafts()
+
+[[forms-example-42]]
+==== Example
+
+[source,javascript]
+----
+submissions.getDrafts();
+----
+
+[[fh-forms-models-submissions-getpending]]
+=== $fh.forms.models.submissions.getPending()
+
+[source,javascript]
+----
+submissions.getPending()
+----
+
+[[forms-details-51]]
+==== Details
+
+Returns pending submissions.
+
+[[forms-example-43]]
+==== Example
+
+[source,javascript]
+----
+submissions.getPending();
+----
+
+[[fh-forms-models-submissions-getsubmitted]]
+=== $fh.forms.models.submissions.getSubmitted()
+
+[source,javascript]
+----
+submissions.getSubmitted()
+----
+
+[[forms-details-52]]
+==== Details
+
+Returns submitted submissions.
+
+[[forms-example-44]]
+==== Example
+
+[source,javascript]
+----
+submissions.getSubmitted();
+----
+
+[[fh-forms-models-submissions-geterror]]
+=== $fh.forms.models.submissions.getError()
+
+[source,javascript]
+----
+submissions.getError()
+----
+
+[[forms-details-53]]
+==== Details
+
+Returns submissions that have errors.
+
+[[forms-example-45]]
+==== Example
+
+[source,javascript]
+----
+submissions.getError();
+----
+
+[[fh-forms-models-submissions-getinprogress]]
+=== $fh.forms.models.submissions.getInProgress()
+
+[source,javascript]
+----
+submissions.getInProgress()
+----
+
+[[forms-details-54]]
+==== Details
+
+Return submissions that are currently in progress.
+
+[[forms-example-46]]
+==== Example
+
+[source,javascript]
+----
+submissions.getInProgress();
+----
+
+[[fh-forms-models-submissions-getsubmissionbymetametacb]]
+=== $fh.forms.models.submissions.getSubmissionByMeta(meta,cb)
+
+[source,javascript]
+----
+submissions.getSubmissionByMeta(meta, function(err, res))
+----
+
+[[forms-details-55]]
+==== Details
+
+Retrieves a submission model object by submission meta data from submission list model.
+
+[[forms-example-47]]
+==== Example
+
+[source,javascript]
+----
+var params = submissions.getSubmitted()[0];
+
+submissions.getSubmissionByMeta(params, function (err, submission){
+  if(err) console.error(err);
+
+  console.log('Returned Submission',submission);
+});
+----
+
+[[fh-forms-models-submissions-getsubmissionbylocalidlocalidcb]]
+=== $fh.forms.models.submissions.getSubmissionByLocalId(localId,cb)
+
+[source,javascript]
+----
+submissions.getSubmissionByLocalId(localId, function(err, submissionModel){})
+----
+
+[[forms-details-56]]
+==== Details
+
+Retrieves a submission model by the _Local ID_ of the submission.
+
+[[forms-example-48]]
+==== Example
+
+[source,javascript]
+----
+var localId = "sublocalid1";
+
+submissions.getSubmissionByLocalId(localId, function (err, submission){
+  if(err) console.error(err);
+
+  console.log('Returned Submission',submission);
+});
+----
+
+[[fh-forms-models-submissions-getsubmissionbyremoteidremoteidcb]]
+=== $fh.forms.models.submissions.getSubmissionByRemoteId(remoteId,cb)
+
+[source,javascript]
+----
+submissions.getSubmissionByRemoteId(remoteId, function(err, submissionModel){})
+----
+
+[[forms-details-57]]
+==== Details
+
+Retrieves a submission model by the _Remote ID_ of the submission.
+
+[[forms-example-49]]
+==== Example
+
+[source,javascript]
+----
+var remoteId = "subremoteid1";
+
+submissions.getSubmissionByRemoteId(remoteId, function (err, submission){
+  if(err) console.error(err);
+
+  console.log('Returned Submission',submission);
+}
+----
+
+[[fh-forms-models-submission]]
+== $fh.forms.models.Submission
+
+[[forms-details-58]]
+=== Details
+
+Submission models contaon user input and related meta information. A list of Submission models can be returned by calling the .getSubmissions() function on a list of submissions.
+
+[source,javascript]
+----
+submissions.getSubmissions(); //double check
+----
+
+Listed below are functions that can be called on Submission models.
+
+[[fh-forms-models-submission-savedraftcb]]
+=== $fh.forms.models.Submission.saveDraft(cb)
+
+[source,javascript]
+----
+submission.saveDraft(cb);
+----
+
+[[forms-details-59]]
+==== Details
+
+Save current submission to draft / local storage.
+
+[[forms-example-50]]
+==== Example
+
+[source,javascript]
+----
+currentSubmission.saveDraft(function (err) {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log('Draft saved to local storage');
+  }
+});
+----
+
+[[fh-forms-models-submission-submit]]
+=== $fh.forms.models.Submission.submit()
+
+[source,javascript]
+----
+submission.submit(cb)
+----
+
+[[forms-details-60]]
+==== Details
+
+Submit current submission. It will create a task for uploading.
+
+[[forms-example-51]]
+==== Example
+
+[source,javascript]
+----
+currentSubmission.submit(function (err) {
+  console.log(!err);
+  if (err) {
+    console.log(err);
+  }
+});
+
+currentSubmission.on("submit", function () {
+ /* Upload the submission. */
+  currentSubmission.upload(function (err) {
+    if (err) {
+      console.log(err);
+    }
+  });
+});
+----
+
+[[fh-forms-models-submission-getstatus]]
+=== $fh.forms.models.Submission.getStatus()
+
+[source,javascript]
+----
+submission.getStatus();
+----
+
+[[forms-details-61]]
+==== Details
+
+Returns the current status of the submission.
+
+[[forms-example-52]]
+==== Example
+
+[source,javascript]
+----
+submission.getStatus();
+----
+
+[[fh-forms-models-submission-addcomment]]
+=== $fh.forms.models.Submission.addComment()
+
+[source,javascript]
+----
+submission.addComment(message, [username]);
+----
+
+[[forms-details-62]]
+==== Details
+
+Allows a user to add a comment to the current submission.
+
+[[forms-example-53]]
+==== Example
+
+[source,javascript]
+----
+submission.addComment('test message', 'test user');
+----
+
+[[fh-forms-models-submission-getcomments]]
+=== $fh.forms.models.Submission.getComments()
+
+[source,javascript]
+----
+submission.getComments()
+----
+
+[[forms-details-63]]
+==== Details
+
+Returns an array of commetns for the current submission.
+
+[[forms-example-54]]
+==== Example
+
+[source,javascript]
+----
+submission.addComment('test message', 'test user');
+
+console.log(submission.getComments()); //will return an array containing the above comment
+----
+
+[[fh-forms-models-submission-removecommenttimestamp]]
+=== $fh.forms.models.Submission.removeComment(timeStamp)
+
+[source,javascript]
+----
+submission.removeComment(timeStamp);
+----
+
+[[forms-details-64]]
+==== Details
+
+Remove a comment from the current submission via its timestamp.
+
+[[forms-example-55]]
+==== Example
+
+[source,javascript]
+----
+submission.removeComment(timeStamp);
+----
+
+[[fh-forms-models-submission-addinputvalueparamscb]]
+=== $fh.forms.models.Submission.addInputValue(params,cb)
+
+[source,javascript]
+----
+$fh.forms.models.Submission(params, callback(err, res))
+----
+
+[[forms-details-65]]
+==== Details
+
+Add a value to submission for a field. This will validate the input value and it will return an error message as a string if failed.
+If in transaction mode, it will not immediately add user input value to submission but a temp variable.
+If not in transaction mode, the input value is added to submission immediately.
+If the "sectionIndex" parameter is provided, a new value is added to the field in the given section index, within the repeating section group.
+
+[[forms-example-56]]
+==== Example
+
+[source,javascript]
+----
+var params = {
+    "fieldId": '53146c1f04e694ec1ad715b6',
+    "value": 'New example text',
+  "Index":optional,
+    "sectionIndex":optional
+
+};
+currentSubmission.addInputValue(params, function(err, res) {
+    if (err) console.error(err);
+
+    console.log('Newly added input: ', res);
+});
+----
+
+[[fh-forms-models-submission-startinputtransaction]]
+=== $fh.forms.models.Submission.startInputTransaction()
+
+[source,javascript]
+----
+submission.startInputTransaction()
+----
+
+[[forms-details-66]]
+==== Details
+
+Start a transaction for user input. if already started, it will drop temporary input.
+
+[[forms-example-57]]
+==== Example
+
+[source,javascript]
+----
+submission.startInputTransaction();
+----
+
+[[fh-forms-models-submission-endinputtransactionissucceed]]
+=== $fh.forms.models.Submission.endInputTransaction(isSucceed)
+
+[source,javascript]
+----
+$fh.forms.models.Submission.endInputTransaction(isSucceed) //'isSucceed' is a boolean value.
+----
+
+[[forms-details-67]]
+==== Details
+
+End the transaction. If the transaction succeeds, it will copy temporary input to submission to be uploaded. If it fails, it will drop the temporary user input. 'isSucceed' is
+a boolean value. If 'true' is passed into the function, the transaction is complete and the user input is transfered from temporary storage to the submission. If 'false' is
+passed into the function, then the temporary values are discarded and the transaction is not completed.
+
+[[forms-example-58]]
+==== Example
+
+[source,javascript]
+----
+submission.startInputTransaction();
+
+var params = {
+    "fieldId": '53146c1f04e694ec1ad715b6',
+    "value": 'Example text'
+  };
+
+submission.addInputValue(params, function(err, res) {
+    if (err) {
+        console.log('Error adding input', err);
+        submission.endInputTransaction(false); //Transaction failed. New values are not added to submission.
+    } else {
+        console.log('Updated value: ', res);
+        submission.endInputTransaction(true); //End input transaction. New value is added to submission.
+    }
+});
+----
+
+[[fh-forms-models-submission-reset]]
+=== $fh.forms.models.Submission.reset()
+
+[source,javascript]
+----
+submission.reset();
+----
+
+[[forms-details-68]]
+==== Details
+
+Remove all user input from this submission.
+
+[[forms-example-59]]
+==== Example
+
+[source,javascript]
+----
+submission.reset();
+----
+
+[[fh-forms-models-submission-getformcb]]
+=== $fh.forms.models.Submission.getForm(cb)
+
+[source,javascript]
+----
+submission.getForm(function (err, form))
+----
+
+[[forms-details-69]]
+==== Details
+
+Returns Form object associated with the submission.
+
+[[forms-example-60]]
+==== Example
+
+[source,javascript]
+----
+submission.getForm(function(err, form) {
+    if (err) console.error(err);
+
+    console.log('Form associated with submission: ', form);
+});
+----
+
+[[fh-forms-submission-removefieldvaluefieldid-index]]
+=== $fh.forms.Submission.removeFieldValue(fieldId, [index])
+
+[source,javascript]
+----
+submission.removeFieldValue(fieldId, index, sectionIndex)
+//Index is only specified when referencing repeated fields
+//sectionIndex is only specified when referencing repeating section
+----
+
+[[forms-details-70]]
+==== Details
+
+Remove a value from a specific field based on ID, sectionIndex may be passed to get value of a field in specific section, otherwise it defaults to 0.
+
+[[forms-example-61]]
+==== Example
+
+[source,javascript]
+----
+var exampleFieldId = '1234';
+
+submission.removeFieldValue(exampleFieldId);
+----
+
+[[fh-forms-submission-getinputvaluebyfieldidfieldcb]]
+=== $fh.forms.Submission.getInputValueByFieldId(field,cb)
+
+[source,javascript]
+----
+submission.getInputValueByFieldId(field, sectionIndex, function(err, res))
+----
+
+[[forms-details-71]]
+==== Details
+
+Get input values associated with a field, sectionIndex may be passed to get value of a field in specific section, otherwise it defaults to 0.
+
+[source,javascript]
+----
+var fieldId = '1234';
+
+currentSubmission.getInputValueByFieldId(fieldId, function(err, res) {
+    if (err) console.error(err);
+
+    console.log('Field value: ', res);
+});
+----
+
+[[submission-events]]
+=== Submission Events
+
+The `Submission` Model emits events as they move through the submission process. Whenever a function is executed when an event is fired, the `this` object will always refer to the `Submission` object that emitted the event.
+
+[[inprogress-the-submission-is-in-the-process-of-uploading.]]
+==== inprogress The Submission Is In The Process Of Uploading.
+
+[source,javascript]
+----
+submission.on('inprogress', function(uploadTask) {
+    var self = this;
+    uploadTask.submissionModel(function(err, submissionModel) {
+        //The 'this' parameter in the event refers the submission model that emitted the event.
+        assert.strictEqual(self, submissionModel);
+    });
+});
+----
+
+[[error-there-was-an-error-uploading-the-submission.]]
+==== error: There Was An Error Uploading The Submission.
+
+[source,javascript]
+----
+submission.on('error', function(errorMessage) {
+    console.error(errorMessage);
+    assert.equal(errorMessage, this.getErrorMessage);
+});
+----
+
+[[savedraft-the-submission-was-saved-as-a-draft]]
+==== savedraft: The Submission Was Saved As A Draft
+
+[source,javascript]
+----
+submission.on('savedraft', function() {
+    //This is the local ID of the submission that emitted the 'savedraft' event.
+    assert.isString(this.getLocalId());
+});
+----
+
+[[validationerror-there-was-a-validation-error-when-making-a-submission.]]
+==== validationerror: There Was A Validation Error When Making A Submission.
+
+This error is only emitted locally. This is not a validation error on the server side.
+
+[source,javascript]
+----
+submission.on('validationerror', function(validationObject) {
+    //This is the local ID of the submission that emitted the 'savedraft' event.
+    assert.isString(false, validationObject.valid);
+});
+----
+
+_Validation Object_
+
+[source,javascript]
+----
+{
+    valid: < true / false > ,
+    < fieldid1 > : {
+        valid: < true / false > ,
+        errorMessages: [
+            "Validation Error Message 1",
+            "Validation Error Message 2"
+        ]
+    },
+    ....,
+    < fieldidN > : {
+        valid: < true / false > ,
+        errorMessages: [
+            "Validation Error Message 1",
+            "Validation Error Message 2"
+        ]
+    }
+}
+----
+
+[[submit-the-submission-is-valid-and-can-now-be-uploaded.]]
+==== submit: The Submission Is Valid And Can Now Be Uploaded.
+
+The submission has passed local validation. It is now ready to be uploaded to the Cloud.
+
+[source,javascript]
+----
+submission.on('submit', function() {
+    //Valid Submission, it can be uploaded now or at any other time
+    this.upload(function(err, uploadTask) {
+            ...
+    });
+});
+----
+
+[[submitted-the-submission-is-valid-and-has-completed-uploading-all-data.]]
+==== submitted: The Submission Is Valid And Has Completed Uploading All Data.
+
+[source,javascript]
+----
+submission.on('submitted', function(remoteSubmissionId) {
+    assert.equal(remoteSubmissionId, this.getRemoteSubmissionId());
+});
+----
+
+[[queued-the-submission-json-definition-has-been-uploaded.-proceeding-to-upload-any-files.]]
+==== queued: The Submission JSON Definition Has Been Uploaded. Proceeding To Upload Any Files.
+
+At this point, the _remote_ submission ID has been assigned on the Cloud side. The submission can now be considered valid on both Client and Cloud sides.
+
+[source,javascript]
+----
+submission.on('queued', function(remoteSubmissionId) {
+    assert.equal(remoteSubmissionId, this.getRemoteSubmissionId());
+});
+----
+
+[[progress-the-progress-for-a-submission-has-been-incremented.]]
+==== progress: The Progress For A Submission Has Been Incremented.
+
+[source,javascript]
+----
+submission.on('progress', function(progressJSON) {
+    //The Current Progress Of The Submission
+});
+----
+
+[[progressjson]]
+===== progressJSON
+
+[source,javascript]
+----
+{
+    'formJSON': false, //Boolean specifying if the submission JSON has been uploaded.
+    'currentFileIndex': 0,
+    'totalFiles': 3,
+    'totalSize': 54321, //Size in Bytes of the entire submission
+    'uploaded': 12345, //Size, in Bytes already uploaded
+    'retryAttempts': 1, //Number of times the submission has been tried.
+    'submissionTransferType': < upload / download > , //Is the submission being uploaded or downloaded.
+    'submissionRemoteId': "remoteSubmissionID1234", //The remote submission ID if it is available.
+    'submissionLocalId': "localSubmissionID1234" //The local submission ID
+}
+----
+
+[[downloaded-the-submission-has-completed-downloading-only-used-when-downloading-submissions.]]
+==== downloaded: The Submission Has Completed Downloading (Only Used When Downloading Submissions.)
+
+This also includes all files when a submission is downloaded to a mobile client device.
+
+[source,javascript]
+----
+submission.on('downloaded', function(remoteSubmissionId) {
+    assert.equal(remoteSubmissionId, this.getRemoteSubmissionId());
+});
+----

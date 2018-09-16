@@ -1,0 +1,138 @@
+[[sync_configuration_guide]]
+= Data Sync Configuration Guide
+
+Data Sync configuration can be applied to the client-side and also in the cloud (server-side).
+
+The sync frequency on the client-side is set using the *sync_frequency* variable.
+To see an example of *sync_frequency* being set, see the code in this xref:basic-usage[section] of the documentation.
+
+The sync frequency in the cloud is set using the *syncFrequency* variable.
+To see an example of *syncFrequency* being set, see the code in this xref:sync-advanced-usage[section] of the documentation.
+
+[[configuring-sync-frequency]]
+== Configuring Sync Frequency
+
+The sync frequency is the time period the system waits between 2 sync processes.
+
+*IMPORTANT*: It is possible to configure the frequency differently on
+the client and server. However, Red Hat recommends using the same setting to
+avoid the following scenarios:
+
+* The client calls more frequently than the server checks for
+updates from the xref:dataset-backend[DataSet Backend], causing
+unnecessary traffic from the client.
+* the client calls less frequently than the server checks for
+updates from the xref:dataset-backend[DataSet Backend], causing the
+server to drop its xref:dataset[DataSet] from the cache because of inactivity.
+
+
+The sync frequency value of a server determines how often the sync processor runs.
+Every time the sync processor executes, it performs a list operation on the Dataset Backend to synchronize the data with a local copy.
+To determine the best value of the sync frequency for your application, review the following sections.
+
+*  How quickly do you want your clients to see changes from others?
++
+When a client submits changes, those changes are applied to the Dataset Backend directly. To ensure high performance, other clients get data from the local copy. This means other clients can only get the new changes after the next sync processor run. If it is required that other clients get the changes as soon as possible, then consider setting a low value for the sync frequency.
+
+* How long it takes the sync processor to run?
++
+The sync frequency value determines how long the system waits between sync processor executions, that is, the sync frequency is the time from the completion of the one execution to the start time of next execution. This means there is never a situation where 2 sync processors are running at the same time. Therefore:
++
+  actual sync period = sync processor execution time + the sync frequency
++
+This helps you calculate the number of requests the system makes to the Dataset Backend.
++
+To determine how long each sync processor execution takes, you can query the sync stats endpoint to see the average `Job Process Time` it takes for the `sync_worker` to complete.
+
+* How much load can the Dataset Backend service handle?
++
+Every time the sync processor runs, it performs a list operation on the Dataset Backend.
+When you configure the sync frequency, you need to estimate how many requests it generates on the backend, and make sure the backend can handle the load.
++
+For example, if you set the sync frequency of a dataset to 100ms, and each sync processor execution is taking 100ms to run, that means the server generates about 5 req/sec to the backend. However, if you have another dataset with a sync frequency of 100ms that uses the same backend,  there will be about 10 req/sec to the backend. You can perform load tests against the backend to determine if the backend can handle that load.
++
+However, this value does not grow when you scale the app. For example, if you have multiple workers in your server, the sync processor executions are distributed among the workers rather than duplicated among them. This design protects the backend when the app is under heavy load.
+
+* How much extra load does it cause to the server?
++
+When the data is returned from the backend, the server must save the data to the local storage (MongoDB). The system  only performs updates if there are changes. But it needs to perform a read operation first to get the current data in the local storage. When there are a lot of sync processor executions, it could cause extra load on the server itself. Sometimes, you need to take this into consideration, especially if the dataset is large.
++
+To understand the performance of the server, you can use the sync stats endpoint to check CPU usage, and the MongoDB operation time.
+
+You can use the sync frequency value to control the number of requests the server generates to the backend.
+It is acceptable to set it to 0ms, as long as the backend can handle the load, and the server itself is not over-loaded.
+
+== Configuring the Workers
+
+There are different queues used to store the sync data, as described in the xref:sync-server-architecture[Sync Architecture].
+To process the data, a corresponding worker is created for each queue.
+Its sole task is to take a job off the queue, one at a time, and process it. 
+However, there is an interval value for how long between finishing one job and getting the next available job.
+To maximize the worker performance, you can configure this value.
+
+=== Purpose of the Intervals
+
+The request to get a job off the queue is a non-blocking operation.
+When there are no jobs left on the queue, the request returns and the worker attempts to get a job again.
+
+In this case, or if jobs are very fast to complete, a worker could overload the main event loop and slow down any other code execution.
+To prevent this scenario, there is an interval value configuration item  for each worker:
+
+* `pendingWorkerInterval`
+* `ackWorkerInterval`
+* `syncWorkerInterval`
+
+
+The default interval value is very low (1ms), but configurable. 
+This default value assumes the job is going to take some time to execute and have some non-blocking I/O operations (remote HTTP calls, DB calls, etc) which allows other operations to be completed on the main event loop.
+This low default interval allows the jobs to be processed as quickly as possible, making more efficient use of the CPU.
+When there are no jobs, a backoff mechanism is invoked to ensure the workers do not overload resources unnecessarily.
+
+If the default value is causing too many requests to the Dataset Backend, or you need to change the default interval value, you can override the configuration options for one or more worker.
+
+
+=== Worker Backoff
+
+When there are no jobs left on a queue, each worker has a backoff strategy.
+This prevents workers from consuming unnecessary CPU cycles and unnecessary calls to the queue.
+When new jobs are put on the queue, the worker resets the interval when it next checks the queue.
+
+You can override the behavior of each worker with the following configuration options:
+
+* `pendingWorkerBackoff`
+* `ackWorkerBackoff`
+* `syncWorkerBackoff`
+
+By default, all workers use an exponential strategy, with a max delay value.
+For example, if the min interval is set to 1ms, the worker waits 1ms after processing a job before taking another job off the queue.
+This pattern continues as long as there are items on the queue.
+If the queue empties, the interval increases exponentially (2ms, 4ms, 8ms, 16ms, ... ~16s, ~32s) until it hits the max interval (for example, 60 seconds).
+The worker then only checks the queue every 60 seconds for a job.
+If it does find a job on the queue in the future, the worker returns to checking the queue every 1ms.
+
+For more information, please refer to the link:{CloudAPI}#fh-sync[Sync API Doc].
+
+
+[[managing-collisions]]
+== Managing Collisions
+
+A collision occurs when a client attempts to send an update to a record, but the client's version of the record is out of date. Typcially, this happens when a client is off line and performs an update to a local version of a record.
+
+Use the following handlers to deal with collisions:
+
+* `handleCollision()` - Called by the Sync Framework when a collision occurs. The default implementation saves the data records to a collection named "<dataset_id>_collision".
+* `listCollision()` - Returns a list of data collisions. The default implementation lists all the collision records from the collection name "<dataset_id>_collision".
+* `removeCollision()` - Removes a collision record from the list of collisions. The default implementation deletes the collision records based on hash values from the collection named "<dataset_id>_collision".
+
+You can provide the handler function overrides for dealing with data collisions. Options include:
+
+* Store the collision record for manual resolution by a data administrator at a later date.
+* Discard the update which caused the collision. To achieve this, the `handleCollision()` function would simply not do anything with the collision record passed to it. 
++
+WARNING: This may result in data loss as the update which caused the collision would be discarded by the Cloud App.
++
+* Apply the update which caused the collision. To achieve this, the `handleCollision()` function would need to call the `handleCreate()` function defined for the dataset.
++
+WARNING: This may result in data loss as the update which caused the collision would be based on a stale version of the data and so may cause some fields to revert to old values.
+
+The native sync clients use similar interfaces. You can check the API and example codes in our https://github.com/feedhenry/fh-ios-sdk[iOS Github repo^] and https://github.com/feedhenry/fh-android-sdk[Android Github repo^].

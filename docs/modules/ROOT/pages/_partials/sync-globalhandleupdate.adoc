@@ -1,0 +1,68 @@
+[[fh-sync-globalhandleupdate]]
+== $fh.sync.globalHandleUpdate
+{syncnote} xref:fh-sync-globalhandleupdate-dep[section for the old version]
+
+Defines a global handler function to update a single row of data on the Dataset Backend.
+
+It can be used by multiple datasets, but is only used if there is no handler assigned to the dataset using the xref:fh-sync-handleupdate[handleUpdate API].
+
+The sync server makes sure the data can be updated by checking the current value matches the value in the Dataset Backend.
+If the values do not match, the update operation is not be performed and a collision is generated.
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.globalHandleUpdate(function updateHandler(dataset_id, uid, data, meta_data, cb){});
+----
+
+=== Parameters
+
+==== updateHandler
+* Description: The function that is invoked when updating a record.
+* Type: Function
+* Invoked Parameters:
+** *dataset_id*
+*** Description: the id of the dataset
+*** Type: String
+** *uid*
+*** Description: the unique id of the record to update
+*** Type: String
+** *data*
+*** Description: the new date fields
+*** Type: Object
+** *meta_data*
+*** Description: the meta data associated with the data, can be null.
+*** Type: Object
+** *cb*
+*** Description: the callback function
+*** Type: Function
+
+=== Example
+
+[source,javascript]
+----
+$fh.sync.globalHandleUpdate(function(dataset_id, uid, meta_data, cb) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // Unique Identifier for row to update
+  console.log(uid);
+
+  // Row of data to update
+  console.log(data);
+
+  // Sample back-end storage call
+  var updatedData = updateData(uid, data);
+  /* sample response
+    {
+      "userid": "1234",
+      "name": "Jane Bloggs",
+      "age": 27
+    }
+  */
+
+  // The callback into the sync service to return the updated row of data
+  return cb(null, updatedData);
+});
+----

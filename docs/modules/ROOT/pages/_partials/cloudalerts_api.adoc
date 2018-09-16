@@ -1,0 +1,337 @@
+// include::shared/attributes.adoc[]
+
+[[cloud-alerts-api]]
+= Cloud Alerts API
+
+[[cloud-alerts-api-list-alerts]]
+== List Alerts
+
+[[cloud-alerts-api-description]]
+=== Description
+
+List alerts associated with an app.
+
+[[cloud-alerts-api-endpoint]]
+=== Endpoint
+
+* uri - /box/srv/1.1/cm/eventlog/alert/list
+
+* method - POST
+
+[[cloud-alerts-api-request-body]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "appGuid":"<24 char String>",
+  "env":"<environment>"
+}
+----
+
+[[cloud-alerts-api-response-body]]
+=== Response Body
+
+[[cloud-alerts-api-success]]
+==== Success
+
+[source,javascript]
+----
+{
+  "list":[
+    {
+      "alertName": "AppTerminated",
+      "emails": "test@example.com",
+      "enabled": true,
+      "env": "dev",
+      "eventCategories": "APP_STATE",
+      "eventNames": "",
+      "eventSeverities": "FATAL",
+      "guid": "iV5E_ASJcQ_83TOgbDpYbHIp",
+      "sysCreated": "2013-06-28 11:09:05",
+      "sysModified": "2013-06-28 11:09:05",
+      "uid": "ajBTU-_UMtc7ggOCL6MbZRP_"
+    },
+    ...
+  ],
+  "status":"ok"
+}
+----
+
+[[cloud-alerts-api-error]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[cloud-alerts-api-create-an-alert]]
+== Create An Alert
+
+[[cloud-alerts-api-description-1]]
+=== Description
+
+Create a new alert for an app.
+
+[[cloud-alerts-api-endpoint-1]]
+=== Endpoint
+
+* uri - /box/srv/1.1/cm/eventlog/alert/create
+
+* method - POST
+
+[[cloud-alerts-api-request-body-1]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "alertName": "<The name of the alert, for example, TestAlert>",
+  "emails": "<The recipients of the alert>",
+  "enabled": "<true|false>",
+  "env": "<environment>",
+  "eventCategories": "<any of the event categories, for example, APP_STATE>",
+  "eventNames": "<any of the event name, for example, APP_TERMINATED. NOTE, if this is specified as well as the event categories and severities, need to make sure categories and severies are valid for the events>",
+  "eventSeverities": "<any of the event severities, for example, FATAL>",
+  "uid": "<the guid of the app>"
+}
+----
+
+[[cloud-alerts-api-response-body-1]]
+=== Response Body
+
+[[cloud-alerts-api-success-1]]
+==== Success
+
+[source,javascript]
+----
+{
+  "alertName": "TestAlert",
+  "emails": "test@example.com",
+  "enabled": true,
+  "env": "dev",
+  "eventCategories": "APP_STATE",
+  "eventNames": "TERMINATED",
+  "eventSeverities": "FATAL",
+  "guid": "F9zwTLwAwsaTZP7I45sOtRKJ",
+  "sysCreated": "2013-07-04 15:32:54",
+  "sysModified": "2013-07-04 15:32:54",
+  "uid": "ajBTU-_UMtc7ggOCL6MbZRP_",
+  "status":"ok"
+}
+----
+
+[[cloud-alerts-api-error-1]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[cloud-alerts-api-update-an-alert]]
+== Update An Alert
+
+[[cloud-alerts-api-description-2]]
+=== Description
+
+Update an existing alert for an app.
+
+[[cloud-alerts-api-endpoint-2]]
+=== Endpoint
+
+* uri - /box/srv/1.1/cm/eventlog/alert/update
+
+* method - POST
+
+[[cloud-alerts-api-request-body-2]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid":"<The unique id of the alert>",
+  "alertName": "<The name of the alert, for example, TestAlert>",
+  "emails": "<The recipients of the alert>",
+  "enabled": "<true|false>",
+  "env": "<environment>",
+  "eventCategories": "<any of the event categories, for example, APP_STATE>",
+  "eventNames": "<any of the event name, for example, APP_TERMINATED. NOTE, if this is specified as well as the event categories and severities, need to make sure categories and severies are valid for the events>",
+  "eventSeverities": "<any of the event severities, for example, FATAL>",
+  "uid": "<the guid of the app>"
+}
+----
+
+[[cloud-alerts-api-response-body-2]]
+=== Response Body
+
+[[cloud-alerts-api-success-2]]
+==== Success
+
+[source,javascript]
+----
+{
+  "alertName": "TestAlert",
+  "emails": "test@example.com, test1@example.com",
+  "enabled": true,
+  "env": "dev",
+  "eventCategories": "APP_STATE",
+  "eventNames": "TERMINATED",
+  "eventSeverities": "FATAL",
+  "guid": "F9zwTLwAwsaTZP7I45sOtRKJ",
+  "sysCreated": "2013-07-04 15:32:54",
+  "sysModified": "2013-07-04 15:32:54",
+  "uid": "ajBTU-_UMtc7ggOCL6MbZRP_",
+  "status":"ok"
+}
+----
+
+[[cloud-alerts-api-error-2]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[cloud-alerts-api-delete-an-alert]]
+== Delete An Alert
+
+[[cloud-alerts-api-description-3]]
+=== Description
+
+Delete an existing alert for an app.
+
+[[cloud-alerts-api-endpoint-3]]
+=== Endpoint
+
+* uri - /box/srv/1.1/cm/eventlog/alert/delete
+
+* method - POST
+
+[[cloud-alerts-api-request-body-3]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid":"<The unique id of the alert>",
+  "alertName": "<The name of the alert, for example, TestAlert>",
+  "emails": "<The recipients of the alert>",
+  "enabled": "<true|false>",
+  "env": "<environment>",
+  "eventCategories": "<any of the event categories, for example, APP_STATE>",
+  "eventNames": "<any of the event name, for example, APP_TERMINATED. NOTE, if this is specified as well as the event categories and severities, need to make sure categories and severies are valid for the events>",
+  "eventSeverities": "<any of the event severities, for example, FATAL>",
+  "uid": "<the guid of the app>"
+}
+----
+
+[[cloud-alerts-api-response-body-3]]
+=== Response Body
+
+[[cloud-alerts-api-success-3]]
+==== Success
+
+[source,javascript]
+----
+{
+  "alertName": "TestAlert",
+  "emails": "test@example.com, test1@example.com",
+  "enabled": true,
+  "env": "dev",
+  "eventCategories": "APP_STATE",
+  "eventNames": "TERMINATED",
+  "eventSeverities": "FATAL",
+  "guid": "F9zwTLwAwsaTZP7I45sOtRKJ",
+  "sysCreated": "2013-07-04 15:32:54",
+  "sysModified": "2013-07-04 15:32:54",
+  "uid": "ajBTU-_UMtc7ggOCL6MbZRP_",
+  "status":"ok"
+}
+----
+
+[[cloud-alerts-api-error-3]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[cloud-alerts-api-list-email-notifications]]
+== List Email Notifications
+
+[[cloud-alerts-api-description-4]]
+=== Description
+
+List all the email notifications that are sent for an app.
+
+[[cloud-alerts-api-endpoint-4]]
+=== Endpoint
+
+* uri - /box/srv/1.1/cm/eventlog/alert/listAudit
+
+* method - POST
+
+[[cloud-alerts-api-request-body-4]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "appGuid":"<24 char String>",
+  "env":"<environment>"
+}
+----
+
+[[cloud-alerts-api-response-body-4]]
+=== Response Body
+
+[[cloud-alerts-api-success-4]]
+==== Success
+
+[source,javascript]
+----
+{
+  "list":[
+    {
+      "alertName": "AppTerminated",
+      "body": "<Email Content>",
+      "env": "dev",
+      "guid": "RD0O6ByAU_BwJRolaZUhXpl8",
+      "recipients": "wei.li@feedhenry.com",
+      "subject": "FeedHenry DynoFarm Testing Alert: AppTerminated - EventsTestApp1 (ajBTU-_UMtc7ggOCL6MbZRP_)",
+      "sysCreated": "2013-07-04 14:24:23",
+      "sysModified": "2013-07-04 14:24:23",
+      "uid": "ajBTU-_UMtc7ggOCL6MbZRP_"
+    },
+    ...
+  ],
+  "status":"ok"
+}
+----
+
+[[cloud-alerts-api-error-4]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----

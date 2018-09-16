@@ -1,0 +1,30 @@
+// include::shared/attributes.adoc[]
+
+[[fh-sync-removecollision-dep]]
+== $fh.sync.removeCollision {oldsync}
+
+[source,javascript]
+----
+$fh.sync.removeCollision(dataset_id, callback)
+----
+
+Defines a handler function for deleting a collision from the collisions list. Should be called after the dataset is initialised.
+
+[[fh-sync-example-18]]
+=== Example
+
+[source,javascript]
+----
+// This would usually be used by an administration console where a user is
+// manually reviewing & resolving collisions.
+$fh.sync.removeCollision(dataset_id, function(dataset_id, collision_hash, cb, meta_data) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // sample back-end storage call
+  removeCollision(collision_hash);
+
+  // The callback into the sync service to return the delete row of data
+  return cb(null);
+});
+----

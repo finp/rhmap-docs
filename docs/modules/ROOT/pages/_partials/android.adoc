@@ -1,0 +1,175 @@
+// include::shared/attributes.adoc[]
+
+[[native-android]]
+= Native Android
+
+.API Documentation
+* link:{ClientAPI}[{ProductShortName} Client API^] - documentation for all {ProductShortName} Client APIs
+* https://github.com/feedhenry/fh-android-sdk[{ProductShortName} Android SDK Reference^] - generated Javadoc documentation of classes and methods of the {ProductShortName} Android SDK
+
+[[install-gradle]]
+== Gradle
+
+Gradle is a Java-based dependency management and build tool used for Android app development.
+It is used to distribute and integrate the {ProductShortName} Native Android SDK with your app project.
+
+[[install-gradle-installer]]
+=== Installing and Setting Up Gradle
+
+Gradle requires Java JDK or JRE version 7 or higher.
+To check the version of Java you are currently using, execute the following command:
+
+[source,bash]
+--
+java -version
+--
+
+[NOTE]
+--
+Gradle uses the JDK version link:https://docs.gradle.org/current/userguide/installation.html#sec:installation_environment_variables[specified^] in your `PATH` environmental variable.
+You can also set the `JAVA_HOME` environmental variable to point to the installation directory of the desired JDK version.
+--
+
+It is recommended that you use Gradle version 2.4 or higher
+
+To install Gradle, follow the link:https://docs.gradle.org/current/userguide/installation.html[installation instructions and setup instructions] on the Gradle website.
+
+Alternatively, to install Gradle using the SDK manager tool, follow the section with instructions on link:https://gradle.org/gradle-download/[installing Gradle using SDKMAN] on the Gradle website.
+
+[[install-maven]]
+== Maven
+
+Apache Maven is a project management and build automation tool for maintaining and distributing Java code. It is distributed under the Apache License, version 2.0. In an {ProductShortName} context, is used to distribute the {ProductShortName} Native Android SDK.
+
+[[install-maven-installer]]
+
+Maven 3.3 requires JDK 1.7 or later to execute.
+To check the version of Java you are currently using, execute the following command:
+
+[source,bash]
+--
+java -version
+--
+
+[NOTE]
+--
+Maven uses the JDK version link:https://maven.apache.org/install.html[specified^] in your `PATH` environmental variable.
+You can also set the `JAVA_HOME` environmental variable to point to the installation directory of the desired JDK version.
+--
+
+You can link:https://maven.apache.org/download.cgi[download^] the latest version of Maven from the Maven developers' website.
+
+See the Maven documentation for detailed instructions on how to link:https://maven.apache.org/install.html[install^] and link:http://maven.apache.org/configure.html[configure^] Maven.
+
+[[native-android-get-started]]
+== Getting Started
+
+This SDK allows the user to use {ProductShortName} APIs with native Android apps up to Android M (version 6.0, API level 23).
+
+The {ProductShortName} Android SDK is an open source project hosted in the https://github.com/feedhenry/fh-android-sdk[FeedHenry Android SDK repository^] on Github. Feel free to fork it and contribute.
+
+Before using the SDK, make sure you have the Android SDK or the Android Studio installed. You can download both from the http://developer.android.com/sdk/index.html[Android Developer portal^].
+
+[[native-android-new-app]]
+=== New App
+
+Download the https://github.com/feedhenry/fh-android-sdk-blank-app.git[sample app^] to get started with a new native Android application which has the {ProductShortName} SDK already included.
+
+[[native-android-existing-app]]
+=== Existing App
+
+Declare the following dependency in your `build.gradle` file:
+
+----
+compile 'com.feedhenry:fh-android-sdk:3.2.0'
+----
+
+NOTE: Add this dependency to the *app's* `build.gradle` file, not the *project's* `build.gradle` file.
+
+If you are not using Gradle, you can manually download the SDK in a JAR along with its dependencies. For more details, see the https://github.com/feedhenry/fh-android-sdk/#usage[Usage^] section in the README file of the SDK's Github repository.
+
+If you use Maven to manage dependencies for your project, declare the `fh-android-sdk` as a dependency by adding the following code to the `pom.xml` file:
+
+[source,xml]
+--
+<dependencies>
+  <dependency>
+			<groupId>com.feedhenry</groupId>
+			<artifactId>fh-android-sdk</artifactId>
+			<version>3.2.0</version>
+		</dependency>
+</dependencies>
+--
+
+[[native-android-setup]]
+===  {ProductShortName} Android Permission Setup
+
+The SDK requires the `INTERNET` permission. If not already added, add the permission to the `AndroidManifest.xml` file:
+
+[source,xml]
+----
+<uses-permission android:name="android.permission.INTERNET"/>
+----
+
+===  {ProductShortName} Server Connection Setup
+
+Define the properties which allow the app to communicate with {ProductShortName} servers. Create a new file in the `assets` folder called `fhconfig.properties`. Add the following contents and replace the references, including the brackets, with the values from your project:
+
+----
+host = <RHMAP Core host>
+projectid = <Project ID>
+connectiontag = <Connection tag>
+appid = <Client App ID>
+appkey = <Client App API key>
+----
+
+NOTE: This data is not considered security sensitive data. For more on app security such as User Authentication, see link:{ClientAPI}#fh-auth[$fh.auth Client API].
+
+An example of a configured `fhconfig.properties` file:
+
+----
+host = https://cldapps.testsite.com
+projectid = 0BiqQ5g8kfnUw8d1fn9NnAeR
+connectiontag = 0.0.2
+appid = 0BiqQAqVu9quH6BIrlH_LT9c
+appkey = bfb20ee69d29add08e974eff89b9a571bacb7959
+----
+
+Additional properties you might encounter when working with {ProductShortName}:
+
+----
+PUSH_SERVER_URL - <The hostname of the MBaaS target you will be targeting>
+PUSH_SENDER_ID - <Firebase Sender ID>
+PUSH_VARIANT- <UPS VARIANT>
+PUSH_SECRET - <UPS SECRET>
+----
+
+See link:{ProductFeatures}#projects-connections[Projects - Connections] for more information on connections between Client Apps and Cloud Apps.
+
+[[native-android-initialization]]
+=== Initialization
+
+Before invoking any cloud requests from the {ProductShortName} SDK, initialisation is required:
+
+[source,java]
+----
+FH.init(this, new FHActCallback() {
+  public void success(FHResponse pRes) {
+    // Init okay, free to use FHActRequest
+  }
+
+  public void fail(FHResponse pRes) {
+    // Init failed
+    Log.e("FHInit", pRes.getErrorMessage(), pRes.getError());
+  }
+});
+----
+
+[[native-android-compatibility]]
+== Compatibility
+
+If the app targets Android M (API Level 23), use a version 3.x or higher of the {ProductShortName} Android SDK, ideally the latest version. The 3.x version of the SDK was introduced primarily because of a significant change in the Android SDK - the Apache HTTP Client. Apache HTTP Client (`org.apache.http` package) is no longer distributed with the Android SDK as of Android M. The {ProductShortName} SDK now uses https://github.com/smarek/httpclient-android[`cz.msebera.android:httpclient`^] as an HTTP client instead.
+
+Upgrading an existing app to target Android M will also require an update to the app so it will use the new HTTP client. If Gradle is not being used, use the HTTP client's JAR files which are distributed with the {ProductShortName} SDK and are available in the https://github.com/feedhenry/fh-android-sdk/tree/master/deps[`deps` folder of the repository^].
+
+For information on compatibility with Android N (API Level 24), see link:{ClientSDK}#androidn[Android N].

@@ -1,0 +1,41 @@
+// include::shared/attributes.adoc[]
+
+[[deploying-an-app-on-ios]]
+= Deploying an App on iOS
+
+. You must possess an iOS Development or Distribution Certificate, see https://developer.apple.com/support/certificates/[here^] for more info.
+
+. Log on to the https://developer.apple.com/account/ios/device/[iPhone Provisioning Portal^] and use the test device's UDID to create a device.
+
+. Register the app's App ID and then create a Provisioning Profile, see https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/MaintainingProfiles/MaintainingProfiles.html[here^] for more info.
+
+. Generate an iOS dev p12 file. A MAC is required to complete the following steps:
+.. Open the Keychain tool
+.. Navigate to "My Certificates" and locate your iOS Development or Distribution Certificate
+... In the following image, an iPhone Developer certificate has been selected
++
+image:ios-developer-certificate.png[UDID]
++
+.. Locate the Private Key and right-click on it. See the image above for reference
+.. Select the option 'Export "iOS developer:"<Name of Developer>' and export this file as a p12 file
+... When prompted to enter a passphrase for the p12 file, enter a secure passphrase
+... When prompted for a password for the keychain, enter the MAC password
+.... The p12 will be stored in the MAC's keychain
++
+. Create a Credential's Bundle in the {ProductShortName} Studio:
+.. Login to the {ProductShortName} Studio
+.. In the 'Project' section, locate your iOS app and click on it
+.. Locate the 'Credentials' tab, click on it and then click 'Create New Bundle'
+.. Select the 'iOS' icon and enter data into the fields:
+... `Bundle name`: Enter a meaningful name
+... `Private key`: Select the p12 file that was exported
+... `Certificate`: Select the iOS Development or Distribution Certificate
+... `Provisioning Profile`: Select the Provisioning Profile created in the steps above
+.. Finally, click 'Create Bundle' to create a Credential's Bundle
+
+. Use the Credential's Bundle to build the application using the {ProductShortName} Studio. A QR code will be created.
+
+. There are two ways to install the app:
+
+.. Use the QR code to install the app on the test device
+.. Download the binary, an `.ipa` file, from the {ProductShortName} Studio and install the `.ipa` file using iTunes

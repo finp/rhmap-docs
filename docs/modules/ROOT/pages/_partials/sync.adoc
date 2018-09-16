@@ -1,0 +1,10 @@
+// include::shared/attributes.adoc[]
+
+[[fh-sync]]
+= $fh.sync
+
+The cloud sync framework requires handler functions to be defined which provide access to the back end data & manage data collisions. These are specified in the handleXXX() functions. Each unique dataset being managed is identified by a dataset_id which must be specified as the first parameter when calling any function of the sync framework.
+
+NOTE: Default implementations of the handler functions are already provided as part of the MBaaS service. They use hosted db service to save data (via xref:fh-db[$fh.db]). If this is enough for your app, you don't need to implement the handler functions anymore, you just need to call the init function and provide sync options.
+
+However, if the default implementations do not meet your app's requirement (e.g you need to save data to somewhere else), you need to provide your own implementations of the handler functions listed below. You can provide implementations for all the CRUDL operations, or you can change the default behaviour of a particular operation by only providing an override for the corresponding handler function (e.g provide an override `$fh.sync.handleRead` function will allow you to implement your own read data logic, but keep the rest operations to still use the default MBaaS implementations).

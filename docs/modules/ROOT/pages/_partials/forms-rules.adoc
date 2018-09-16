@@ -1,0 +1,38 @@
+// include::shared/attributes.adoc[]
+
+[[dynamically-displaying-form-fields-and-pages]]
+= Dynamically Displaying Form Fields and Pages
+
+[[dynamically-displaying-form-fields-and-pages-overview]]
+== Overview
+
+Fields in a form can be hidden or displayed dynamically based on values of one or more other fields.
+
+Pages can also be hidden or displayed based on a predefined set of rules. When applying rules to pages, the 'object' affected by the rule will always be a page. This means that although the subject of the rule will be a field, a page will always be affected. Rules are applied in the same way they are applied to fields.
+
+[[defining-rules]]
+== Defining Rules
+
+For example, a rule could be applied to an age field, where if the input is an age of 17 or older, a text field asking the user to list previous jobs appears. If the user is too young to have had a job, the field is hidden.
+
+* Subject -- This is the field to which the rule is applied.
+* Comparison -- The comparison determines how the subject's value is compared to the given value. The comparisons include __contains__, __does not contain__, __begins with__, __ends with__, and others.
+* Value -- This is the value that the rule will be tested against.
+* Action -- The action to be taken if the condition is satisfied. The action can be either show, or hide.
+* Object -- The field or page that will be shown or hidden if the condition of the rule is met.
+
+When constructing rules, different comparisons can be selected depending on the type of field the rule is being applied to. For example, a text field and a number field will have different comparison options. When applying a rule to a text field, a rule can be constructed based on whether an input begins with a particular letter, contains certain letters, or ends in a particular letter, whereas when applying a rule to a number field, rules are constructed based on whether or not input to a particular field is greater than, less than, or equal to a particular value.
+
+Different types of fields have different rule comparisons available for selection.
+
+* textfield -- is, is not, contains, does not contain, begins with, ends with
+* paragraph -- is, is not, contains, does not contain, begins with, ends with
+* number -- is greater than, is less than, is equal to
+* email -- is, is not, contains, does not contain, begins with, ends with
+* web -- is, is not, contains, does not contain, begins with, ends with
+* dropdown -- is, is not, contains, does not contain, begins with, ends with
+* radio buttons -- is, is not, contains, does not contain, begins with, ends with
+* checkbox -- is, is not
+* date stamp -- is at, is before, is after
+
+NOTE: Map, Photo capture, Signature capture, File upload, and Location fields can not have rules applied to them, however they can be displayed or hidden based on input to other fields.

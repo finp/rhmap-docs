@@ -1,0 +1,72 @@
+// include::shared/attributes.adoc[]
+
+[[fh-cache]]
+= $fh.cache
+
+[source,javascript]
+----
+$fh.cache(options, callback);
+----
+
+Store, read or delete a value in the cache layer of your Cloud App.
+
+By default, the cache store has a memory limit of 1GB. Once the limit is reached, the store starts removing data using an LRU (Least Recently Used) algorithm.
+
+If the option "expire" is not specified when storing a value in the cache, that value remains in the cache until the memory limit is reached. Then, the LRU algorithm determines which value is removed.
+
+== Managing the cache options
+The memory limit for the cache can be managed in the Studio, which also allows you to flush the cache store. These two options are available in `Resources > [environment] > Cache`
+
+NOTE:  The Max Cache Size limit setting affects all Cloud Apps for an environment.
+
+image:manage-cache.png[Manage cache]
+
+[[fh-cache-examples]]
+== Examples
+
+.Save a value to the cache
+[source,javascript]
+----
+var options = {
+  "act": "save",
+  "key": "foo", // The key associated with the object
+  "value": "bar", // The value to be cached, must be serializable
+  "expire": 60 // Expiry time in seconds. Optional
+};
+$fh.cache(options, function (err, res) {
+  if (err) return console.error(err.toString());
+
+  // res is the original cached object
+  console.log(res.toString());
+});
+----
+
+.Load a value from the cache
+[source,javascript]
+----
+var options = {
+  "act": "load",
+  "key": "foo" // key to look for in cache
+};
+$fh.cache(options, function (err, res) {
+  if (err) return console.error(err.toString());
+
+  // res is the original cached object
+  console.log(res.toString());
+});
+----
+
+.Remove a value from the cache
+[source,javascript]
+----
+var options = {
+  "act": "remove",
+  "key": "foo" // key to look for in cache
+};
+$fh.cache(options, function (err, res) {
+  if (err) return console.error(err.toString());
+
+  // res is the removed cached object
+  console.log(res.toString());
+});
+----

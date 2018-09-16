@@ -1,0 +1,515 @@
+// include::shared/attributes.adoc[]
+
+[[auth-policies-api]]
+= Auth Policies API
+
+Auth polices allow you to define different methods for *authenticating* and *authorizing* your application users. Different Auth Policies require different authentication configuration options to be defined. The structure of the various authentication configuration options are defined in the xref:auth-policies-api-authentication-configuration-options[Authentication Configuration Options].
+
+[[auth-policies-api-create-auth-policy]]
+== Create Auth Policy
+
+[[auth-policies-api-description]]
+=== Description
+
+Create a new Auth policy.
+
+[[auth-policies-api-endpoint]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/authpolicy/create
+
+* method - POST
+
+[[auth-policies-api-request-body]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required - a unique id for the policy. Used by $fh.auth() to
+  // specify which Auth policy to use for authenticating/authorizing users
+  "policyId": "<for example, oauth-google>",
+  // required - the type of Autheitcation policy
+  "policyType": "<oauth1 | oauth2 | ldap | openid>",
+  // required, the configuration parameters for the policy
+  // See Configuration Options section for full details
+  "configurations": {<Config JSON Object>},
+  // optional, default false
+  // Flag to indicate if a check should be performed to
+  // validate that the user id of the user being autheticated exists
+  // in the platform. This should be set to
+  // true for private apps & false for public apps.
+  "checkUserExists": true | false,
+  // Flag to indicate if our User needs to be approved for Auth
+  "checkUserApproved": true | false
+}
+----
+
+[[auth-policies-api-response-body]]
+=== Response Body
+
+[[auth-policies-api-success]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "guid": "<new_auth_policy_global_unique_id>"
+}
+----
+
+[[auth-policies-api-error]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[auth-policies-api-read-auth-policy]]
+== Read Auth Policy
+
+[[auth-policies-api-description-1]]
+=== Description
+
+Read details of an existing Auth policy.
+
+[[auth-policies-api-endpoint-1]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/authpolicy/read
+
+* method - POST
+
+[[auth-policies-api-request-body-1]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required - the unique id the policy to read
+  "policyId": "<for example, oauth-google>"
+}
+----
+
+[[auth-policies-api-response-body-1]]
+=== Response Body
+
+[[auth-policies-api-success-1]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "guid": "<auth_policy_global_unique_id>",
+  "policyId" : "<user_defined_policy_identifier>"
+  "policyType": "<oauth1 | oauth2 | ldap | openid>",
+  "configurations": {<Config JSON Object>},
+  "checkUserExists": true | false,
+  "checkUserApproved": true | false,
+  "users" : [<user-id>]
+}
+----
+
+[[auth-policies-api-error-1]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[auth-policies-api-update-auth-policy]]
+== Update Auth Policy
+
+[[auth-policies-api-description-2]]
+=== Description
+
+Update an existing Auth policy.
+
+[[auth-policies-api-endpoint-2]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/authpolicy/update
+
+* method - POST
+
+[[auth-policies-api-request-body-2]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required - the global unique identifier for the policy to update
+  "guid" : "<global_unique_identifier>",
+  // required - a unique id for the policy. Used by $fh.auth() to
+  // specify which authentication policy to use for authenticating/authorizing users
+  "policyId": "<for example, oauth-google>",
+  // required - the type of Auth policy
+  "policyType": "<oauth1 | oauth2 | ldap | openid>",
+  // required, the configuration parameters for the policy
+  // See See Configuration Options section for full details
+  "configurations": {<Config JSON Object>},
+  // optional, default false
+  // Flag to indicate if a check should be performed to
+  // validate that the user id of the user being authenticated exists
+  // in the platform. This should be set to
+  // true for private apps & false for public apps.
+  "checkUserExists": true | false,
+  // Flag to indicate if our User needs to be approved for Auth
+  "checkUserApproved": true | false
+}
+----
+
+[[auth-policies-api-response-body-2]]
+=== Response Body
+
+[[auth-policies-api-success-2]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "guid": "<auth_policy_global_unique_id>"
+}
+----
+
+[[auth-policies-api-error-2]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[auth-policies-api-delete-auth-policy]]
+== Delete Auth Policy
+
+[[auth-policies-api-description-3]]
+=== Description
+
+Delete an existing Auth policy.
+
+[[auth-policies-api-endpoint-3]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/authpolicy/delete
+
+* method - POST
+
+[[auth-policies-api-request-body-3]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required - the global unique identifier for the policy to delete
+  "guid" : "<global_unique_identifier>"
+}
+----
+
+[[auth-policies-api-response-body-3]]
+=== Response Body
+
+[[auth-policies-api-success-3]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok"
+}
+----
+
+[[auth-policies-api-error-3]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[auth-policies-api-list-auth-policies]]
+== List Auth Policies
+
+[[auth-policies-api-description-4]]
+=== Description
+
+List all existing Auth policies.
+
+[[auth-policies-api-endpoint-4]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/authpolicy/list
+
+* method - POST | GET
+
+[[auth-policies-api-request-body-4]]
+=== Request Body
+
+N/A
+
+[[auth-policies-api-response-body-4]]
+=== Response Body
+
+[[auth-policies-api-success-4]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "list" : [
+    {
+      "guid": "<auth_policy_global_unique_id#1>",
+      "policyId" : "<user_defined_policy_identifier#1>"
+      "policyType": "<oauth1 | oauth2 | ldap | openid>",
+      "configurations": {<Config JSON Object>},
+      "checkUserExists": true | false,
+      "checkUserApproved": true | false
+    },
+    {
+      "guid": "<auth_policy_global_unique_id#2>",
+      "policyId" : "<user_defined_policy_identifier#2>"
+      "policyType": "<oauth1 | oauth2 | ldap | openid>",
+      "configurations": {<Config JSON Object>},
+      "checkUserExists": true | false,
+      "checkUserApproved": true | false
+    },
+    ...
+    {
+      "guid": "<auth_policy_global_unique_id#N>",
+      "policyId" : "<user_defined_policy_identifier#N>"
+      "policyType": "<oauth1 | oauth2 | ldap | openid>",
+      "configurations": {<Config JSON Object>},
+      "checkUserExists": true | false,
+      "checkUserApproved": true | false
+    }
+  ],
+  "count" : "<number_of_policies>"
+}
+----
+
+[[auth-policies-api-error-4]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[auth-policies-api-list-policy-users]]
+== List Policy Users
+
+[[auth-policies-api-description-5]]
+=== Description
+
+List all Users associated with an Auth Policy.
+
+[[auth-policies-api-endpoint-5]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/authpolicy/users
+
+* method - POST
+
+[[auth-policies-api-request-body-5]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid": "<policy_guid>",
+}
+----
+
+[[auth-policies-api-response-body-5]]
+=== Response Body
+
+[[auth-policies-api-success-5]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "list" : [
+    {
+      "userid": "<user_id>",
+      "name" : "<user_name>"
+      "email": "<user_email>",
+    }
+  ],
+  "count" : "<number_of_users_for_this_policy>"
+}
+----
+
+[[auth-policies-api-error-5]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[auth-policies-api-add-users-to-a-policy]]
+== Add Users to a Policy
+
+[[auth-policies-api-description-6]]
+=== Description
+
+Associate Users with an Auth Policy.
+
+[[auth-policies-api-endpoint-6]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/authpolicy/addusers
+
+* method - POST
+
+[[auth-policies-api-request-body-6]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid": "<policy_guid>",
+  "users": ["<user_id>"]
+}
+----
+
+[[auth-policies-api-response-body-6]]
+=== Response Body
+
+[[auth-policies-api-success-6]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok"
+}
+----
+
+[[auth-policies-api-error-6]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[auth-policies-api-remove-users-from-a-policy]]
+== Remove Users from a Policy
+
+[[auth-policies-api-description-7]]
+=== Description
+
+Remove Users association with an Auth Policy.
+
+[[auth-policies-api-endpoint-7]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/authpolicy/removeusers
+
+* method - POST
+
+[[auth-policies-api-request-body-7]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  "guid": "<policy_guid>",
+  "users": ["<user_id>"]
+}
+----
+
+[[auth-policies-api-response-body-7]]
+=== Response Body
+
+[[auth-policies-api-success-7]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok"
+}
+----
+
+[[auth-policies-api-error-7]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[auth-policies-api-authentication-configuration-options]]
+== Authentication Configuration Options
+
+[[auth-policies-api-oauth-2-0]]
+=== OAuth 2.0
+
+* *clientId* - The public key used to identify the client which is requesting the authentication. This key will be passed to, and used by, the client.
+* *clientSecret* - The secret key assigned by your OAuth provider. This key should never be set to, or stored on the client. It is used for server-to-server communication between the platform and the OAuth Provider.
+
+[[auth-policies-api-example]]
+==== Example:
+
+[source,javascript]
+----
+{
+  "clientId": "1234567890.apps.example.com",
+  "clientSecret": "Wfv8DQw80hhyaBqnW37x5R23"
+}
+----
+
+[[auth-policies-api-ldap]]
+=== LDAP
+
+* *authmethod* - The authentication method to uses when authenticating against the LDAP server. This can be one of: 'simple', 'DIGEST-MD5', 'CRAM-MD5', or 'GSSAPI'.
+* *url* - The LDAP Server url for example, "ldap://foo.example.com:389/".
+* *dn* - The "Distinguished Name" to use. A DN is a sequence of relative distinguished names (RDN) connected by commas - for example, "ou=people,dc=example,dc=com".
+* *dn_prefix* - The prefix to use for authentication for example, "uid" or "cn".
+
+[[auth-policies-api-example-1]]
+==== Example:
+
+[source,javascript]
+----
+{
+  "authmethod" : "simple",
+  "url" : "ldap://foo.example.com:389/",
+  "dn": "ou=people,dc=example,dc=com",
+  "dn_prefix": "cn",
+}
+----

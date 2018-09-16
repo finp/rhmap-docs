@@ -1,0 +1,53 @@
+[[fh-sync-removecollision]]
+== $fh.sync.removeCollision
+{syncnote} xref:fh-sync-removecollision-dep[section for the old version]
+
+Defines a handler function to delete a collision for a Dataset.
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.removeCollision(dataset_id, function removeCollisionHandler(dataset_id, collision_hash, meta_data, cb){});
+----
+
+=== Parameters
+
+==== dataset_id
+* Description: the id of the dataset
+* Type: String
+
+==== removeCollisionHandler
+* Description: The function that is invoked when deleting a collisions.
+* Type: Function
+* Invoked Parameters:
+** *dataset_id*
+*** Description: the id of the dataset
+*** Type: String
+** *collision_hash*
+*** Description: the unique hash of the collision
+*** Type: String
+** *meta_data*
+*** Description: the meta data associated with the data, can be null.
+*** Type: Object
+** *cb*
+*** Description: the callback function
+*** Type: Function
+
+=== Example
+
+[source,javascript]
+----
+// This would usually be used by an administration console where a user is
+// manually reviewing & resolving collisions.
+$fh.sync.removeCollision("todo", function(dataset_id, collision_hash, meta_data, cb) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // sample back-end storage call
+  removeCollision(collision_hash);
+
+  // The callback into the sync service to return the delete row of data
+  return cb(null);
+});
+----

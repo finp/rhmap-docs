@@ -1,0 +1,23 @@
+// include::shared/attributes.adoc[]
+
+[[fh-sync-globalremovecollision-dep]]
+== $fh.sync.globalRemoveCollision {oldsync}
+
+[source,javascript]
+----
+$fh.sync.globalRemoveCollision(callback)
+----
+
+Similar to $fh.sync.removeCollision, but set the handler globally which means the same handler function can be used by multiple datasets.
+The global handler will only be used if there is no handler assigned to the dataset via $fh.sync.removeCollision.
+
+[[fh-sync-example-19]]
+=== Example
+
+[source,javascript]
+----
+
+$fh.sync.globalRemoveCollision(function(dataset_id, collision_hash, cb, meta_data){
+
+});
+----

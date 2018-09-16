@@ -1,0 +1,29 @@
+// include::shared/attributes.adoc[]
+
+[[accessing-the-database-from-cloud-apps]]
+= Accessing the Database from Cloud Apps
+
+[[mongodb-overview]]
+== Overview
+
+In an {ProductShortName} 4.x MBaaS based on OpenShift 3, all components of the MBaaS run within a single OpenShift project, together with a shared MongoDB replica set. Depending on how the MBaaS was installed, the replica set runs either on a single node, or on multiple nodes, and may be backed by persistent storage. The recommended production-grade MongoDB setup for an MBaaS has 3 replicas, each backed by persistent storage.
+
+Each Cloud App deployed to the MBaaS has its own OpenShift project. However, the database of a Cloud App is created in the shared MongoDB instance. Therefore, all management operations on the persistent data of Cloud Apps and the MBaaS, such as backup, or replication can be centralized. At the same time, the data of individual Cloud Apps is isolated in separate databases.
+
+[[accessing-data-in-the-mongodb-in-the-mbaas]]
+== Accessing data in the MongoDB in the MBaaS
+
+A simple way to store data is using the `$fh.db` API, which provides methods for create, read, update, delete, and list operations. See the link:{CloudAPI}#fh-db[$fh.db API documentation] for more information.
+
+If you need the full capability of a native MongoDB driver, or want to use another library to access the data, such as Mongoose, you can use the `connectionString` method of the `$fh.db` API to retrieve the connection string to the MongoDB instance:
+
+[source,javascript]
+----
+$fh.db({
+ "act" : "connectionString"
+}, function(err, connectionString){
+  console.log('connectionString=', connectionString);
+});
+----
+
+NOTE: To avoid concurrency issues, we recommend using either the `$fh.db` API or a direct connection to the database, but not both at the same time.

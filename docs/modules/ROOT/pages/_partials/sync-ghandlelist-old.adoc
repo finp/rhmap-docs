@@ -1,0 +1,22 @@
+// include::shared/attributes.adoc[]
+[[fh-sync-globalhandlelist-dep]]
+== $fh.sync.globalHandleList {oldsync}
+
+[source,javascript]
+----
+$fh.sync.globalHandleList(callback)
+----
+
+Similar to $fh.sync.handleList, but set the handler globally which means the same handler function can be used by multiple datasets.
+The global handler will only be used if there is no handler assigned to the dataset via $fh.sync.handleList.
+
+[[fh-sync-example-5]]
+=== Example
+
+[source,javascript]
+----
+
+$fh.sync.globalHandleList(function(dataset_id, params, cb, meta_data){
+  //list data for the specified dataset_id
+});
+----

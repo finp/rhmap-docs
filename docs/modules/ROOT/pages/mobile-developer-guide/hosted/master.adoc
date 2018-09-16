@@ -1,0 +1,35 @@
+include::{partialsdir}/attributes.adoc[]
+
+= Mobile Developer Guide
+
+[[mobile-developer-guide-android]]
+== Android
+include::{partialsdir}/deploying_apps_on_android.adoc[leveloffset=+2]
+
+[[mobile-developer-guide-ios]]
+== iOS
+include::{partialsdir}/deploying_apps_on_ios.adoc[leveloffset=+2]
+
+
+[[mobile-developer-guide-forms]]
+== Forms
+include::{partialsdir}/app_forms_integration.adoc[leveloffset=+2]
+
+[[mobile-developer-guide-developing-client-apps]]
+== Developing Client Apps
+include::{partialsdir}/app_development_angular.adoc[leveloffset=+2]
+include::{partialsdir}/app_development_backbone.adoc[leveloffset=+2]
+include::{partialsdir}/app_development_ionic.adoc[leveloffset=+2]
+
+// include::{partialsdir}/app_development_push.adoc[leveloffset=+2]
+include::{partialsdir}/using_cordova_plugins.adoc[leveloffset=+2]
+include::{partialsdir}/secure_keys.adoc[leveloffset=+2]
+include::{partialsdir}/debugging.adoc[leveloffset=+2]
+
+[[mobile-developer-guide-publishing-apps]]
+== Publishing Apps
+
+include::{partialsdir}/submitting_android.adoc[leveloffset=+2]
+include::{partialsdir}/submitting_ios.adoc[leveloffset=+2]
+// include::{partialsdir}/submitting_rhmap.adoc[leveloffset=+2]
+include::{partialsdir}/credentials.adoc[leveloffset=+2]

@@ -1,0 +1,37 @@
+include::{partialsdir}/attributes.adoc[]
+
+= Product Features
+
+[[projects-apps-and-services]]
+== Projects, Apps, and Services
+
+include::{partialsdir}/projects.adoc[leveloffset=+2]
+include::{partialsdir}/apps.adoc[leveloffset=+2]
+include::{partialsdir}/cloud_apps.adoc[leveloffset=+2]
+include::{partialsdir}/services.adoc[leveloffset=+2]
+
+[[product-features-mobile-backend]]
+== Mobile Backend
+
+include::{partialsdir}/mbaas.adoc[leveloffset=+2]
+=== Cloud Resources
+include::{partialsdir}/resourcesviaosd.adoc[leveloffset=+2]
+include::{partialsdir}/push_notifications.adoc[leveloffset=+2]
+
+[[product-features-drag-and-drop-apps]]
+== Drag and Drop Apps
+
+include::{partialsdir}/forms-builder.adoc[leveloffset=+2]
+include::{partialsdir}/forms-projects.adoc[leveloffset=+2]
+include::{partialsdir}/forms-rules.adoc[leveloffset=+2]
+include::{partialsdir}/forms-data_sources.adoc[leveloffset=+2]
+include::{partialsdir}/forms-themes.adoc[leveloffset=+2]
+include::{partialsdir}/forms-submissions.adoc[leveloffset=+2]
+
+[[product-features-administration-and-management]]
+== Administration and Management
+
+include::{partialsdir}/account.adoc[leveloffset=+2]
+include::{partialsdir}/admin.adoc[leveloffset=+2]
+include::{partialsdir}/analytics.adoc[leveloffset=+2]
+include::{partialsdir}/teams.adoc[leveloffset=+2]

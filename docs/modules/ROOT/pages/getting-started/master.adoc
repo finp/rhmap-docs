@@ -1,0 +1,265 @@
+include::{partialsdir}/attributes.adoc[]
+
+[[getting-started]]
+= Getting Started
+
+.Overview
+To get started with {ProductName} ({ProductShortName}) quickly, the first step is to understand the project life cycle.
+This involves creating a project, creating a client and a Cloud App from templates, deploying the Cloud App to the MBaaS, building the Client App, and deploying it to a mobile device.
+
+This guide uses the Studio -- the web interface of {ProductShortName} -- for all operations.
+However, you can also use the link:{LocalDevelopmentGuide}#local-development-guide-setting-up-fhc[FHC command line tool] to access most functions of {ProductShortName}.
+
+[[create-a-project]]
+== Create a Project
+
+Projects help you group all code bases related to a single mobile application in one place. Projects contain Client Apps, Cloud Apps, MBaaS services, and any data and configurations associated with them.
+
+Create a new project from an existing template. {ProductShortName} offers many project templates to choose from out of the box, with basic _Hello World_ examples for all supported platforms.
+
+. Log in to the Studio and navigate to the *Projects* area.
+. Click **New Project**.
++
+image:getting_started_new_project.png[New Project]
+. Select the *Hello World Project* template by clicking *Choose* on the right side next to it.
+. Enter a name for the project in the "App Name" field.
++
+image:getting_started_create_project.png[Create Project]
+. Scroll down to find the Cordova App option. Enter a name for the project in the "App Name" field and also ensure the checkbox is selected.
++
+image:getting_started_create_cordova_project.png[Create Cordova Project]
+. Click **Create**.
+. The progress bar turns green when the project is successfully created. Click **Finish**.
+
+[[explore-the-project]]
+=== Explore the Project
+
+After creating a project, you can see the *Apps, Cloud Apps & Services* section. This displays the Client and Cloud Apps, and also the MBaaS services associated with the project.
+
+* **Client Apps**: applications deployed on mobile devices used by the end users.
+* **Cloud Apps**: applications deployed in the MBaaS that handle requests from Client Apps and communicate with other internal or external systems.
+* **MBaaS Services**: reusable services used by Cloud Apps and shared across multiple projects.
+
+The newly created _My Hello World Project_ contains one Client App (Cordova technology) and one Cloud App (Node.js technology) with a single HTTP endpoint.
+You can add more Client and Cloud Apps, and also MBaaS services to the project by clicking the `+` symbol in each corresponding box.
+
+[[deploy-the-cloud-app]]
+== Deploy the Cloud App
+
+Depending on the setup of your cluster, the Cloud App may need to be deployed manually after creating the project.
+
+. In the *Apps, Cloud Apps & Services* section of the screen, click on the __Cloud App__ - this will display the __App Details__ screen.
+. In the __App Details__ section of the screen, see the value of the *Cloud App Status* field.
++
+If the status is __Stopped__, you must deploy the Cloud App.
+If it is __Running__, skip to section xref:preview-the-client-app[_3. Preview the Client App_].
++
+image:getting_started_cloud_app_status.png[Cloud App Status]
+. Click *Deploy* on the sidebar on the left.
++
+image:getting_started_deploy_cloud_app.png[Deploy Cloud App]
++
+. Click **Deploy Cloud App**
++
+NOTE: By default, the Cloud App deployment reuses existing container images built from the same commit hash and for the same Node.JS runtime. To force RHMAP to create a new container image, select the **Clean Stage** option.
++
+Once the deployment is finished, the progress bar turns green and the Cloud App is deployed.
+. Click *Details* on the sidebar on the left.
+. Verify that the *Cloud App Status* is now __Running__.
+
+=== Cloud App Deployments
+Deploying a Cloud App into an Environment can require a Cloud App source-to-image (S2I) build that creates a new container image.
+{ProductShortName} reuses the container image created in the previous Environment when reuse is appropriate, that is, when both the commit hashes and Node.JS runtime versions are identical.
+This provides more consistency and better performance for Cloud App deployments.
+
+=== Build Queue Policy
+When you deploy a Cloud App, {ProductShortName} creates an asynchronous request to the OpenShift API and the Deploy Cloud App button is disabled until the build completes and the application is deployed.
+Only one running deployment and one queued deployment can exist at the same time, and if you deploy an additional Cloud App, it will replace the Cloud App currently in the queue.
+To deploy a Cloud App under these conditions, either wait for the existing deployment to complete, or cancel the existing deployment.
+This policy is described further in link:https://access.redhat.com/documentation/en-us/openshift_dedicated/3/html-single/developer_guide/index#build-serial-run-policy[SerialLatestOnly Run Policy].
+
+NOTE: Various build policies are described in the link:https://access.redhat.com/documentation/en-us/openshift_dedicated/3/html-single/developer_guide/index#dev-guide-build-run-policy[Build Run Policy] including the SerialLatestOnly run policy. However, you cannot change this policy for {ProductShortName}, that is, the SerialLatestOnly run policy applies for all {ProductShortName} deployments.
+
+[[preview-the-client-app]]
+== Preview the Client App
+
+With the project created and the Cloud App deployed, you can now test the Client App.
+
+. In the *Apps, Cloud Apps & Services* screen, click on the _Cordova App_ in the *Apps* box.
++
+This opens the *App Details* page. On the right, you can interact with a running preview of your app. On the left is metadata, such as your app's name, ID, and git repository URL.
++
+image:getting_started_client_app_details.png[Client App Details]
+. Ensure that the environment where the Cloud App is deployed to is selected in the "App Preview" section.
++
+image:getting_started_client_app_details_environment.png[Client App Environment Details]
+. In the preview, enter your name in the provided box.
+. Click **Say Hello From The Cloud**.
++
+The Client App makes a call to the Cloud App in this project and shows a response in the area beneath the button.
+
+[[run-the-client-app-on-a-mobile-device]]
+== Run the Client App on a Mobile Device
+
+. Click *Build* on the sidebar on the left.
+. In the *Client Binary* section, select *Android* as the target platform.
+. Click **Build**.
++
+image:getting_started_build_binary.png[Build a binary]
++
+After some time, the binary gets built and you are presented with a URL and a QR code.
+. Install the Client App binary on your mobile device, in one of the following ways:
++
+* Download the Client App binary to your computer and transfer it to the device manually.
+* On the mobile device, open the download URL in a browser.
+* On the mobile device, scan the QR code with a QR code reader. The QR code contains the download URL.
++
+image:getting_started_binary_link_qr.png[Binary link]
++
+NOTE: On your Android mobile device, you must enable the option to install apps from unknown sources. See the section http://developer.android.com/distribute/tools/open-distribution.html[User Opt-In for Apps from Unknown Sources^] in the _Alternative Distribution Options_ guide in Android documentation for more information.
+The Client App built in this example is considered by Android as coming from an _unknown source_ since the Client App binary is not signed with a developer's certificate.
+
+[[customize-the-cloud-app]]
+== Customize the Cloud App
+
+To better understand how the Cloud App works, make a minor modification to the code. Add a `timestamp` field with the value of the current UNIX time stamp to the server response. In the next section, you will modify the Client App to display the time stamp.
+
+. Navigate to the *Projects* area using the navigation bar at the top.
+. Open the _My Hello World Project_ project.
+. Open the __Cloud App__.
+. Click *Editor* on the sidebar on the left.
++
+This area lets you edit the source code of any file in the Git repository of the Cloud App.
+The Cloud App in this project is a Node.js web application framework called __Express__.
++
+image:getting_started_cloud_app_editor.png[Editor]
++
+NOTE: The Studio editor provides a quick and easy way to edit files, however, Red Hat recommends cloning the code and using a local editor or IDE to develop applications.
+. Open the `application.js` file.
++
+`application.js` handles all requests to the Cloud App.
+The Client App sends requests to the `/hello` endpoint and the `application.js` file routes those requests to another file called `hello.js`.
++
+[source,javascript]
+----
+app.use('/hello', require('./lib/hello.js')());
+----
++
+To learn more about routing in Express, take a look at the http://expressjs.com/en/4x/api.html#express.router[Express Router documentation^].
+
+Change the `lib/hello.js` file to return a timestamp in the response.
+
+. Open `lib/hello.js`.
+. Add a `timestamp` property to the POST response object, with the value of the current UNIX time stamp.
++
+Find this line in the POST handler:
++
+[source,javascript]
+----
+res.json({msg: 'Hello ' + world});
+----
++
+Change that line to the following:
++
+[source,javascript]
+----
+res.json({msg: 'Hello ' + world, timestamp: new Date().getTime() });
+----
++
+The POST handler now looks like this:
++
+[source,javascript]
+----
+hello.post('/', function(req, res) {
+  console.log(new Date(), 'In hello route POST / req.body=', req.body);
+  var world = req.body && req.body.hello ? req.body.hello : 'World';
+
+  // see http://expressjs.com/4x/api.html#res.json
+  res.json({msg: 'Hello ' + world, timestamp: new Date().getTime() });
+});
+----
+. Save your changes by clicking _File > Save_ in the editor.
++
+image:getting_started_editor_save.png[Editor]
++
+The changes are saved to the Git repository of the Cloud App.
+To propagate the changes to the running instance, you must re-deploy the Cloud App.
+. Click *Deploy* on the sidebar on the left.
+. Click **Deploy Cloud App**.
+
+[[modify-the-client-app]]
+== Modify the Client App
+
+Change the Client App to also show the `timestamp` property from the received server response.
+
+First, create a placeholder for the response.
+
+. Navigate to the *Apps, Cloud Apps & Services* page.
+. Open the *Cordova App* Client App.
+. Open the **Editor**.
++
+NOTE: The Studio editor provides a quick and easy way to edit files, however, Red Hat recommends cloning the code and using a local editor or IDE to develop applications.
+. Open the `www/index.html` file.
+. Add a new `<div>` that will show the received `timestamp`.
++
+This element acts as a placeholder for the received value.
++
+Find this line:
++
+[source,markup]
+----
+<div id="cloudResponse" class="cloudResponse"></div>
+----
++
+Replace it with the following:
++
+[source,markup]
+----
+<div id="cloudResponse" class="cloudResponse"></div>
+<div id="timestamp" class="cloudResponse"></div>
+----
+. Save the changes using __File > Save__, or using the _Ctrl + S_ keyboard shortcut (Windows) or _cmd + S_ keyboard shortcut (Mac).
+
+Modify the handler of the *Say Hello From The Cloud* button to use the received `timestamp` value to populate the placholder.
+
+. Open the `www/js/hello.js` file in the editor.
++
+This file contains a click handler for the *Say Hello From The Cloud* button, which uses the `$fh.cloud` API to call the `/hello` endpoint of the Cloud App and populates the placeholder `<div id="timestamp">` element.
+. Set the placeholder to the received `timestamp` value.
++
+Find the following code:
++
+[source,javascript]
+----
+document.getElementById('cloudResponse').innerHTML = "<p>" + res.msg + "</p>";
+----
++
+Replace it with the following:
++
+[source,javascript]
+----
+document.getElementById('cloudResponse').innerHTML = "<p>" + res.msg + "</p>";
+document.getElementById('timestamp').innerHTML = "<p>" + res.timestamp + "</p>";
+----
+. Save your changes.
++
+The preview will update automatically.
+. Click *Say Hello From The Cloud* in the preview.
++
+The area below the button now also contains a long string of numbers, which represent the time stamp.
+If it does not work, try refreshing the page.
++
+image:getting_started_preview_timestamp.png[Timestamp]
+
+[[conclusion]]
+== Conclusion
+
+You should now have an understanding of basic concepts, such as:
+
+* Projects, Client Apps, and Cloud Apps and how these are related.
+* Building an app binary for Android and trying it on a mobile device.
+* Making changes to Client Apps and Cloud Apps.
+
+You can find detailed guides and explanations in link:{LinkProductDocHome}[the {ProductShortName} documentation].
+
+For a more detailed walkthrough, which includes some insight into local development, you can watch the https://access.redhat.com/videos/2504991[Red Hat Mobile Application Platform Overview Demo].

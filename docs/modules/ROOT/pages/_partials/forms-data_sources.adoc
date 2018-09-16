@@ -1,0 +1,103 @@
+// include::shared/attributes.adoc[]
+
+[[using-data-sources]]
+= Using Data Sources
+
+[[using-data-sources-overview]]
+== Overview
+
+To make your forms applications more dynamic, you can set certain field types in Forms to have values loaded dynamically.
+The values can be loaded from a database, from an external web service, from a back-end system, or any other source accessible through an MBaaS service.
+
+_Data sources_ are the mechanism which binds a form field to an MBaaS service which provides the values.
+
+The following field types can have values loaded from a data source:
+
+* Dropdown
+* Check boxes
+* Radio Buttons
+* Read Only
+
+For a step-by-step guide to defining and using a data source, follow the guide link:{ServerSideDeveloperGuide}#dynamically-populating-form-fields-from-an-mbaas-service[Dynamically Populating Form Fields From an MBaaS Service].
+
+[[how-it-works]]
+== How it works
+
+The data source acts as a binding layer between the form field, and the MBaaS service endpoint.
+When a form definition is accessed, the data for fields backed by a data source are not retrieved directly from the MBaaS service. Instead, the data source always returns a version of the data cached in the environment.
+
+For example, when a data source is invoked from a form deployed in a _Dev_ environment, the associated MBaaS service must also be deployed in a _Dev_ environment, and the data is cached only for the _Dev_ environment.
+
+[[refresh-period]]
+=== Refresh Period
+
+The cached data from the MBaaS service is refreshed periodically on the cloud side, according to the configured period – from as little as one minute, up to seven days.
+
+If a data source refresh fails for any reason, a back-off algorithm will progressively increase the refresh period to a maximum of seven days. Any successful update to the data source in that time, either from an automatic or manual refresh, will allow the data source to resume the configured period.
+
+[[requirements]]
+== Requirements
+
+* The MBaaS service used as a data source must use `fh-mbaas-api` version `5.8.1` or higher
+* The Cloud App associated with a form, which uses a data source, must use `fh-mbaas-api` version `5.0.0` or higher
+
+[[json-format]]
+=== JSON Format
+
+The HTTP endpoint of the MBaaS service used as a data source must return a JSON response in the following format:
+
+* For __Dropdown__, __Check boxes__, and _Radio Buttons_ field types:
++
+A list of objects with three keys:
++
+--
+** `key` – (Optional) internal identifier, used as the `name` attribute in the HTML form field
+** `value` – the user-friendly display text
+** `selected` – (Optional) used to preselect a single option in case of _Radio Buttons_ and __Dropdown__, or multiple options for _Check boxes_
+--
++
+[source,javascript]
+----
+[
+  {
+    "value": "January",
+    "selected": "true"
+  },
+  {
+    "key": "02",
+    "value": "February"
+  },
+  {
+    "value": "March"
+  },
+  ...
+]
+----
++
+NOTE: There is no limit on the number of objects returned by the service, and all returned objects get rendered in the form as options. Using too many options can make the form difficult to navigate.
+
+* For _Read Only_ text field type:
++
+[source,javascript]
+----
+[
+  {
+    "value": "<b>Note:</b> You can use <i>HTML</i> in the Read Only field."
+  }
+]
+----
++
+A subset of HTML is supported in the `value` and will be rendered in the form.
++
+If the list contains more than one object, the values of the `value` fields from all objects are separated by newlines and concatenated.
+
+[[mbaas-service-endpoint]]
+=== MBaaS Service Endpoint
+
+You can use any MBaaS service as a data source, as long as it uses the required version of `fh-mbaas-api` and the output of the HTTP endpoint conforms to the required format, as described above.
+
+Three MBaaS service templates are provided by default, which demonstrate common use cases:
+
+* Static Data Source – serves data statically defined in a JSON file in the MBaaS service
+* MongoDB Data Source – serves data stored in the built-in MongoDB database, loaded through `$fh.db`
+* Internet Data Source – serves data parsed from an external website

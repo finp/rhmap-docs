@@ -1,0 +1,31 @@
+// include::shared/attributes.adoc[]
+[[fh-sync-stopall-dep]]
+== $fh.sync.stopAll {oldsync}
+
+[source,javascript]
+----
+$fh.sync.stopAll(callback)
+----
+
+Stop cloud data sync service for ALL datasets.
+
+[[fh-sync-example-3]]
+=== Example
+
+[source,javascript]
+----
+// This will remove all reference to all datasets from the sync service.
+// Any subsequent cloud calls to sync.invoke() will fail with an unknown_dataset error.
+// Any of the datasets can be put back under control of the sync service by calling
+// the sync.init() function again and passing the required dataset_id.
+// Calling stop multiple times has no effect -
+// except that the return data to the callback (an array of dataset_ids which are no longer being synced) will be different.
+$fh.sync.stopAll(function(err, res) {
+  if (err) console.error(err); // Any error thrown during the removal of the datasets
+
+  // A JSON Array of Strings - representing the dataset_Ids which have been
+  // removed from the sync service.
+  console.log(res);
+});
+----
+

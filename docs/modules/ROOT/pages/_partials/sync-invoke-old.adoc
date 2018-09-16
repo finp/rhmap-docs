@@ -1,0 +1,26 @@
+// include::shared/attributes.adoc[]
+
+[[fh-sync-invoke-dep]]
+== $fh.sync.invoke {oldsync}
+
+[source,javascript]
+----
+$fh.sync.invoke(dataset_id, params, callback)
+----
+
+Invoke the Sync Server.
+
+[[fh-sync-example-1]]
+=== Example
+
+[source,javascript]
+----
+// This should be called from a cloud “act” function.
+// The params passed to the “act” function:
+var params = {
+  "limit": 50
+};
+$fh.sync.invoke(dataset_id, params, function() {
+  // "act" function callback
+});
+----

@@ -1,0 +1,57 @@
+[[fh-sync-globalhandlecreate]]
+== $fh.sync.globalHandleCreate
+{syncnote} xref:fh-sync-globalhandlecreate-dep[section for the old version]
+
+
+Defines a global handler function for creating a single row of data in the back end.
+
+It can be used by multiple datasets, but is only used if there is no handler assigned to the dataset using the xref:fh-sync-handlecreate[handleCreate API].
+
+=== Usage
+
+[source,javascript]
+----
+$fh.sync.globalHandleCreate(function createHandler(dataset_id, data, meta_data, cb){});
+----
+
+=== Parameters
+
+==== createHandler
+* Description: The function that is invoked when creating a record.
+* Type: Function
+* Invoked Parameters:
+** *dataset_id*
+*** Description: the id of the dataset
+*** Type: String
+** *data*
+*** Description: the data to create
+*** Type: Object
+** *meta_data*
+*** Description: the meta data associated with the data, can be null.
+*** Type: Object
+** *cb*
+*** Description: the callback function
+*** Type: Function
+
+=== Example
+
+[source,javascript]
+----
+$fh.sync.globalHandleCreate(function(dataset_id, data, meta_data, cb){
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // Row of data to create
+  console.log(data);
+
+  // Sample back-end storage call
+  var savedData = saveData(data);
+  var res = {
+    "uid": savedData.uid, // Unique Identifier for row
+    "data": savedData.data // The created data record - including any system or UID fields added during the create process
+  };
+
+  // Callback function for when the data has been created, or if theres an error
+  return cb(null, res);
+});
+----

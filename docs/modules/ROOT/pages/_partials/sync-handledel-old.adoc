@@ -1,0 +1,41 @@
+// include::shared/attributes.adoc[]
+[[fh-sync-handledelete-dep]]
+== $fh.sync.handleDelete {oldsync}
+
+[source,javascript]
+----
+$fh.sync.handleDelete(dataset_id, callback)
+----
+
+Defines a handler function for deleting a single row of data from the back end. Should be called after the dataset is initialised.
+
+[[fh-sync-example-12]]
+=== Example
+
+[source,javascript]
+----
+// data source for a dataset.
+// The sync service will verify that the delete can proceed
+// (that is, collision detection) before it invokes the delete function.
+$fh.sync.handleDelete(dataset_id, function(dataset_id, uid, cb, meta_data) {
+  // The dataset identifier that this function was defined for
+  console.log(dataset_id);
+
+  // Unique Identifier for row to update
+  console.log(uid);
+
+  // Sample back-end storage call
+  var deletedData = deleteData(uid);
+
+  /* sample response
+    {
+      "userid": "1234",
+      "name": "Jane Bloggs",
+      "age": 27
+    }
+  */
+
+  // The callback into the sync service to return the deleted row of data
+  return cb(null, deletedData);
+});
+----

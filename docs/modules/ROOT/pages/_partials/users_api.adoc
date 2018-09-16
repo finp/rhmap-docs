@@ -1,0 +1,638 @@
+// include::shared/attributes.adoc[]
+
+[[users-administration-api]]
+= Users Administration API
+
+[[users-administration-api-requirements]]
+== Requirements
+
+The user must be a member of one or more teams with the following permissions:
+
+* Reseller
+** Adminisration (View & Edit)
+
+OR
+
+* Customer
+** Administration (View & Edit)
+
+For more information on Permissions, see link:{ProductFeatures}#teams-and-collaboration[Teams & Collaborations].
+
+[[users-administration-api-create-user]]
+== Create User
+
+[[users-administration-api-description]]
+=== Description
+
+Create a new user belonging to the specified customer.
+
+[[users-administration-api-endpoint]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/user/create
+
+* method - POST
+
+[[users-administration-api-request-body]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required
+  "username": "unqiue user identifier",
+  // optional, default is a randomly generated password
+  // Useful to leave as default if User is to be sent an activation email,
+  // allowing them to set the password as required upon activation
+  "password": "<password>",
+  //optional
+  "email": "<email>",
+  //optional
+  "name": "<name>",
+  // optional, default is ""
+  // comma separated list of roles to assign new user
+  "roles": "<roles>",
+  // optional, default is ""
+  // comma separated list of Auth policy guids to assign new user
+  "authpolicies": "<authpolicies>",
+  // optional, default is false
+  // whether or not an activation invite email should be sent to the user
+  "invite": false
+}
+----
+
+[[users-administration-api-response-body]]
+=== Response Body
+
+[[users-administration-api-success]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "username": "<user_name>"
+}
+----
+
+[[users-administration-api-error]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[users-administration-api-update-user]]
+== Update User
+
+[[users-administration-api-description-1]]
+=== Description
+
+Update an existing user belonging to the specified customer.
+
+[[users-administration-api-endpoint-1]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/user/update
+
+* method - POST
+
+[[users-administration-api-request-body-1]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  //required, and it can not be changed
+  "username": "<unique user identifier>",
+  // all fields are optional
+  // email address of user to update
+  "email": "<email>",
+  "name": "<name>",
+  "password": "<password>",
+  //user won't be able to login if this is set to true
+  "enabled": false,
+  //if this is set to true, if will return a special flag next time the user logged in,
+  //this flag can be used to delete application data on the device
+  "blacklisted": false,
+  // comma separated list of roles to set for this user for example, 'dev, analytics'
+  "roles": "<roles>",
+  // comma separated list of Auth policy guids to set for this user
+  "authpolicies": "<authpolicies>"
+}
+----
+
+[[users-administration-api-response-body-1]]
+=== Response Body
+
+[[users-administration-api-success-1]]
+==== Success
+
+NOTE: The `teams` field is only available if Teams is enabled on the Platform. To view the JSON Team Definition, click xref:teams-administration-api-json-team-definition[here].
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "fields": {
+    "username": "<unique user identifier>",
+    "email": "<email>",
+    "name": "<name>",
+    "enabled": false,
+    "blacklisted": false,
+    "roles": "<roles>",
+    //An Array of JSON Team Definitions the User is a Member of.
+    //Note: This is only included if Teams is enabled for the User.
+     "teams": ["<JSON Team Definition>"]
+  }
+}
+----
+
+[[users-administration-api-error-1]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[users-administration-api-delete-user]]
+== Delete User
+
+[[users-administration-api-description-2]]
+=== Description
+
+Delete a user. The user must not have any Apps, otherwise the deletion will fail.
+
+[[users-administration-api-endpoint-2]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/user/delete
+
+* method - POST
+
+[[users-administration-api-request-body-2]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required
+  // username of user to delete
+  "username": "<unique user identifier>",
+}
+----
+
+[[users-administration-api-response-body-2]]
+=== Response Body
+
+[[users-administration-api-success-2]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "fields": {
+    "username": "<unique user identifier>",
+    "email": "<email>",
+    "name": "<name>",
+    "enabled": false,
+    "blacklisted": false,
+    "roles": "<roles>",
+    "authpolicies": "<authpolicies>"
+  }
+}
+----
+
+[[users-administration-api-error-2]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[users-administration-api-read-user]]
+== Read User
+
+[[users-administration-api-description-3]]
+=== Description
+
+Read a user information based on the user name.
+
+[[users-administration-api-endpoint-3]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/user/read
+
+* method - POST
+
+[[users-administration-api-request-body-3]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required
+  // user name of the user to delete
+  "username": "<unique user identifier>",
+}
+----
+
+[[users-administration-api-response-body-3]]
+=== Response Body
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "fields": {
+    "username": "<unique user identifier>",
+    "email": "<email>",
+    "name": "<name>",
+    "enabled": false,
+    "blacklisted": false,
+    "roles": [<an array of role string>],
+    "authpolicies": [<an array of Auth policy guids>],
+    "lastLogin" : "<timestamp of last login>"
+  }
+}
+----
+
+[[users-administration-api-error-3]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[users-administration-api-list-users]]
+== List Users
+
+[[users-administration-api-description-4]]
+=== Description
+
+List users.
+
+[[users-administration-api-endpoint-4]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/user/list
+
+* method - POST
+
+[[users-administration-api-request-body-4]]
+=== Request Body
+
+[source,javascript]
+----
+{}
+----
+
+[[users-administration-api-response-body-4]]
+=== Response Body
+
+[[users-administration-api-success-3]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "count": "<users total count>",
+  "list": [{
+    "fields": {
+      "username": "<unique user identifier>",
+      "email": "<email>",
+      "name": "<name>",
+      "enabled": false,
+      "blacklisted": false,
+      "authpolicies": [<an array of Auth policy guids>],
+      "lastLogin" : "<timestamp of last login>"
+    }
+  }, ...]
+}
+----
+
+[[users-administration-api-error-4]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[users-administration-api-enabledisable-user]]
+== Enable/Disable User
+
+[[users-administration-api-description-5]]
+=== Description
+
+Enable/disable an existing user.
+
+[[users-administration-api-endpoint-6]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/user/update
+
+* method - POST
+
+[[users-administration-api-request-body-6]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required
+  // username of user to update
+  "username": "<unique user identifier>",
+  "enabled": true/false
+}
+----
+
+[[users-administration-api-response-body-6]]
+=== Response Body
+
+[[users-administration-api-success-5]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "fields": {
+    "username": "<unique user identifier>",
+    "email": "<email>",
+    "name": "<name>",
+    "enabled": false,
+    "blacklisted": false,
+    "roles": [<an array of string>],
+    "authpolicies": [<an array of Auth policy guids>]
+  }
+}
+----
+
+[[users-administration-api-error-6]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[users-administration-api-addremove-roles]]
+== Add/Remove Roles
+
+[[users-administration-api-description-6]]
+=== Description
+
+Add new roles or remove existing roles of a user.
+
+[[users-administration-api-endpoint-7]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/user/update
+
+* method - POST
+
+[[users-administration-api-request-body-7]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required
+  // username of the user to update
+  "username": "<unique user identifier>",
+  // comma separated list of roles to set for this user for example, 'dev, analytics'
+  "roles": "<roles>"
+}
+----
+
+[[users-administration-api-response-body-7]]
+=== Response Body
+
+[[users-administration-api-success-6]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "fields": {
+    "username": "<unique user identifier>",
+    "email": "<email>",
+    "name": "<name>",
+    "enabled": false,
+    "blacklisted": false,
+    "roles": [<an array of string>],
+    "authpolicies": [<an array of Auth policy guids>]
+  }
+}
+----
+
+[[users-administration-api-error-7]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[users-administration-api-addremove-auth-policies]]
+== Add/Remove Auth Policies
+
+[[users-administration-api-description-7]]
+=== Description
+
+Add new Auth policies to or remove existing Auth policies from a user.
+
+[[users-administration-api-endpoint-8]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/user/update
+
+* method - POST
+
+[[users-administration-api-request-body-8]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  // required
+  // username of the user to update
+  "username": "<unique user identifier>",
+  // comma separated list of Auth policy guids to set for this user
+  "authpolicies": "<authpolicies>"
+}
+----
+
+[[users-administration-api-response-body-8]]
+=== Response Body
+
+[[users-administration-api-success-7]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status": "ok",
+  "fields": {
+    "username": "<unique user identifier>",
+    "email": "<email>",
+    "name": "<name>",
+    "enabled": false,
+    "blacklisted": false,
+    "roles": [<an array of string>],
+    "authpolicies": [<an array of Auth policy guids>]
+  }
+}
+----
+
+[[users-administration-api-error-8]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[users-administration-api-list-a-users-devices]]
+== List a user's devices
+
+[[users-administration-api-description-8]]
+=== Description
+
+List a user's devices.
+
+[[users-administration-api-endpoint-9]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/user/listdevices
+
+* method - POST
+
+[[users-administration-api-request-body-9]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  //required
+  "username": "<unique user identifier>"
+}
+----
+
+[[users-administration-api-response-body-9]]
+=== Response Body
+
+[[users-administration-api-success-8]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status" : "ok",
+  "list" : [{
+      "guid" : "<device guid>",
+      "cuid" : "<device id>",
+      "name" : "<devicel lable>",
+      "disabled" : "<is the device disabled>",
+      "blacklisted" : "<is the device blacklisted>"
+    }, ...]
+}
+----
+
+[[users-administration-api-error-9]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
+
+[[users-administration-api-list-a-users-store-items]]
+== List a user's store items
+
+[[users-administration-api-description-9]]
+=== Description
+
+List a user's apps he/she has installed (But the app maybe deleted).
+
+[[users-administration-api-endpoint-10]]
+=== Endpoint
+
+* uri - /box/srv/1.1/admin/user/liststoreitems
+
+* method - POST
+
+[[users-administration-api-request-body-10]]
+=== Request Body
+
+[source,javascript]
+----
+{
+  //required
+  "username" : "<unique user identifier>"
+}
+----
+
+[[users-administration-api-response-body-10]]
+=== Response Body
+
+[[users-administration-api-success-9]]
+==== Success
+
+[source,javascript]
+----
+{
+  "status" : "ok",
+  "list" : [{
+      "guid" : "<app guid>",
+      "name" : "<app name>",
+      "description" : "<app description>"
+    }, ...]
+}
+----
+
+[[users-administration-api-error-10]]
+==== Error
+
+[source,javascript]
+----
+{
+  "status": "error",
+  "message": "<error_message>"
+}
+----
